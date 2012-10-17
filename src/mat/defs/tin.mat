@@ -1,0 +1,8 @@
+# Tin (silver) appearance
+name: tin
+diffuse: 0.73 0.73 0.75
+emissive: 0 0 0
+specular: 1 1 1
+ambient: 1
+transparency: 0
+shininess: 0.5

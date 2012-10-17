@@ -1,0 +1,8 @@
+# Ceramic gray, low gloss
+name: ceram_gry
+diffuse: 0.34 0.32 0.32
+emissive: 0 0 0
+specular: 0.24 0.23 0.22
+ambient: 0.5
+transparency: 0
+shininess: 0.05
