@@ -1,5 +1,5 @@
 /*
- *      file: ring.h
+ *      file: polygon.h
  *
  *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
@@ -16,74 +16,67 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
- *      The Ring object describes a common element in VRML models of
- *      electronic components. Operations on a ring include the following:
- *          + calculate the vertices using a center point, number of points,
- *              X radius, Y radius, and a Transform.
- *          + render the interior in a forward or reverse vertex order;
- *              this determines which side the ring is visible from.
- *          + stitch the edges of 2 rings to form a tubular section
- *          + retrieve the vertices and number of points
+ *
+ *      This class represents a regular polygon. Override the default
+ *      Paint() routine in any derived class which is not a regular polygon.
  *
  */
 
-#ifndef RING_H_
-#define RING_H_
+#ifndef POLYGON_H_
+#define POLYGON_H_
 
 #include <iosfwd>
 
-#include "material.h"
+#include "vrmlmat.h"
 #include "transform.h"
 
-class Ring;
-class Ring
+class Polygon
 {
-private:
-    double cx, cy, cz;  // center point after transformation
+protected:
     double *x, *y, *z;  // array of vertices after transformation
-    int np;             // number of vertices (8 .. 360 ; must be multiple of 4)
+    int nv;             // number of vertices (8 .. 360 ; must be multiple of 4)
     bool valid;         // true if Calc has successfully completed
 
-    void init(void);
+    virtual void init(void);
 
 public:
-    Ring();
-    virtual ~Ring();
+    Polygon();
+    virtual ~Polygon();
 
     // Return values: 0 for success otherwise -1
-    /// @param np The number of vertices; must be 8..360 inclusive and a multiple of 4
+    /// @param np The number of vertices; must be 3..360 inclusive
     /// @param xrad Radius along the X axis
     /// @param yrad Radius along the Y axis
     /// @param t Transform to place the ellipse in an appropriate orientation in space
-    int Calc(int np, double xrad, double yrad, const Transform &t);
+    int Calc(int np, double xrad, double yrad, Transform &t);
 
+    // Append a polygonal face to the Shape section of a VRML file
     // Return values: 0 for success otherwise -1
-    /// @param name Name for the VRML Transform entity
-    /// @param forward Determines order of vertices
+    /// @param ccw Determines order of points in vertices
     /// @param t Transform to reorient the ellipse
     /// @param color Material appearance to use
     /// @param reuse_color Reuse (true) or define an appearance
     /// @param fp The output stream
     /// @param tabs The tabulator level (max. 4)
-    int Render(const std::string &name, bool forward, const Transform &t,
-            const VRMLMat &color, bool reuse_color, ofstream &fp, int tabs = 0);
+    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+            std::ofstream &fp, int tabs = 0);
 
+    // Append a tubular Shape section to a VRML file
     // Return values: 0 for success otherwise -1
-    /// @param name Name for the VRML Transform entity
-    /// @param ring The ring to stitch to
-    /// @param forward Determines order of vertices
+    /// @param p2 The polygon to stitch to (must have the same number of vertices)
+    /// @param ccw Determines order of points in vertices
     /// @param t Transform to reorient the ellipse
     /// @param color Material appearance to use
     /// @param reuse_color Reuse (true) or define an appearance
     /// @param fp The output stream
     /// @param tabs The tabulator level (max. 4)
-    int Stitch(const std::string &name, const Ring &ring, bool forward, const Transform &t,
-            const VRMLMat &color, bool reuse_color, ofstream &fp, int tabs = 0);
+    int Stitch(Polygon &p2, bool ccw, Transform &t,
+            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
 
     // Return value: number of points. Handles will point to arrays of doubles
     int GetVertices(double **px, double **py, double **pz);
-
 };
 
 
-#endif /* RING_H_ */
+
+#endif /* POLYGON_H_ */
