@@ -22,12 +22,11 @@
 #include <iostream>
 #include <iomanip>
 
+#include "vdefs.h"
 #include "material.h"
 #include "keyvalparser.h"
 
 using namespace std;
-
-#define ERRBLOB cerr << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(): "
 
 Material::Material()
 {
@@ -210,7 +209,7 @@ int Material::validateRGB(const float rgb[3], float target[3])
             || (rgb[1] < 0.0) || (rgb[1] > 1.0)
             || (rgb[2] < 0.0) || (rgb[2] > 1.0))
     {
-        ERRBLOB;
+        ERRBLURB;
         cerr << "Invalid RGB value (range is 0.0 .. 1.0): " << setprecision(2) << rgb[0] <<
                 ", " << rgb[1] << ", " << rgb[2] << "\n";
         return -1;
@@ -299,7 +298,7 @@ int Material::SetAmbientIntensity(float coeff)
 {
     if ((coeff < 0.0) || (coeff > 1.0))
     {
-        ERRBLOB;
+        ERRBLURB;
         cerr << "Invalid value for Ambient Intensity (" << coeff <<
                 "). Valid range is 0.0 .. 1.0\n";
         return -1;
@@ -317,7 +316,7 @@ int Material::SetTransparency(float coeff)
 {
     if ((coeff < 0.0) || (coeff > 1.0))
     {
-        ERRBLOB;
+        ERRBLURB;
         cerr << "Invalid value for transparency (" << coeff <<
                 "). Valid range is 0.0 .. 1.0\n";
         return -1;
@@ -335,7 +334,7 @@ int Material::SetShininess(float coeff)
 {
     if ((coeff < 0.0) || (coeff > 1.0))
     {
-        ERRBLOB;
+        ERRBLURB;
         cerr << "Invalid value for shininess (" << coeff <<
                 "). Valid range is 0.0 .. 1.0\n";
         return -1;

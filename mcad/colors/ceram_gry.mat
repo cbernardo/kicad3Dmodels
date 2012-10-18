@@ -1,4 +1,7 @@
 # Ceramic gray, low gloss
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
 name: ceram_gry
 diffuse: 0.34 0.32 0.32
 emissive: 0 0 0

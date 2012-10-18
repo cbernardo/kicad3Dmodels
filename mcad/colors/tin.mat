@@ -1,4 +1,7 @@
 # Tin (silver) appearance
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
 name: tin
 diffuse: 0.73 0.73 0.75
 emissive: 0 0 0

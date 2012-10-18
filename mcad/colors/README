@@ -1,2 +1,7 @@
 This directory contains material appearance definitions
 for use by KiCAD 3D models.
+
+All material definitions are licensed under the GPLv3;
+if you do not have a copy of the license, see
+http://www.gnu.org/licenses/gpl.html
+

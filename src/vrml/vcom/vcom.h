@@ -56,7 +56,13 @@ int SetupShape(VRMLMat &color, bool reuse_color,
 // Close a VRML Shape block
 int CloseShape(std::ofstream &fp, int tabs = 0);
 
-// Set up a VRML Geometry block
-int SetupGeom(std::ofstream &fp, int tabs = 0);
+// Write a VRML coordinate block
+int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int tabs = 0);
+
+// Set up a VRML coordIndex block
+int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
+
+// Close a VRML coordIndex block
+int CloseCoordIndex(std::ofstream &fp, int tabs = 0);
 
 #endif /* VCOM_H_ */

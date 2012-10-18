@@ -1,7 +1,7 @@
-/**
+/*
   file: makeDip.cpp
 
-  Copyright 2012, Cirilo Bernardo
+  Copyright 2012, Cirilo Bernardo (cjh.bernardo@gmail.com)
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,12 +45,12 @@ int main()
   char name[256];
   int i;
   dipparams dp;
-  dp.casematerial.Load("../../mat/defs/ceram_gry.mat");
-  dp.pinmaterial.Load("../../mat/defs/tin.mat");
+  dp.casematerial.Load("/home/cirilo/projects/kicad/models/mcad/colors/ceram_gry.mat");
+  dp.pinmaterial.Load("/home/cirilo/projects/kicad/models/mcad/colors/tin.mat");
   dil.SetParams(dp);
 
   for(i = 4; i <= 28; i+=2) {
-    sprintf(name, "dip%d_300i.wrl", i);
+    sprintf(name, "dil%d_i300.wrl", i);
     dil.Calc(i, name);
   }
 

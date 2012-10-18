@@ -1,7 +1,7 @@
 /*
   file: dip.cpp
 
-  Copyright 2012, Cirilo Bernardo
+  Copyright 2012, Cirilo Bernardo (cjh.bernardo@gmail.com)
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -168,22 +168,15 @@ int dip::Calc(int pins, std::string filename)
         return -1;
     }
 
-    // Header
-    /*
-    fp << "#VRML 2.0 utf8\n";
-    fp << "#File: " << filename << "\n";
-    fp << "\n";
-    */
-
     // Case
     ostringstream partname;
     if (params.metric)
     {
-        partname << "DIP" << pins << "_" << icpin.getRowSpacing()*100 << "m";
+        partname << "DIL" << pins << "_m" << icpin.getRowSpacing()*100;
     }
     else
     {
-        partname << "DIP" << pins << "_" << icpin.getRowSpacing()*1000 < "i";
+        partname << "DIL" << pins << "_i" << icpin.getRowSpacing()*1000;
     }
 
     SetupXForm(partname.str(), fp, 0);
