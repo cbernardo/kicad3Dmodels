@@ -1,0 +1,135 @@
+This project aims to implement the MCAD scheme for KiCAD which is described in the email
+reproduced below.  All 3D models in this project are to be generated automatically by
+specialized software as opposed to hand-crafted modelling.  This approach allows the
+parametric generation of a class of models, for example the DIL models implemented for
+VRML. If improvements are made to the parametric description, new improved 3D models
+are easily generated.  For example, the early DIL models had a fault in the description
+of the pins; once the fault was corrected, the generator software was run and all
+DIL4 .. DIL28 packages were created in less than a second.
+
+Initially work will focus on VRML models to improve the look of the KiCAD built-in
+3D rendering.  However, VRML models are of limited practical use in a typical
+workflow; STEP models of the electronic assembly are of far greater value to
+engineers designing and packaging a product. As the Free-CAD project matures and
+supports mechanical assemblies, effort will be redirected to creating Free-CAD
+solid models which can later be exported as STEP files. Other software tools will
+also be developed within this project to read a KiCAD board file and to produce a
+Free-CAD solid model of the board assembly.  The Free-CAD solid model can then
+be used to create photorealistic renderings as well as STEP assemblies for use by
+engineers.
+
+
+====
+
+Hi everyone,  I'm looking for some comments from interested parties on some suggestions of mine regarding future directions for 3D models in KiCAD.
+
+
+I have spent some time thinking about the future of 3D models in KiCAD and how things need to evolve to provide useful features for users. One feature which would be very useful (in fact indispensable in many professional shops) is the ability to produce a solid model which a second party can use for other purposes such as designing the packaging. To provide such functionality to the largest number of users, I have investigated a number of free mechanical CAD packages.  I have put some thought into how the scheme can be developed so that (1) the current VRML support remains and can be extended and (2) others can add support for their favorite CAD.
+
+ What I propose is to maintain a separate set of MCAD tools to achieve the desired outcome. This would allow users maximum flexibility in their choice of MCAD package (provided they write tools for it) while keeping KiCAD free of the burden of maintaining code which is highly specialised for a particular MCAD and also free KiCAD of any MCAD related configuration options. However, KiCAD will need to provide some minimal support to achieve this goal. I'm not asking that developers take on this extra work; I'm happy to get stuck into the code some time in the future after I have a more substantial proof of concept to present. For now I am posting this to get feedback on some proposals before I proceed and possibly come up with a scheme which no one likes.
+
+ As I imagine it, KiCAD need only provide minimal support for MCAD integration. Specifically, (1) items in the PCB file format specifications which allow the user to enter information for MCAD packages and (2) a few menu items to allow users to link a particular component to the related MCAD files and edit properties such as scale and rotation. Using the old PCB format as an example, (1) can be achieved by adding some sections to the $SHAPE3D section such as:
+
+$MCAD
+      File 'cad_file.step'
+      Color 'color_file'
+      Offset x,y,z
+      Rotation x,y,z,a
+      Scale x,y,z
+$EndMCAD
+
+A number of MCAD sections can exist within the SHAPE3D section to allow support for multiple CAD formats. For example, the list of MCAD sections may contain the ubiquitous 'step' model as well as a file for, say, FreeCAD - it will be up to the (non-KiCAD) tools to decide which models it can make use of and which one is best to use.
+
+One step towards supporting MCAD is to define a directory heirarchy which can be used by any external MCAD tool. I present a suggestion below and would appreciate any comments.
+
+1. TOP LEVEL 3D MODEL DIRECTORY STRUCTURE
+The current organization (or lack thereof) of the 3D models directory needs some work in order to easily support intergration of external tools. I propose the following structure:
+
+    mcad: top level directory
+    |
+    +--colors: color files; these may be shared by vrml as well as any MCAD;
+    |           These files should describe a generic surface appearance via
+    |           parameters such as specular and diffuse reflectance,
+    |           transparency and so on. The use of a specified color format
+    |           and named color schemesallows better consistency of appearance 
+    |           regardless of the 3Dmodel used
+    |
+    +--vrml: top directory for VRML models
+    |
+    +--step: top directory for STEP models
+    |
+    +--freecad: top directory for FreeCAD models
+    |
+    +--somecad: top directory for some other supported CAD; supporting a
+        particular CAD consists of putting  a top directory under 'mcad',
+        putting models into that directory or its subdirectories, and of
+        course writing the CAD-specific PCB-to-MCAD tools.
+
+2. CAD Directory Structure
+Users like some form of consistency; having a wildly different directory structure for the VRML models and STEP models would ultimately result in a frustrating mess for anyone who would like to work with a different 3D model. I would like to propose the following MCAD directory structure; this is
+only a proposal for consistency at the top level; the lower levels must necessarily be divided to maintain a neat navigable structure but the huge variety of parts makes it difficult to specify a deeper directory structure than what I present here.
+
+    somecad: top level MCAD directory (ex. 'vrml' or 'freecad')
+    |
+    +--thru: through-hole components
+    |  |
+    |  +--res: resistors
+    |  |
+    |  +--cap: capacitors
+    |  |
+    |  +--ind: inductors
+    |  |
+    |  +--dio: diodes
+    |  |
+    |  +--rly: relays
+    |  |
+    |  +--skt: sockets and carriers
+    |  |
+    |  +--misc: miscellaneous packages
+    |  |
+    |  +--con: top directory for thru-connectors
+    |  |
+    |  +--pkg: generic packages such as TO-3, TO-92, TO-220 and so on
+    |     |
+    |     +--transistor: various transistor packages
+    |     |
+    |     +--dil: dil packages
+    |     |
+    |     +--sil: sil packages
+    |
+    +--smd: SMD packages
+       |
+       +--con: SMD connectors
+       |
+       +--dis: Discrete components such as Flat Chip (for example 0603), MELF,
+       |            molded Tantalum caps, SOT-n, DPAK, SOD80
+       |
+       +--soic: Small Outline IC
+       |
+       +--fp: Flat Pack (does anyone still use it?)
+       |
+       +--qfp: Quad Flat Pack
+       |
+       +--cc: Chip Carrier varieties (leaded and leadless)
+       |
+       +--tsop: Thin Small Outline Package
+       |
+       +--pga: Pin Grid Array
+       |
+       +--bga: Ball Grid Array
+       |
+       +--flip: 'Flip Chip' (leadless)
+       |
+       +--skt: sockets, for example a leaded carrier socket
+
+ And that's about it.  Some reorganization of the existing VRML files is required and in the future some level of support will be required from the KiCAD suite so that the CAD model can be specified in the PCB file format. People who want to use non-free models can follow this directory structure and provide their own set of models in a fashion similar to the TeX directory structure. I would appreciate any feedback on the proposed scheme.
+
+Other comments (though unrelated to what has been proposed above):
+
+ I have already investigated a number of free CAD packages and I have settled on FreeCAD since (a) it can produce STEP files (personally I like BRL-CAD much more but it does not export to STEP or IGES) and (b) support for drawings is being developed - for small shops and hobbyists who may wish to use a free tool to do all their mechanical manufacturing and assembly drawings, this seems the way to go.
+
+ I am working on my demonstration of the concept and have produced simplistic STEP assemblies which I have successfully imported into SolidWorks and checked for correctness. I intend to work with the old PCB format for my demonstrator and I want to get the code to a stage where people can edit their existing PCB files (by hand, just to check out the tool) and run the tool to generate a STEP file before I present the actual concept demonstration to people. I hope by that stage that the new PCB file format would be well tested and I can easily adapt the tools to work with the new format.  If enough people are interested in the tool I intend to produce free MCAD models and slowly populate the directory structure to make the tool useful to more people. At the start I expect that people should at least be able to set up their own directory structure with non-free STEP models and quickly export a usable STEP assembly. However, I believe that in the
+long-term, using free MCAD models contributed by users will be the way to go; I made extremely simple hand-assembled models using FreeCAD and STEP models available from RS Components and boards containing literally only a handful of components blows out to tens of MB - that suggests to me that a realistic simple board with a mere 200 components will result in a ridiculous size STEP assembly if people rely on the STEP files provided by suppliers like RS; using native CAD formats for the models should hopefully produce much more sensible STEP files.
+
+- Cirilo
+

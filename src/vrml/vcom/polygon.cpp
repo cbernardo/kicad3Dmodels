@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <new>
 
 #include "vdefs.h"
 #include "vcom.h"
@@ -36,6 +37,119 @@ Polygon::Polygon()
     init();
     return;
 }
+
+Polygon::Polygon(const Polygon &p)
+{
+    valid = p.valid;
+    nv = p.nv;
+
+    x = NULL;
+    y = NULL;
+    z = NULL;
+
+    if (!valid) nv = 0;
+    if (nv == 0) return;
+
+    x = new (nothrow) double [nv];
+    if (x == NULL)
+    {
+        valid = false;
+        nv = 0;
+        return;
+    }
+
+    y = new (nothrow) double [nv];
+    if (y == NULL)
+    {
+        delete [] x;
+        valid = false;
+        nv = 0;
+        return;
+    }
+
+    z = new (nothrow) double [nv];
+    if (z == NULL)
+    {
+        delete [] x;
+        delete [] y;
+        valid = false;
+        nv = 0;
+        return;
+    }
+
+    int i;
+    for (i = 0; i < nv; ++i)
+    {
+        x[i] = p.x[i];
+        y[i] = p.y[i];
+        z[i] = p.z[i];
+    }
+
+    return;
+}
+
+
+Polygon & Polygon::operator=(const Polygon &p)
+{
+    if (this == &p) return *this;
+
+    if (nv)
+    {
+        delete [] x;
+        delete [] y;
+        delete [] z;
+        nv = 0;
+        valid = false;
+    }
+
+    valid = p.valid;
+    nv = p.nv;
+
+    x = NULL;
+    y = NULL;
+    z = NULL;
+
+    if (!valid) nv = 0;
+    if (nv == 0) return *this;
+
+    x = new (nothrow) double [nv];
+    if (x == NULL)
+    {
+        valid = false;
+        nv = 0;
+        return *this;
+    }
+
+    y = new (nothrow) double [nv];
+    if (y == NULL)
+    {
+        delete [] x;
+        valid = false;
+        nv = 0;
+        return *this;
+    }
+
+    z = new (nothrow) double [nv];
+    if (z == NULL)
+    {
+        delete [] x;
+        delete [] y;
+        valid = false;
+        nv = 0;
+        return *this;
+    }
+
+    int i;
+    for (i = 0; i < nv; ++i)
+    {
+        x[i] = p.x[i];
+        y[i] = p.y[i];
+        z[i] = p.z[i];
+    }
+
+    return *this;
+}
+
 
 Polygon::~Polygon()
 {
@@ -90,7 +204,7 @@ int Polygon::Calc(int np, double xrad, double yrad, Transform &t)
         return -1;
     }
 
-    x = new double[np];
+    x = new (nothrow) double[np];
     if (x == NULL)
     {
         ERRBLURB;
@@ -98,7 +212,7 @@ int Polygon::Calc(int np, double xrad, double yrad, Transform &t)
         init();
         return -1;
     }
-    y = new double[np];
+    y = new (nothrow) double[np];
     if (y == NULL)
     {
         ERRBLURB;
@@ -107,7 +221,7 @@ int Polygon::Calc(int np, double xrad, double yrad, Transform &t)
         init();
         return -1;
     }
-    z = new double[np];
+    z = new (nothrow) double[np];
     if (z == NULL)
     {
         ERRBLURB;
@@ -155,17 +269,16 @@ int Polygon::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
     if (tabs > 4) tabs = 4;
 
     double *lx, *ly, *lz;
-    lx = ly = lz = NULL;
 
     // allocate memory
-    lx = new double[nv];
+    lx = new (nothrow) double [nv];
     if (lx == NULL)
     {
         ERRBLURB;
         cerr << "could not allocate points for intermediate calculations\n";
         return -1;
     }
-    ly = new double[nv];
+    ly = new (nothrow) double [nv];
     if (ly == NULL)
     {
         ERRBLURB;
@@ -173,7 +286,7 @@ int Polygon::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
         delete [] lx;
         return -1;
     }
-    lz = new double[nv];
+    lz = new (nothrow) double [nv];
     if (lz == NULL)
     {
         ERRBLURB;
@@ -191,12 +304,12 @@ int Polygon::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
     }
 
     // perform transforms
-    t.transform(lx, ly, lz, nv + 1);
+    t.transform(lx, ly, lz, nv);
 
     // set up VRML Shape
     SetupShape(color, reuse_color, fp, tabs);
     // enumerate vertices
-    WriteCoord(lx, ly, lz, nv +1, fp, tabs +1);
+    WriteCoord(lx, ly, lz, nv, fp, tabs +1);
     // enumerate facets
     SetupCoordIndex(fp, tabs +1);
     string fmt((tabs + 1)*4, ' ');
@@ -330,6 +443,21 @@ int Polygon::Stitch(Polygon &p2, bool ccw, Transform &t,
     delete [] lz;
     return CloseShape(fp, tabs);
 }
+
+
+// Transform all points in the polygon
+int Polygon::Xform(Transform &T)
+{
+    if (!valid)
+    {
+        ERRBLURB;
+        cerr << "invoked without prior invocation of Calc()\n";
+        return -1;
+    }
+    T.transform(x, y, z, nv);
+    return 0;
+}
+
 
 // Return value: number of points. Handles will point to arrays of doubles
 int Polygon::GetVertices(double **px, double **py, double **pz)

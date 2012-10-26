@@ -34,20 +34,25 @@ class Polygon
 {
 protected:
     double *x, *y, *z;  // array of vertices after transformation
-    int nv;             // number of vertices (8 .. 360 ; must be multiple of 4)
+    int nv;             // number of vertices (3 .. 360)
     bool valid;         // true if Calc has successfully completed
 
     virtual void init(void);
 
 public:
     Polygon();
+    Polygon(const Polygon &p);
     virtual ~Polygon();
 
+    Polygon &operator=(const Polygon &p);
+
     // Return values: 0 for success otherwise -1
+    // Inscribes a polygon within an ellipse. Use xrad=yrad to obtain
+    // regular polygons.
     /// @param np The number of vertices; must be 3..360 inclusive
     /// @param xrad Radius along the X axis
     /// @param yrad Radius along the Y axis
-    /// @param t Transform to place the ellipse in an appropriate orientation in space
+    /// @param t Transform to place the polygon in an appropriate orientation in space
     int Calc(int np, double xrad, double yrad, Transform &t);
 
     // Append a polygonal face to the Shape section of a VRML file
@@ -72,6 +77,9 @@ public:
     /// @param tabs The tabulator level (max. 4)
     int Stitch(Polygon &p2, bool ccw, Transform &t,
             VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
+
+    // Transform all points in the polygon
+    int Xform(Transform &T);
 
     // Return value: number of points. Handles will point to arrays of doubles
     int GetVertices(double **px, double **py, double **pz);

@@ -17,9 +17,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
 
  Notes:
- These classes were created to support the
- programmatic creation of VRML models for
- use with KiCad.
+    These classes were created to support the
+    programmatic creation of VRML models for
+    use with KiCad.
+
+    The coordinate system is a right-hand coordinate system
+    in X, Y, Z so it can be imagined, for example, as the
+    +X extending from left to right on the screen while +Y
+    extends behind the screen and +z extends upwards on the screen.
 
  */
 
@@ -38,6 +43,7 @@ public:
     double w, x, y, z;
 
     Quat();
+    Quat(const Quat &p);
     Quat(double w, double x, double y, double z);
 
     Quat operator-();
@@ -45,6 +51,7 @@ public:
     Quat operator-(Quat arg);
     Quat operator*(Quat arg);
     Quat operator*(double arg);
+    Quat operator/(double arg);
 
     int normalize(void);  ///< normalizes the quaternion
     int vnormalize(void); ///< normalizes the XYZ vector
@@ -53,20 +60,28 @@ Quat operator*(double d, Quat q);
 
 class Translation
 {
-private:
+protected:
     Quat offset;
     bool unity;
     void testUnity(void);
 
 public:
+    virtual ~Translation();
     Translation();
-    Translation(Quat &p);
+    Translation(Quat p);
+    Translation(const Translation &p);
     Translation(double x, double y, double z);
-    void setTranslation(Quat &t)
-    {
-        offset = t;
-    }
 
+    Translation operator-();
+    Translation operator+(Quat arg);
+    Translation operator+(Translation arg);
+    Translation operator-(Quat arg);
+    Translation operator-(Translation arg);
+    Translation operator*(double arg);
+    Translation operator/(double arg);
+
+    void set(Quat t);
+    void set(double x, double y, double z);
     void translate(Quat &pt);
     void translate(double &x, double &y, double &z);
     bool isUnity(void)
@@ -74,6 +89,7 @@ public:
         return unity;
     }
 };
+Translation operator*(double d, Translation t);
 
 class Rotation
 {
@@ -84,18 +100,17 @@ private:
     void zeroRotation();  ///< Set the rotation matrix to zero rotation
 
 public:
+    virtual ~Rotation();
     Rotation();
     Rotation(double angle, double x, double y, double z);
-    Rotation(Quat &p);
+    Rotation(Quat p);
 
     void rotate(Quat &pt);
     void rotate(double &x, double &y, double &z);
-    void setRotation(Quat pt);
-    void setRotation(double angle, double x, double y, double z);
-    bool isUnity(void)
-    {
-        return unity;
-    }
+    void set(Quat pt);
+    void set(double angle, double x, double y, double z);
+    Quat get(void);
+    bool isUnity(void);
 };
 
 class Scale
@@ -107,8 +122,9 @@ private:
 
 public:
     Scale();
-    Scale(Quat &p);
+    Scale(Quat p);
     Scale(double xscale, double yscale, double zscale);
+    void set(double xscale, double yscale, double zscale);
 
     void scale(Quat &p);
     void scale(double &x, double &y, double &z);
@@ -129,9 +145,17 @@ class Transform
 public:
     Transform();
     Transform(Translation T, Rotation R, Scale S);
-    void setTranslation(Translation &T);
-    void setRotation(Rotation &R);
-    void setScale(Scale &S);
+    void set(Translation T, Rotation R, Scale S);
+    void setTranslation(Translation T);
+    void setTranslation(Quat q);
+    void setTranslation(double x, double y, double z);
+    void setRotation(Rotation R);
+    void setRotation(Quat q);
+    void setRotation(double angle, double x, double y, double z);
+    void setScale(Scale S);
+    void setScale(Quat q);
+    void setScale(double x, double y, double z);
+    void setScale(double n);
 
     void transform(Quat &p);
     void transform(double &x, double &y, double &z);
