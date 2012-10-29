@@ -1,0 +1,11 @@
+# Brown, resistor band, glossy (#532C22)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_brn_g
+diffuse: 0.33 0.17 0.13
+emissive: 0 0 0
+specular: 0.33 0.17 0.13
+ambient: 0.9
+transparency: 0
+shininess: 0.2

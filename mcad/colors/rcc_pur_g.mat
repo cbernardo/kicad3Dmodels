@@ -1,0 +1,11 @@
+# Purple, resistor band, glossy (#5211A2)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_pur_g
+diffuse: 0.32 0.07 0.64
+emissive: 0 0 0
+specular: 0.32 0.07 0.64
+ambient: 0.9
+transparency: 0
+shininess: 0.2

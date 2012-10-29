@@ -1,0 +1,11 @@
+# Blue, resistor band, glossy (#1A1BE0)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_blu_g
+diffuse: 0.1 0.11 0.88
+emissive: 0 0 0
+specular: 0.1 0.11 0.88
+ambient: 0.9
+transparency: 0
+shininess: 0.2

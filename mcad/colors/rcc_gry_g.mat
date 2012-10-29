@@ -1,0 +1,11 @@
+# Gray, resistor band, glossy (#272730)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_gry_g
+diffuse: 0.35 0.35 0.39
+emissive: 0 0 0
+specular: 0.35 0.35 0.39
+ambient: 0.9
+transparency: 0
+shininess: 0.2

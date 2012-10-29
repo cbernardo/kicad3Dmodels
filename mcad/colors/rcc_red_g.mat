@@ -1,0 +1,11 @@
+# Red, resistor band, glossy (#B02424)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_red_g
+diffuse: 0.69 0.14 0.14
+emissive: 0 0 0
+specular: 0.69 0.14 0.14
+ambient: 0.9
+transparency: 0
+shininess: 0.2

@@ -1,0 +1,11 @@
+# Cream, resistor body, glossy #D7C9A3
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rbc_crm_g
+diffuse: 0.81 0.74 0.61
+emissive: 0 0 0
+specular: 0.81 0.74 0.61
+ambient: 0.6
+transparency: 0
+shininess: 0.05

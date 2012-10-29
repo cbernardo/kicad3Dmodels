@@ -1,0 +1,11 @@
+# Silver, resistor band, glossy (#BEC7D5)
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: rcc_slv_g
+diffuse: 0.6 0.6 0.6
+emissive: 0 0 0
+specular: 0.6 0.6 0.6
+ambient: 0.9
+transparency: 0
+shininess: 0.2
