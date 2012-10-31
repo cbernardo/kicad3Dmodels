@@ -18,6 +18,8 @@
  *
  */
 
+// XXX - TODO: add Copy Constructor and Assignment methods
+
 #ifndef PIN_H_
 #define PIN_H_
 
@@ -51,17 +53,22 @@ struct PParams
 class Pin
 {
 private:
-    Polygon *poly;     // pointer to rectangles
-    int nr;             // number of polygons
-    bool valid;         // true when we have valid polygons
-    bool square;        // true (default) for square pins
+    Polygon **poly;  // pointer to polygons (rectangles or circles)
+    int nr;         // number of polygons
+    bool valid;     // true when we have valid polygons
+    bool square;    // true (default) for square pins
+
+    void cleanup(void);
 
 protected:
     PParams pin;
 
 public:
     Pin();
+    Pin (const Pin &p);
     virtual ~Pin();
+
+    Pin &operator=(const Pin &p);
 
     // Calculate the intermediate polygons
     virtual int Calc(const PParams &pp, Transform &t);

@@ -27,7 +27,8 @@
 #include "transform.h"
 #include "vrmlmat.h"
 #include "polygon.h"
-#include "polyrect.h"
+#include "circle.h"
+#include "rectangle.h"
 
 using namespace std;
 
@@ -59,16 +60,97 @@ Pin::Pin()
     return;
 }
 
+Pin::Pin(const Pin &p)
+{
+    valid = p.valid;
+    nr = p.nr;
+    square = p.square;
+    poly = NULL;
+
+    if (!valid) nr = 0;
+    if (nr == 0) return;
+
+    poly = new (nothrow) Polygon *[nr];
+    if (poly == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for polygon pointers\n";
+        valid = false;
+        nr = 0;
+        return;
+    }
+
+    int i, j;
+    for (i = 0; i < nr; ++i)
+    {
+        poly[i] = p.poly[i]->clone();
+        if (!poly[i])
+        {
+            for (j = 0; j < i; ++j) delete poly[j];
+            delete [] poly;
+            poly = NULL;
+            ERRBLURB;
+            cerr << "could not allocate memory for polygon pointers\n";
+            valid = false;
+            nr = 0;
+            return;
+        }
+    }
+
+    return;
+}   // Pin::Pin(const Pin &p)
+
+
 Pin::~Pin()
 {
-    if (poly)
-    {
-        delete [] poly;
-        poly = NULL;
-        nr = 0;
-    }
+    cleanup();
     return;
 }
+
+Pin & Pin::operator=(const Pin &p)
+{
+    if (this == &p) return *this;
+
+    if (valid) cleanup();
+
+    valid = p.valid;
+    nr = p.nr;
+    square = p.square;
+    poly = NULL;
+
+    if (!valid) nr = 0;
+    if (nr == 0) return *this;
+
+    poly = new (nothrow) Polygon *[nr];
+    if (poly == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for polygon pointers\n";
+        valid = false;
+        nr = 0;
+        return *this;
+    }
+
+    int i, j;
+    for (i = 0; i < nr; ++i)
+    {
+        poly[i] = p.poly[i]->clone();
+        if (!poly[i])
+        {
+            for (j = 0; j < i; ++j) delete poly[j];
+            delete [] poly;
+            poly = NULL;
+            ERRBLURB;
+            cerr << "could not allocate memory for polygon pointers\n";
+            valid = false;
+            nr = 0;
+            return *this;
+        }
+    }
+
+    return *this;
+}   // Pin::operator=(const Pin &p)
+
 
 // Calculate the intermediate polygons
 int Pin::Calc(const PParams &pp, Transform &t)
@@ -77,16 +159,10 @@ int Pin::Calc(const PParams &pp, Transform &t)
     bool has_b = false; // true if there is a bend
     bool has_l = false; // true if there is a horizontal section
     bool has_t = false; // true if there is a taper
+    int i;
 
-    if (valid)
-    {
-        valid = false;
-        if (nr)
-        {
-            nr = 0;
-            delete [] poly;
-        }
-    }
+    if (valid) cleanup();
+
     // validate parameters
     if (pp.h > 0.0)
     {
@@ -193,9 +269,29 @@ int Pin::Calc(const PParams &pp, Transform &t)
         if ((has_t) && (pp.dbltap)) ++np;
     }
 
+    poly = new (nothrow) Polygon *[np];
+    if (poly == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for polygon pointers\n";
+        return -1;
+    }
     if (square)
     {
-        poly = new (nothrow) PolyRect[np];
+        int j;
+        for (i = 0; i < np; ++i)
+        {
+            poly[i] = new (nothrow) Rectangle(pp.bev);
+            if (!poly[i])
+            {
+                for (j = 0; j < i; ++j) delete poly[j];
+                delete [] poly;
+                poly = NULL;
+                ERRBLURB;
+                cerr << "could not allocate memory for rectangles\n";
+                return -1;
+            }
+        }
     }
     else
     {
@@ -206,18 +302,25 @@ int Pin::Calc(const PParams &pp, Transform &t)
             cerr << "\tValid values are 3 .. 360\n";
             return -1;
         }
-        poly = new (nothrow) Polygon[np];
-    }
-    if (!poly)
-    {
-        ERRBLURB;
-        cerr << "could not allocate memory for polygons\n";
-        return -1;
+        int j;
+        for (i = 0; i < np; ++i)
+        {
+            poly[i] = new (nothrow) Circle(pp.ns);
+            if (!poly[i])
+            {
+                for (j = 0; j < i; ++j) delete poly[j];
+                delete [] poly;
+                poly = NULL;
+                ERRBLURB;
+                cerr << "could not allocate memory for circles\n";
+                return -1;
+            }
+        }
     }
 
     // calculate the polygons
     pin = pp;
-    int i, idx, acc;
+    int idx, acc;
     double px, pz;
     idx = 0;
     acc = 0;
@@ -229,17 +332,11 @@ int Pin::Calc(const PParams &pp, Transform &t)
     {
         if (has_t)
         {
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w*pin.stw, pin.d*pin.std, t0);
+            acc += (*poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0);
             pz = pin.tap;
             t0.setTranslation(0, 0, pz);
         }
-        if (square)
-            acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-        else
-            acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+        acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
         pz = pin.h;
         t0.setTranslation(0, 0, pz);
     }
@@ -250,10 +347,7 @@ int Pin::Calc(const PParams &pp, Transform &t)
         double tx, tz;  // x and z positions of the wire centers on the bend
         double ang;
 
-        if (square)
-            acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-        else
-            acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+        acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
 
         for (i = 1; i < pin.nb; ++i)
         {
@@ -262,10 +356,7 @@ int Pin::Calc(const PParams &pp, Transform &t)
             tz = pin.r*sin(ang) + pz;
             t0.setRotation(ang, 0, 1, 0);
             t0.setTranslation(tx, 0, tz);
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+            acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
         }
         px = pin.r*(1-cos(pin.bend));
         pz = pz + pin.r*sin(pin.bend);
@@ -286,13 +377,9 @@ int Pin::Calc(const PParams &pp, Transform &t)
         t0.setRotation(M_PI/2.0, 0, 1, 0);
     }
 
-
     if (has_l)
     {
-        if (square)
-            acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-        else
-            acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+        acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
 
         double cb = M_PI/2.0 - pin.bend;  // complement to bend
         if ((has_t) && (pin.dbltap))
@@ -301,40 +388,25 @@ int Pin::Calc(const PParams &pp, Transform &t)
             {
                 // special case of a horizontal feature only
                 t0.setTranslation(pin.l - pin.tap, 0, pin.h);
-                if (square)
-                    acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-                else
-                    acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+                acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
                 t0.setTranslation(pin.l, 0, pin.h);
-                if (square)
-                    acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0, pin.bev);
-                else
-                    acc += poly[idx++].Calc(pin.ns, pin.w*pin.stw, pin.d*pin.std, t0);
+                acc += (*poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0);
             }
             else
             {
                 t0.setTranslation(px + (pin.l - pin.tap)*cos(cb), 0,
                         pz + (pin.l - pin.tap)*sin(cb));
-                if (square)
-                    acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-                else
-                    acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+                acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
                 t0.setTranslation(px + pin.l*cos(cb), 0,
                         pz + pin.l*sin(cb));
-                if (square)
-                    acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0, pin.bev);
-                else
-                    acc += poly[idx++].Calc(pin.ns, pin.w*pin.stw, pin.d*pin.std, t0);
+                acc += (*poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0);
             }
         }
         else
         {
             t0.setTranslation(px + pin.l*cos(cb), 0,
                     pz + pin.l*sin(cb));
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+            acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
         }
     }
     else
@@ -343,22 +415,13 @@ int Pin::Calc(const PParams &pp, Transform &t)
         if ((!has_b) && (has_t) && (pin.dbltap))
         {
             t0.setTranslation(0, 0, pin.h - pin.tap);
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+            acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
             t0.setTranslation(0, 0, pin.h);
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w*pin.stw, pin.d*pin.std, t0);
+            acc += (*poly[idx++]).Calc(pin.w*pin.stw, pin.d*pin.std, t0);
         }
         else
         {
-            if (square)
-                acc += static_cast <PolyRect &> (poly[idx++]).Calc(pin.w, pin.d, t0, pin.bev);
-            else
-                acc += poly[idx++].Calc(pin.ns, pin.w, pin.d, t0);
+            acc += (*poly[idx++]).Calc(pin.w, pin.d, t0);
         }
     }
 
@@ -366,9 +429,13 @@ int Pin::Calc(const PParams &pp, Transform &t)
     {
         ERRBLURB;
         cerr << "errors encountered while building a square pin\n";
-        delete [] poly;
+        nr = np;
+        cleanup();
         return -1;
     }
+
+    // apply the transform
+    for (i = 0; i < np; ++ i) poly[i]->Xform(t);
 
     valid = true;
     nr = np;
@@ -397,20 +464,20 @@ int Pin::Build(bool cap0, bool cap1, Transform &t, VRMLMat &color, bool reuse_co
 
     if (cap0)
     {
-        vl += poly[0].Paint(false, t, color, reuse, fp, tabs);
+        vl += poly[0]->Paint(false, t, color, reuse, fp, tabs);
         reuse = true;
     }
     if (cap1)
     {
-        vl += poly[nr -1].Paint(true, t, color, reuse, fp, tabs);
+        vl += poly[nr -1]->Paint(true, t, color, reuse, fp, tabs);
         reuse = true;
     }
-    vl += poly[0].Stitch(poly[1], true, t, color, reuse, fp, tabs);
+    vl += poly[0]->Stitch(*poly[1], true, t, color, reuse, fp, tabs);
 
     int i;
     for (i = 1; i < nr-1; ++i)
     {
-        vl += poly[i].Stitch(poly[i+1], true, t, color, true, fp, tabs);
+        vl += poly[i]->Stitch(*poly[i+1], true, t, color, true, fp, tabs);
     }
 
     if (vl)
@@ -425,16 +492,22 @@ int Pin::Build(bool cap0, bool cap1, Transform &t, VRMLMat &color, bool reuse_co
 
 void Pin::SetShape(bool square)
 {
-    if (valid)
-    {
-        if (nr)
-        {
-            delete [] poly;
-            poly = NULL;
-            nr = 0;
-            valid = false;
-        }
-    }
+    if (valid) cleanup();
     Pin::square = square;
+    return;
+}
+
+
+void Pin::cleanup(void)
+{
+    int i;
+    if (poly)
+    {
+        for (i = 0; i < nr; ++i) delete poly[i];
+        delete [] poly;
+        poly = NULL;
+    }
+    nr = 0;
+    valid = false;
     return;
 }

@@ -108,7 +108,6 @@ int dip::Calc(int pins, std::string filename)
     double xoff, yoff, zoff;
     int pin, hpin;
     ofstream fp;
-    double tval;
 
     if (pins == 0) pins = params.npins;
     if ((pins < 4) || (pins % 2))
@@ -121,7 +120,6 @@ int dip::Calc(int pins, std::string filename)
     dipcase iccase;
     dippin icpin;
 
-    tval = 0.05*pins+0.005;
     params.D = pins/2*params.P + params.DW;
 
     iccase.setMetric(params.metric);
@@ -196,7 +194,7 @@ int dip::Calc(int pins, std::string filename)
     hpin = pins/2;
     for (pin = 2; pin <= hpin; ++pin) {
         offset.x = offset.x + 1.0;
-        tr.setTranslation(offset);
+        tr.set(offset);
         T.setTranslation(tr);
         SetupShape(params.pinmaterial, true, fp, 2);
         icpin.writeCoord(fp, 4, &T);
@@ -205,10 +203,10 @@ int dip::Calc(int pins, std::string filename)
     }
 
     // Pin (pins/2 +1)..
-    rot.setRotation(M_PI, 0, 0, 1);
+    rot.set(M_PI, 0, 0, 1);
     T.setRotation(rot);
     offset.y = -offset.y;
-    tr.setTranslation(offset);
+    tr.set(offset);
     T.setTranslation(tr);
     for (pin = hpin+1; pin <= pins; ++pin) {
         SetupShape(params.pinmaterial, true, fp, 2);
@@ -216,7 +214,7 @@ int dip::Calc(int pins, std::string filename)
         icpin.writeFacets(fp, 4);
         CloseShape(fp, 2);
         offset.x = offset.x - 1.0;
-        tr.setTranslation(offset);
+        tr.set(offset);
         T.setTranslation(tr);
     }
     if (CloseXForm(fp)) return -1;

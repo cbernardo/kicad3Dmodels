@@ -32,6 +32,9 @@
 
 class Polygon
 {
+private:
+    Polygon &operator=(const Polygon &p);
+
 protected:
     double *x, *y, *z;  // array of vertices after transformation
     int nv;             // number of vertices (3 .. 360)
@@ -41,19 +44,19 @@ protected:
 
 public:
     Polygon();
-    Polygon(const Polygon &p);
     virtual ~Polygon();
 
-    Polygon &operator=(const Polygon &p);
+
+    // Clone the class
+    virtual Polygon *clone(void) = 0;
 
     // Return values: 0 for success otherwise -1
     // Inscribes a polygon within an ellipse. Use xrad=yrad to obtain
     // regular polygons.
-    /// @param np The number of vertices; must be 3..360 inclusive
     /// @param xrad Radius along the X axis
     /// @param yrad Radius along the Y axis
     /// @param t Transform to place the polygon in an appropriate orientation in space
-    int Calc(int np, double xrad, double yrad, Transform &t);
+    virtual int Calc(double xrad, double yrad, Transform &t) = 0;
 
     // Append a polygonal face to the Shape section of a VRML file
     // Return values: 0 for success otherwise -1

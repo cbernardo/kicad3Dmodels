@@ -1,5 +1,5 @@
 /*
- *      file: polyrect.cpp
+ *      file: rectangle.cpp
  *
  *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
@@ -29,22 +29,38 @@
 
 #include "vdefs.h"
 #include "vcom.h"
-#include "polygon.h"
 #include "transform.h"
 #include "vrmlmat.h"
-#include "polyrect.h"
+#include "polygon.h"
+#include "rectangle.h"
 
 using namespace std;
 
 #define MIN_LEN (0.000001)
 
-PolyRect::PolyRect()
+Rectangle::Rectangle()
 {
+    bev = -1.0;
+    nv = 0;
     Polygon::init();
     return;
 }
 
-PolyRect::~PolyRect()
+Rectangle::Rectangle(double bevel)
+{
+    nv = 0;
+    Polygon::init();
+    bev = bevel;
+    return;
+}
+
+// Clone the object
+Polygon *Rectangle::clone(void)
+{
+    return new (nothrow) Rectangle(*this);
+}
+
+Rectangle::~Rectangle()
 {
     if (x) delete [] x;
     if (y) delete [] y;
@@ -54,7 +70,7 @@ PolyRect::~PolyRect()
 }
 
 
-PolyRect::PolyRect(const PolyRect &p)
+Rectangle::Rectangle(const Rectangle &p)
 {
     valid = p.valid;
     nv = p.nv;
@@ -100,12 +116,14 @@ PolyRect::PolyRect(const PolyRect &p)
         y[i] = p.y[i];
         z[i] = p.z[i];
     }
+    
+    bev = p.bev;
 
     return;
 }
 
 
-PolyRect & PolyRect::operator=(const PolyRect &p)
+Rectangle & Rectangle::operator=(const Rectangle &p)
 {
     if (this == &p) return *this;
 
@@ -163,17 +181,20 @@ PolyRect & PolyRect::operator=(const PolyRect &p)
         z[i] = p.z[i];
     }
 
+    bev = p.bev;
+    
     return *this;
 }
 
-int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
+int Rectangle::Calc(double xl, double yl, Transform &t)
 {
     if (valid)
     {
         if (x) delete [] x;
         if (y) delete [] y;
         if (z) delete [] z;
-        init();
+        Polygon::init();
+	nv = 0;
     }
 
     int np;
@@ -207,7 +228,8 @@ int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
     {
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
-        init();
+        Polygon::init();
+	nv = 0;
         return -1;
     }
     y = new (nothrow) double[np];
@@ -216,7 +238,8 @@ int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
         delete [] x;
-        init();
+        Polygon::init();
+	nv = 0;
         return -1;
     }
     z = new (nothrow) double[np];
@@ -226,7 +249,8 @@ int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
         cerr << "could not allocate points for vertices\n";
         delete [] x;
         delete [] y;
-        init();
+        Polygon::init();
+	nv = 0;
         return -1;
     }
 
@@ -272,7 +296,8 @@ int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
         delete [] x;
         delete [] y;
         delete [] z;
-        init();
+        Polygon::init();
+	nv = 0;
         return -1;
     }
 
@@ -283,3 +308,10 @@ int PolyRect::Calc(double xl, double yl, Transform &t, double bev)
     nv = np;
     return 0;
 }   // Calc
+
+
+void Rectangle::SetBevel(double bevel)
+{
+    bev = bevel;
+    return;
+}

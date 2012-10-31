@@ -18,11 +18,6 @@
  *
  */
 
-// XXX - TODO:
-// Carbon composition resistors have bulging ends but do not have
-// a metallic cap. We need a flag to determine whether or not the
-// metallic cap is created; the default is arbitrary and should
-// probably be 'yes'.
 
 #include <iostream>
 #include <fstream>
@@ -35,7 +30,7 @@
 
 #include "vdefs.h"
 #include "vcom.h"
-#include "polygon.h"
+#include "circle.h"
 #include "transform.h"
 #include "vrmlmat.h"
 #include "resistor.h"
@@ -72,27 +67,35 @@ int Resistor::makeHzLead(std::ofstream &fp)
     //  end of cap:   ((p - L)/2, 0, (D/2 + d/2))
 
     // vertical lead
-    Polygon lvert[2];
+    Circle lvert[2];
+    lvert[0].SetNVertices(params.wsides);
+    lvert[1].SetNVertices(params.wsides);
     // bend; first polygon = last polygon of vertical lead
     int nb = params.bsides + 1;
-    Polygon *bend = new (nothrow) Polygon[nb];
+    Circle *bend = new (nothrow) Circle[nb];
     if (bend == NULL)
     {
         ERRBLURB;
         cerr << "could not allocate memory for calculations\n";
         return -1;
     }
+    int i;
+    for (i = 0; i < nb; ++i) bend[i].SetNVertices(params.wsides);
     // horizontal lead; first polygon = last polygon of bend
-    Polygon lhz[2];
-    Polygon cap[2];
+    Circle lhz[2];
+    lhz[0].SetNVertices(params.wsides);
+    lhz[1].SetNVertices(params.wsides);
+    Circle cap[2];
+    cap[0].SetNVertices(params.wsides);
+    cap[1].SetNVertices(params.wsides);
 
     // vertical lead
     Transform tv;
     tv.setTranslation(0, 0, -4);
     double rw = params.d/2.0;   // wire radius
-    lvert[0].Calc(params.wsides, rw, rw, tv);
+    lvert[0].Calc(rw, rw, tv);
     tv.setTranslation(0, 0, params.D/2 - params.d);
-    lvert[1].Calc(params.wsides, rw, rw, tv);
+    lvert[1].Calc(rw, rw, tv);
 
     // bend
     double ba = M_PI/params.bsides/2.0; // incremental bend angle
@@ -101,7 +104,6 @@ int Resistor::makeHzLead(std::ofstream &fp)
     double ph = params.D/2.0 - params.d;  // z offset
     bend[0] = lvert[1];
     double ang;
-    int i;
     for (i = 1; i < nb; ++i)
     {
         ang = i*ba;
@@ -109,7 +111,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
         pz = br*sin(ang) + ph;
         tv.setRotation(ang, 0, 1, 0);
         tv.setTranslation(px, 0, pz);
-        bend[i].Calc(params.wsides, rw, rw, tv);
+        bend[i].Calc(rw, rw, tv);
     }
 
     // horizontal lead
@@ -127,15 +129,15 @@ int Resistor::makeHzLead(std::ofstream &fp)
     }
     tv.setRotation(M_PI/2.0, 0, 1, 0);
     tv.setTranslation(px, 0, pz);
-    lhz[1].Calc(params.wsides, rw, rw, tv);
+    lhz[1].Calc(rw, rw, tv);
 
     // metallic cap (only when endshape option is 'B'
     if ((params.endshape == 'B')&&(params.bcap))
     {
-        cap[0].Calc(params.wsides, params.d, params.d, tv);
+        cap[0].Calc(params.d, params.d, tv);
         px = (params.p - params.L)/2.0;
         tv.setTranslation(px, 0, pz);
-        cap[1].Calc(params.wsides, params.d, params.d, tv);
+        cap[1].Calc(params.d, params.d, tv);
     }
 
     // paint the wire end and stitch the vertical part
@@ -241,7 +243,15 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     }
     ntot = 2*nend + 2*(nb -1);
 
-    Polygon *body = new (nothrow) Polygon[ntot];
+    Circle *body = new (nothrow) Circle[ntot];
+    if (!body)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for polygons\n";
+        return -1;
+    }
+    int i;
+    for (i = 0; i < ntot; ++i) body[i].SetNVertices(params.rsides);
 
     Transform t0;   // transform reference
     Transform t1;   // variable transform
@@ -262,22 +272,21 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     t1 = t0;
 
     // create the end shapes
-    int i;
     double rad;
     switch (params.endshape)
     {
     case 'C':
         // first annulus is D/20 wide and 0.9D diameter
         rad = params.D*0.9/2.0;
-        body[0].Calc(params.rsides, rad, rad, t1);
+        body[0].Calc(rad, rad, t1);
         off1 = off0*params.D/20.0;
         t1.setTranslation(off1);
         rad = params.D/2.0;
-        body[1].Calc(params.rsides, rad, rad, t1);
+        body[1].Calc(rad, rad, t1);
         // second annulus is at 0.5D
         off1 = off0*0.25*params.D;
         t1.setTranslation(off1);
-        body[2].Calc(params.rsides, rad, rad, t1);
+        body[2].Calc(rad, rad, t1);
         // calculate the other end
         body[ntot -1] = body[0];
         body[ntot -2] = body[1];
@@ -306,7 +315,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 if (xx < 0.0) xx = 0.0;
                 r = k*sqrt(xx) + params.d/2.0;
                 t1.setTranslation(off0*x);
-                body[i].Calc(params.rsides, r, r, t1);
+                body[i].Calc(r, r, t1);
                 tx.setTranslation(off0*(params.L - 2*x));
                 body[ntot -1 - i] = body[i];
                 body[ntot -1 - i].Xform(tx);
@@ -333,7 +342,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 if (xx <= 0.0) xx = 0.0;
                 r = sqrt(xx)*k + rmin;
                 t1.setTranslation(off0*x);
-                body[i].Calc(params.rsides, r, r, t1);
+                body[i].Calc(r, r, t1);
                 tx.setTranslation(off0*(params.L - 2*x));
                 body[ntot -1 - i] = body[i];
                 body[ntot -1 - i].Xform(tx);
@@ -374,7 +383,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 r = x;
             }
             t1.setTranslation(off0*sx);
-            body[i+j].Calc(params.rsides, r, r, t1);
+            body[i+j].Calc(r, r, t1);
         }
     }
     else
@@ -387,7 +396,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
         {
             sx += dx;
             t1.setTranslation(off0*sx);
-            body[i+j].Calc(params.rsides, r, r, t1);
+            body[i+j].Calc(r, r, t1);
         }
     }
 

@@ -1,0 +1,11 @@
+# Black plastic
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: black
+diffuse: 0.02 0.02 0.02
+emissive: 0 0 0
+specular: 0.05 0.05 0.05
+ambient: 0.5
+transparency: 0
+shininess: 0.1

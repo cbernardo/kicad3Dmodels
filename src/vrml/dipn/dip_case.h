@@ -129,7 +129,7 @@ public:
         return NL;
     }
     /// set the virtual world's scaling parameter
-    int setWorldScale(double sc);
+    void setWorldScale(double sc);
     /// retrieve the virtual world's scaling parameter
     double getWorldScale(void)
     {

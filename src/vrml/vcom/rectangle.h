@@ -1,5 +1,5 @@
 /*
- *      file: polyrect.h
+ *      file: rectangle.h
  *
  *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
@@ -22,19 +22,27 @@
  *
  */
 
-#ifndef POLYRECT_H_
-#define POLYRECT_H_
+#ifndef RECTANGLE_H_
+#define RECTANGLE_H_
 
 #include "polygon.h"
+class Transform;
 
-class PolyRect: public Polygon
+class Rectangle: public Polygon
 {
+private:
+  double bev;
+  
 public:
-    PolyRect();
-    PolyRect(const PolyRect &p);
-    virtual ~PolyRect();
+    Rectangle();
+    Rectangle(double bevel);
+    Rectangle(const Rectangle &p);
+    virtual ~Rectangle();
 
-    PolyRect &operator=(const PolyRect &p);
+    Rectangle &operator=(const Rectangle &p);
+
+    // Clone the object
+    Polygon *clone(void);
 
     // Return values: 0 for success otherwise -1
     // Inscribes a polygon within an ellipse. Use xrad=yrad to obtain
@@ -42,9 +50,10 @@ public:
     /// @param xl length along the X axis
     /// @param yl length along the Y axis
     /// @param t Transform to place the polygon in an appropriate orientation in space
-    /// @bev   bevel; < 0 means no bevel
-    int Calc(double xl, double yl, Transform &t, double bev = -1.0);
+    virtual int Calc(double xl, double yl, Transform &t);
 
+    /// @param bev   bevel; < 0 means no bevel
+    void SetBevel(double bevel);
 };
 
-#endif /* POLYRECT_H_ */
+#endif /* RECTANGLE_H_ */

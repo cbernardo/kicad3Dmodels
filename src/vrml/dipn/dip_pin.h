@@ -59,7 +59,7 @@ public:
     void setMetric(bool metric);
 
     /// set the virtual world's scaling parameter
-    int setWorldScale(double sc)
+    void setWorldScale(double sc)
     {
         scale = sc;
         valid = false;

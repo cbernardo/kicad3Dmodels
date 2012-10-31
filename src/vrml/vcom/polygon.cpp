@@ -34,10 +34,12 @@ using namespace std;
 
 Polygon::Polygon()
 {
+    nv = 0;
     init();
     return;
 }
 
+/*
 Polygon::Polygon(const Polygon &p)
 {
     valid = p.valid;
@@ -47,14 +49,13 @@ Polygon::Polygon(const Polygon &p)
     y = NULL;
     z = NULL;
 
-    if (!valid) nv = 0;
+    if (!valid) return;
     if (nv == 0) return;
 
     x = new (nothrow) double [nv];
     if (x == NULL)
     {
         valid = false;
-        nv = 0;
         return;
     }
 
@@ -63,7 +64,6 @@ Polygon::Polygon(const Polygon &p)
     {
         delete [] x;
         valid = false;
-        nv = 0;
         return;
     }
 
@@ -73,7 +73,6 @@ Polygon::Polygon(const Polygon &p)
         delete [] x;
         delete [] y;
         valid = false;
-        nv = 0;
         return;
     }
 
@@ -86,9 +85,10 @@ Polygon::Polygon(const Polygon &p)
     }
 
     return;
-}
+}   //Polygon(const Polygon &p)
+*/
 
-
+/*
 Polygon & Polygon::operator=(const Polygon &p)
 {
     if (this == &p) return *this;
@@ -109,7 +109,7 @@ Polygon & Polygon::operator=(const Polygon &p)
     y = NULL;
     z = NULL;
 
-    if (!valid) nv = 0;
+    if (!valid) return *this;
     if (nv == 0) return *this;
 
     x = new (nothrow) double [nv];
@@ -148,7 +148,8 @@ Polygon & Polygon::operator=(const Polygon &p)
     }
 
     return *this;
-}
+}   // operator=(const Polygon &p)
+*/
 
 
 Polygon::~Polygon()
@@ -163,105 +164,27 @@ Polygon::~Polygon()
 void Polygon::init(void)
 {
     x = y = z = NULL;
-    nv = 0;
     valid = false;
     return;
 }
 
-#define MIN_RAD (0.000001)
-#define MAX_RAD (100.0)
-
-
-
-int Polygon::Calc(int np, double xrad, double yrad, Transform &t)
-{
-    if (valid)
-    {
-        if (x) delete [] x;
-        if (y) delete [] y;
-        if (z) delete [] z;
-        init();
-    }
-
-    if ((np < 3)||(np > 360))
-    {
-        ERRBLURB;
-        cerr << "Invalid number of points (" << np << "). Range is 3..360 in multiples of 4.\n";
-        return -1;
-    }
-
-    if ((xrad < MIN_RAD)||(xrad > MAX_RAD))
-    {
-        ERRBLURB;
-        cerr << "Invalid X radius (" << xrad << "). Range is " << MIN_RAD << " to " << MAX_RAD << "\n";
-        return -1;
-    }
-
-    if ((yrad < MIN_RAD)||(yrad > MAX_RAD))
-    {
-        ERRBLURB;
-        cerr << "Invalid Y radius (" << yrad << "). Range is " << MIN_RAD << " to " << MAX_RAD << "\n";
-        return -1;
-    }
-
-    x = new (nothrow) double[np];
-    if (x == NULL)
-    {
-        ERRBLURB;
-        cerr << "could not allocate points for vertices\n";
-        init();
-        return -1;
-    }
-    y = new (nothrow) double[np];
-    if (y == NULL)
-    {
-        ERRBLURB;
-        cerr << "could not allocate points for vertices\n";
-        delete [] x;
-        init();
-        return -1;
-    }
-    z = new (nothrow) double[np];
-    if (z == NULL)
-    {
-        ERRBLURB;
-        cerr << "could not allocate points for vertices\n";
-        delete [] x;
-        delete [] y;
-        init();
-        return -1;
-    }
-
-    // calculate the vertices then apply the transform
-    double da = M_PI/np*2.0;
-    double ang = 0.0;
-    int i;
-
-    for (i = 0; i < np; ++ i)
-    {
-        x[i] = xrad*cos(ang);
-        y[i] = yrad*sin(ang);
-        z[i] = 0.0;
-        ang += da;
-    }
-
-    // transform the vertices
-    t.transform(x, y, z, np);
-
-    valid = true;
-    nv = np;
-    return 0;
-}   // Calc
 
 int Polygon::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs)
 {
-    int i, j, k;
+    int i;
 
     if (!valid)
     {
         ERRBLURB;
         cerr << "invoked without prior invocation of Calc()\n";
+        return -1;
+    }
+
+    if (nv < 3)
+    {
+        ERRBLURB;
+        cerr << "invalid number of vertices (" << nv << "); range is 3 .. 360\n";
         return -1;
     }
 
@@ -352,6 +275,13 @@ int Polygon::Stitch(Polygon &p2, bool ccw, Transform &t,
     {
         ERRBLURB;
         cerr << "invoked without prior invocation of Calc()\n";
+        return -1;
+    }
+
+    if (nv < 3)
+    {
+        ERRBLURB;
+        cerr << "invalid number of vertices (" << nv << "); range is 3 .. 360\n";
         return -1;
     }
 

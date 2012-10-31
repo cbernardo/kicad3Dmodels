@@ -28,6 +28,8 @@
 
 using namespace std;
 
+#define MAX_TABS (6)
+
 // Create the VRML header and ancillary comments
 int SetupVRML(std::string filename, std::ofstream &fp)
 {
@@ -81,7 +83,7 @@ int SetupXForm(std::string name, std::ofstream &fp, int tabs)
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     fp << fmt << "DEF " << name << " Transform {\n";
@@ -107,7 +109,7 @@ int CloseXForm(std::ofstream &fp, int tabs)
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     // close Children
@@ -137,7 +139,7 @@ int SetupShape(VRMLMat &color, bool reuse_color,
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
     fp << fmt << "Shape {\n";
     fp << fmt << "    appearance Appearance {\n";
@@ -188,7 +190,7 @@ int CloseShape(std::ofstream &fp, int tabs)
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     fp << fmt << "    }\n";
@@ -222,19 +224,32 @@ int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int t
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     fp << fmt << "coord Coordinate { point [\n";
     fp << fmt << "   ";
     int i;
+    double tx, ty, tz;
     for (i = 0; i < (np -1); ++i)
     {
-        fp << setprecision(8) << " " << x[i] << " " << y[i] << " " << z[i] << ",";
+        tx = x[i];
+        ty = y[i];
+        tz = z[i];
+        if ((tx < 1e-9) && (tx > -1e-9)) tx = 0;
+        if ((ty < 1e-9) && (ty > -1e-9)) ty = 0;
+        if ((tz < 1e-9) && (tz > -1e-9)) tz = 0;
+        fp << setprecision(8) << " " << tx << " " << ty << " " << tz << ",";
         if (!((i + 1) % 6))
             fp << "\n" << fmt << "   ";
     }
-    fp << setprecision(8) << " " << x[i] << " " << y[i] << " " << z[i] << " ]\n";
+    tx = x[i];
+    ty = y[i];
+    tz = z[i];
+    if ((tx < 1e-9) && (tx > -1e-9)) tx = 0;
+    if ((ty < 1e-9) && (ty > -1e-9)) ty = 0;
+    if ((tz < 1e-9) && (tz > -1e-9)) tz = 0;
+    fp << setprecision(8) << " " << tx << " " << ty << " " << tz << " ]\n";
     fp << fmt << "}\n";
 
     if (!fp.good())
@@ -258,7 +273,7 @@ int SetupCoordIndex(std::ofstream &fp, int tabs)
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     fp << fmt << "coordIndex [\n";
@@ -283,7 +298,7 @@ int CloseCoordIndex(std::ofstream &fp, int tabs)
     }
 
     if (tabs < 0) tabs = 0;
-    if (tabs > 4) tabs = 4;
+    if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
 
     fp << fmt << "]\n";

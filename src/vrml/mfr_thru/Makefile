@@ -1,7 +1,7 @@
 VPATH = ../../common:../../mat:../vcom
 includes = -I ../../common -I ../../mat -I ../vcom
 
-ALLOBJS = vrmlmat.o material.o keyvalparser.o transform.o vcom.o polygon.o resistor.o
+ALLOBJS = vrmlmat.o material.o keyvalparser.o transform.o vcom.o polygon.o circle.o resistor.o
 
 CXXFLAGS = -g -O0
 
@@ -17,7 +17,10 @@ makeMFR : makeMFR.cpp $(ALLOBJS)
 resistor.o : resistor.cpp resistor.h polygon.h transform.h vrmlmat.h material.h vdefs.h vcom.h
 	g++ $(CXXFLAGS) $(includes) -c $< -o $@
 
-polygon.o : polygon.cpp transform.h vrmlmat.h material.h vdefs.h vcom.h
+polygon.o : polygon.cpp polygon.h transform.h vrmlmat.h material.h vdefs.h vcom.h
+	g++ $(CXXFLAGS) $(includes) -c $< -o $@
+
+circle.o : circle.cpp circle.h polygon.h transform.h vrmlmat.h material.h vdefs.h vcom.h
 	g++ $(CXXFLAGS) $(includes) -c $< -o $@
 
 vrmlmat.o : vrmlmat.cpp vrmlmat.h material.h keyvalparser.h

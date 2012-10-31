@@ -212,7 +212,7 @@ int dipcase::setNotchLength(double nl)
     return 0;
 }
 
-int dipcase::setWorldScale(double sc)
+void dipcase::setWorldScale(double sc)
 {
     scale = sc;
     valid = false;

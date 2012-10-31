@@ -80,7 +80,7 @@ int Material::Load(const std::string &name)
         cerr << "No material name found in file '" << name << "'\n";
         return -1;
     }
-    cerr << "Material file: '" << name << "'\n";
+    // cerr << "Material file: '" << name << "'\n";
 
     // diffusivity
     ki = keys.find("diffuse");
