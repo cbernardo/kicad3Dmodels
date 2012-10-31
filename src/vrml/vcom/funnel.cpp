@@ -290,7 +290,6 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
 int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
         VRMLMat &stemcolor, bool reuse_stem, std::ofstream &fp, int tabs)
 {
-    // TODO Auto-generated constructor stub
     if (!valid)
     {
         ERRBLURB;

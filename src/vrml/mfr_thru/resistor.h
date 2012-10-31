@@ -119,8 +119,7 @@ class Resistor
 {
     RParams params;
     int makeHzLead(std::ofstream &fp);
-    int startVtLead(std::ofstream &fp);
-    int endVtLead(std::ofstream &fp);
+    int makeVtLead(std::ofstream &fp);
     int makeBody(std::ofstream &fp, const std::string &bands);
     int validateBands(const std::string &bands);
     int getColorIdx(int i, const std::string &bands);

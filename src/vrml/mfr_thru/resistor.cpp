@@ -34,6 +34,7 @@
 #include "transform.h"
 #include "vrmlmat.h"
 #include "resistor.h"
+#include "pin.h"
 
 using namespace std;
 
@@ -92,7 +93,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
     // vertical lead
     Transform tv;
     tv.setTranslation(0, 0, -4);
-    double rw = params.d/2.0;   // wire radius
+    double rw = params.d;   // wire diameter (formerly radius) // XXX - deprecate
     lvert[0].Calc(rw, rw, tv);
     tv.setTranslation(0, 0, params.D/2 - params.d);
     lvert[1].Calc(rw, rw, tv);
@@ -185,28 +186,103 @@ int Resistor::makeHzLead(std::ofstream &fp)
 
 
 
-int Resistor::startVtLead(std::ofstream &fp)
+int Resistor::makeVtLead(std::ofstream &fp)
 {
-    // XXX - TO IMPLEMENT
-    ERRBLURB;
-    cerr << "UNIMPLEMENTED\n";
-    return -1;
-}
+    Transform t0;
+    PParams lp;
+    Pin lead[2];
+    Pin cap[2];
 
+    // select round wires
+    lead[0].SetShape(false);
+    lead[1].SetShape(false);
+    cap[0].SetShape(false);
+    cap[1].SetShape(false);
 
+    bool has_mcap = false;
+    double th0 = 2.0*params.d - params.d/3.0;               // height of cap0
+    double th1 = 2.0*params.d + params.L;                   // height of cap1
+    double th2 = 2.0*params.d + params.L + params.d/3.0;    // height of lead1
 
-int Resistor::endVtLead(std::ofstream &fp)
-{
-    // XXX - TO IMPLEMENT
-    ERRBLURB;
-    cerr << "UNIMPLEMENTED\n";
-    return -1;
+    t0.setTranslation(0, 0, -4.0);
+    if ((params.endshape == 'B') && (params.bcap))
+    {
+        lp.h = 4.0 + 2.0*params.d - params.d/3.0;
+        has_mcap = true;
+    }
+    else
+    {
+        lp.h = 4.0 + 2*params.d;
+    }
+    lp.w    = params.d; // wire thickness (X axis)
+    lp.d    = params.d; // wire thickness (Y axis)
+    lp.tap  = -1.0;     // no taper
+    lp.r    = -1.0;     // no bend
+    lp.l    = -1.0;     // no second part
+    lp.ns   = params.wsides;
+
+    // starting lead
+    lead[0].Calc(lp, t0);
+
+    // caps (if necessary)
+    if (has_mcap)
+    {
+        lp.h = params.d/3.0;
+        lp.w = params.d*2.0;
+        lp.d = lp.w;
+        t0.setTranslation(0, 0, th0);
+        cap[0].Calc(lp, t0);
+        t0.setTranslation(0, 0, th1);
+        cap[1].Calc(lp, t0);
+    }
+
+    // end lead
+    lp.h = 2.0*params.d;
+    if (has_mcap)
+    {
+        t0.setTranslation(0, 0, th2);
+        lp.l = th2 + 4.0 + lp.h;
+    }
+    else
+    {
+        t0.setTranslation(0, 0, th1);
+        lp.l = th1 + 4.0 + lp.h;
+    }
+    lp.r = params.p/2.0;
+    lp.bend = M_PI;
+    lp.nb = 2*params.bsides;
+    lp.w = params.d;
+    lp.d = params.d;
+    lead[1].Calc(lp, t0);
+
+    t0.setTranslation(params.scale*params.shift, 0, 0);
+    t0.setScale(params.scale);
+
+    int acc = 0;
+    acc += lead[0].Build(true, false, t0, params.colors[13], false, fp, 2);
+    if (has_mcap)
+    {
+        acc += cap[0].Build(true, false, t0, params.colors[13], true, fp, 2);
+        acc += cap[1].Build(false, true, t0, params.colors[13], true, fp, 2);
+    }
+    acc += lead[1].Build(false, true, t0, params.colors[13], true, fp, 2);
+
+    if (acc)
+    {
+        ERRBLURB;
+        cerr << "problems writing vertical resistor lead\n";
+        return -1;
+    }
+
+    return 0;
 }
 
 
 
 int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
 {
+    // XXX - TODO: Clean up code; use diameters in invocations of Calc()
+
     // Notes:
     //  Hz start of body:   ((p - L)/2, 0, (D/2 + 0.2))
     //  Vt start of body:   (0, 0, 2*d)
@@ -278,15 +354,15 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     case 'C':
         // first annulus is D/20 wide and 0.9D diameter
         rad = params.D*0.9/2.0;
-        body[0].Calc(rad, rad, t1);
+        body[0].Calc(rad*2.0, rad*2.0, t1);
         off1 = off0*params.D/20.0;
         t1.setTranslation(off1);
         rad = params.D/2.0;
-        body[1].Calc(rad, rad, t1);
+        body[1].Calc(rad*2.0, rad*2.0, t1);
         // second annulus is at 0.5D
         off1 = off0*0.25*params.D;
         t1.setTranslation(off1);
-        body[2].Calc(rad, rad, t1);
+        body[2].Calc(rad*2.0, rad*2.0, t1);
         // calculate the other end
         body[ntot -1] = body[0];
         body[ntot -2] = body[1];
@@ -315,7 +391,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 if (xx < 0.0) xx = 0.0;
                 r = k*sqrt(xx) + params.d/2.0;
                 t1.setTranslation(off0*x);
-                body[i].Calc(r, r, t1);
+                body[i].Calc(r*2.0, r*2.0, t1);
                 tx.setTranslation(off0*(params.L - 2*x));
                 body[ntot -1 - i] = body[i];
                 body[ntot -1 - i].Xform(tx);
@@ -342,7 +418,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 if (xx <= 0.0) xx = 0.0;
                 r = sqrt(xx)*k + rmin;
                 t1.setTranslation(off0*x);
-                body[i].Calc(r, r, t1);
+                body[i].Calc(r*2.0, r*2.0, t1);
                 tx.setTranslation(off0*(params.L - 2*x));
                 body[ntot -1 - i] = body[i];
                 body[ntot -1 - i].Xform(tx);
@@ -383,7 +459,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
                 r = x;
             }
             t1.setTranslation(off0*sx);
-            body[i+j].Calc(r, r, t1);
+            body[i+j].Calc(r*2.0, r*2.0, t1);
         }
     }
     else
@@ -396,7 +472,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
         {
             sx += dx;
             t1.setTranslation(off0*sx);
-            body[i+j].Calc(r, r, t1);
+            body[i+j].Calc(r*2.0, r*2.0, t1);
         }
     }
 
@@ -442,7 +518,7 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
 
 int Resistor::Create(RParams &rp, const std::string &bands, const std::string &filename)
 {
-    int i, val;
+    int i;
     bool fail = false;
     std::ofstream fp;
 
@@ -535,31 +611,29 @@ int Resistor::Create(RParams &rp, const std::string &bands, const std::string &f
         return -1;
     }
     // write all data to file and check the results at the end
-    SetupXForm(modname, fp, 0);
+    int acc = 0;
+    acc += SetupXForm(modname, fp, 0);
     if (params.horiz)
     {
-        makeHzLead(fp);
-        if (makeBody(fp, bands))
-        {
-            fp.close();
-            return -1;
-        }
+        acc += makeHzLead(fp);
+        acc += makeBody(fp, bands);
     }
     else
     {
-        startVtLead(fp);
-        makeBody(fp, bands);
-        endVtLead(fp);
+        acc += makeVtLead(fp);
+        acc += makeBody(fp, bands);
     }
-    val = CloseXForm(fp, 0);
+    acc += CloseXForm(fp, 0);
     fp.close();
 
-    if (val)
+    if (acc)
     {
         ERRBLURB;
         cerr << "problems writing to file '" << filename << "'\n";
+        return -1;
     }
-    return val;
+
+    return 0;
 }   // Create
 
 
