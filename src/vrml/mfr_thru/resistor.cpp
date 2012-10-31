@@ -585,7 +585,7 @@ int Resistor::validateBands(const std::string &bands)
         {
             if (fail)
             {
-                cerr < "\t";
+                cerr << "\t";
             }
             else
             {

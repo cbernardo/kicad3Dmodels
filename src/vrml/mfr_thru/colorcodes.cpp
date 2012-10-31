@@ -307,7 +307,7 @@ int GetValueCode4(int value, int exp, std::string &vcode)
     int pos;    // position of the magnitude code (after 1st, 2nd or 3rd char)
     char mag;   // magnitude code (R, K, M, G)
 
-    int v0, v1, v2;
+    int v0, v1;
     v0 = value/100;
     v1 = (value % 100)/10;
 
