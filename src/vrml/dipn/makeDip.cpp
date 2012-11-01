@@ -39,14 +39,16 @@
 #include "dip.h"
 #include "transform.h"
 
+#include "k3dconfig.h"
+
 int main()
 {
   dip dil;
   char name[256];
   int i;
   dipparams dp;
-  dp.casematerial.Load("/home/cirilo/projects/kicad/models/mcad/colors/ceram_gry.mat");
-  dp.pinmaterial.Load("/home/cirilo/projects/kicad/models/mcad/colors/tin.mat");
+  dp.casematerial.Load(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
+  dp.pinmaterial.Load(K3D_TOP_DIR "/mcad/colors/tin.mat");
   dil.SetParams(dp);
 
   for(i = 4; i <= 28; i+=2) {

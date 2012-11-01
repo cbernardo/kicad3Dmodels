@@ -16,6 +16,19 @@ project (K3D CXX)
 # file is not portable across compilers.
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
+# install executables in the scripting directory
+set(CMAKE_INSTALL_PREFIX ${K3D_SOURCE_DIR}/scripts)
+
+# Version information
+set(K3D_VERSION_MAJOR 0)
+set(K3D_VERSION_MINOR 2)
+set(K3D_TOP_DIR ${K3D_SOURCE_DIR})
+
+# create a config file
+configure_file(${K3D_SOURCE_DIR}/src/k3dconfig.h.in ${K3D_BINARY_DIR}/src/k3dconfig.h)
+include_directories(${K3D_BINARY_DIR}/src)
+
+
 # pull in the sources
 add_subdirectory (src)
 

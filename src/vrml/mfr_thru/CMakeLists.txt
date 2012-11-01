@@ -14,3 +14,5 @@ add_executable(makeEnnn makeEnnn.cpp colorcodes.cpp)
 # Parametric model for tubular thru-hole resistors
 add_executable(makeMFR makeMFR.cpp resistor.cpp)
 target_link_libraries(makeMFR vcom)
+
+install(TARGETS makeMFR makeEnnn RUNTIME DESTINATION bin)

@@ -60,6 +60,8 @@ RParams::RParams()
 
 int Resistor::makeHzLead(std::ofstream &fp)
 {
+    // XXX - TODO: refactor using class Pin
+
     // Notes:
     //  bottom point: (0, 0, -4)
     //  top point:    (0, 0, (D/2 - d))

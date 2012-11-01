@@ -12,3 +12,5 @@ link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/mat
 add_executable(makeDip makeDip.cpp dip_pin.cpp dip_case.cpp dip.cpp)
 
 target_link_libraries(makeDip vcom)
+
+install(TARGETS makeDip RUNTIME DESTINATION bin)

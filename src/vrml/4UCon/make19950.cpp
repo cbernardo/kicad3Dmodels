@@ -53,11 +53,7 @@
 #include "hole.h"
 #include "shoulder.h"
 
-
-#include <iostream>
-#include <fstream>
-#include <string>
-
+#include "k3dconfig.h"
 
 using namespace std;
 
@@ -168,8 +164,8 @@ int makeHdr(int np)
     shd[1].Calc(l-0.3, 2.2, t0);
 
     VRMLMat pcol, bcol; // pin and body color
-    pcol.Load("/home/cirilo/projects/kicad/models/mcad/colors/gold.mat");
-    bcol.Load("/home/cirilo/projects/kicad/models/mcad/colors/black.mat");
+    pcol.Load(K3D_TOP_DIR "/mcad/colors/gold.mat");
+    bcol.Load(K3D_TOP_DIR "/mcad/colors/black.mat");
 
     ofstream output;
     ostringstream fname, bname;

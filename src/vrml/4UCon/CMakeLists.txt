@@ -12,3 +12,5 @@ link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/mat
 add_executable(make19950 make19950.cpp)
 
 target_link_libraries(make19950 vcom)
+
+install(TARGETS make19950 RUNTIME DESTINATION bin)
