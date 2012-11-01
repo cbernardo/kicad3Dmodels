@@ -1,0 +1,8 @@
+// Main configuration file for the KiCAD3DModels (K3D) project
+
+// Version
+#define K3D_VERSION_MAJOR (@K3D_VERSION_MAJOR@)
+#define K3D_VERSION_MINOR (@K3D_VERSION_MINOR@)
+
+// Top level working directory; parent to the mcad and scripts directories
+#define K3D_TOP_DIR "@K3D_TOP_DIR@"
