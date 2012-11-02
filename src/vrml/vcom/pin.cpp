@@ -203,10 +203,10 @@ int Pin::Calc(const PParams &pp, Transform &t)
     if (pp.r > 0)
     {
         has_b = true;
-        if ((pp.nb < 3) || (pp.nb > 90))
+        if ((pp.nb < 1) || (pp.nb > 90))
         {
             ERRBLURB;
-            cerr << "invalid number of segments in a bend (" << pp.nb << "); valid range is 3 .. 90\n";
+            cerr << "invalid number of segments in a bend (" << pp.nb << "); valid range is 1 .. 90\n";
             return -1;
         }
         if (pp.r < pp.w)

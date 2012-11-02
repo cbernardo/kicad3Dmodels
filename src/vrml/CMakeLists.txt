@@ -14,3 +14,7 @@ add_subdirectory (mfr_thru)
 
 # 4UCon connectors
 add_subdirectory (4UCon)
+
+# PCC-SMP/OST Thermocouple connectors
+add_subdirectory (pcc)
+

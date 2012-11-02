@@ -67,6 +67,7 @@ private:
     bool   valid;
     bool   square;
     int    npoly;       // number of polygons in the funnel
+    double bev;         // bevel for square funnels
     Polygon **poly;     // list of polygons
 
     void cleanup(void);
@@ -85,7 +86,7 @@ public:
     int Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
             VRMLMat &stemcolor, bool reuse_stem, std::ofstream &fp, int tabs = 0);
 
-    void SetShape(bool square);
+    void SetShape(bool square, double bev = -1.0);
 };
 
 #endif /* FUNNEL_H_ */

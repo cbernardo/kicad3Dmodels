@@ -1,0 +1,329 @@
+%!PS-Adobe-2.0
+%%Author: Cirilo Bernardo
+%%BoundingBox: 0 0 550 700
+%%EndComments
+
+%
+% dimensions for the case
+%
+/l1h 0.15 def
+/l1w 0.2 def
+/bev 0.04 def
+/nh  0.05 def
+/nl  0.06 def
+
+% set the scale for inches*7
+/mag 72 7 mul def
+mag dup scale
+/pt {mag div} def
+
+
+0.5 mag div setlinewidth
+/Times-Roman findfont
+9 mag div  scalefont setfont
+
+% define the center for the top front face of the pin
+% the page center is ~(0.127,0.193)
+/xwidth 550 mag div def
+/ywidth 700 mag div def
+/xmid xwidth 2 div def
+/xfh  xmid 2 div def
+/xlh  xmid 1.5 mul def
+/ymid ywidth 2 div def
+/bheight 0.08 def
+
+% the levels of divisions
+% q0 = top 1/4 of page
+/q0 ywidth .75 mul def
+% q1 = center of page
+/q1 ywidth 0.5 mul def
+% q2 = lower 1/4 of page
+/q2 q1 0.5 mul def
+% q3 = bottom of page
+/q3 0 def
+/dq ywidth 0.125 mul def
+
+
+% circle with numbers
+/circ {
+  /val exch def
+  gsave
+  translate
+% determine the bounding box
+  newpath
+  0 0 moveto
+  val true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+  newpath
+    moveto
+    val show
+  newpath
+    0 0 0.015 0 360 arc
+    stroke
+  grestore
+} def
+/blunum {
+  /val exch def
+  gsave
+  translate
+% determine the bounding box
+  newpath
+  0 0 moveto
+  val true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+  0 0 1 setrgbcolor
+  newpath
+    moveto
+    val show
+  grestore
+} def
+/rednum {
+  /val exch def
+  gsave
+  translate
+% determine the bounding box
+  newpath
+  0 0 moveto
+  val true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+  1 0 0 setrgbcolor
+  newpath
+   moveto
+    val show
+  grestore
+} def
+
+% dividers
+% [] 0 setdash = solid line
+% [ a b ... ] 0 setdash = alternating pattern of ink and space
+gsave
+% horizontal lines
+newpath
+0 q0 moveto
+xwidth 0 rlineto
+[5 pt 3 pt] 0 setdash
+stroke
+newpath
+0 q1 moveto
+xwidth 0 rlineto
+stroke
+newpath
+0 q2 moveto
+xwidth 0 rlineto
+stroke
+% vertical line
+newpath
+xmid 0 moveto
+0 ywidth rlineto
+stroke
+
+grestore
+
+% labels
+/label {
+  /text exch def
+  newpath
+  0 0 moveto text true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+    moveto text show
+} def
+gsave
+/Times-Roman findfont
+11 mag div  scalefont setfont
+gsave
+xfh q0 dq add translate
+0 0 moveto
+(Bottom) label
+grestore
+gsave
+xlh q0 dq add translate
+0 0 moveto
+(Bottom Bevel) label
+grestore
+gsave
+xfh q1 dq add translate
+0 0 moveto
+(Lower Middle) label
+grestore
+gsave
+xlh q1 dq add translate
+0 0 moveto
+(Upper Middle) label
+grestore
+gsave
+xfh q2 dq add translate
+0 0 moveto
+(Lower Notch Bevel) label
+grestore
+gsave
+xlh q2 dq 1.85 mul add translate
+0 0 moveto
+(Lower Notch) label
+grestore
+gsave
+xfh q3 dq 1.85 mul add translate
+0 0 moveto
+(Top Bevel) label
+grestore
+gsave
+xlh q3 dq 1.85 mul add translate
+0 0 moveto
+(Top) label
+grestore
+grestore
+
+%
+% LEVEL 1 - BOTTOMMOST VERTICES
+%
+gsave
+xfh q0 dq add translate
+l1w neg bev add l1h neg bev add (0) circ
+l1w bev sub l1h neg bev add (1) circ
+l1w bev sub l1h bev sub (2) circ
+l1w neg bev add l1h bev sub (3) circ
+grestore
+
+%
+% LEVEL 2 - BEVELED BOTTOM
+%
+gsave
+xlh q0 dq add translate
+l1w neg l1h neg bev add (4) circ
+l1w neg bev add l1h neg (5) circ
+l1w bev sub l1h neg (6) circ
+l1w l1h neg bev add (7) circ
+l1w l1h bev sub (8) circ
+l1w bev sub l1h (9) circ
+l1w neg bev add l1h (10) circ
+l1w neg l1h bev sub (11) circ
+grestore
+
+%
+% LEVEL 3 - LOWER MIDDLE SECTION
+%
+gsave
+xfh q1 dq add translate
+l1w neg l1h neg bev add (12) circ
+l1w neg bev add l1h neg (13) circ
+l1w bev sub l1h neg (14) circ
+l1w l1h neg bev add (15) circ
+l1w l1h bev sub (16) circ
+l1w bev sub l1h (17) circ
+l1w neg bev add l1h (18) circ
+l1w neg l1h bev sub (19) circ
+grestore
+
+%
+% LEVEL 4 - UPPER MIDDLE SECTION
+%
+gsave
+xlh q1 dq add translate
+l1w neg l1h neg bev add (20) circ
+l1w neg bev add l1h neg (21) circ
+l1w bev sub l1h neg (22) circ
+l1w l1h neg bev add (23) circ
+l1w l1h bev sub (24) circ
+l1w bev sub l1h (25) circ
+l1w neg bev add l1h (26) circ
+l1w neg l1h bev sub (27) circ
+grestore
+
+%
+% LEVEL 5 - LOWER NOTCH BEVEL
+%
+gsave
+xfh q2 dq add translate
+l1w neg nh (28) circ
+l1w neg nh neg (29) circ
+grestore
+
+%
+% LEVEL 6 - NOTCH FLOOR
+%
+gsave
+xlh q2 dq add translate
+l1w neg bev add nh (30) circ
+l1w neg bev nl add add nh (31) blunum
+l1w neg bev nl add add bev 0.6 mul add nh 0.95 mul (32) rednum
+l1w neg bev nl add add bev add nh 0.8 mul (33) blunum
+l1w neg bev nl add add bev 1.2 mul add nh 0.3 mul (34) circ
+l1w neg bev nl add add bev 1.2 mul add nh 0.3 mul neg (35) circ
+l1w neg bev nl add add bev add nh 0.8 mul neg (36) blunum
+l1w neg bev nl add add bev 0.6 mul add nh 0.95 mul neg (37) rednum
+l1w neg bev nl add add nh neg (38) blunum
+l1w neg bev add nh neg (39) circ
+grestore
+
+%
+% LEVEL 7 - UPPER NOTCH AND CASE
+%
+gsave
+xfh q3 dq add translate
+l1w neg nh bev 2 div add (40) circ
+l1w neg bev add nh (41) circ
+l1w neg bev nl add add nh (42) blunum
+l1w neg bev nl add add bev 0.6 mul add nh 0.95 mul (43) rednum
+l1w neg bev nl add add bev add nh 0.8 mul (44) blunum
+l1w neg bev nl add add bev 1.2 mul add nh 0.3 mul (45) circ
+l1w neg bev nl add add bev 1.2 mul add nh 0.3 mul neg (46) circ
+l1w neg bev nl add add bev add nh 0.8 mul neg (47) blunum
+l1w neg bev nl add add bev 0.6 mul add nh 0.95 mul neg (48) rednum
+l1w neg bev nl add add nh neg (49) blunum
+l1w neg bev add nh neg (50) circ
+l1w neg nh bev 2 div add neg (51) circ
+
+l1w neg l1h neg bev add (52) circ
+l1w neg bev add l1h neg (53) circ
+l1w bev sub l1h neg (54) circ
+l1w l1h neg bev add (55) circ
+l1w l1h bev sub (56) circ
+l1w bev sub l1h (57) circ
+l1w neg bev add l1h (58) circ
+l1w neg l1h bev sub (59) circ
+grestore
+
+%
+% LEVEL 8 - CASE TOP AND BEVEL
+%
+gsave
+xlh q3 dq add translate
+l1w neg bev add nh bev 2 div add (60) circ
+l1w neg bev nl add add nh bev 2 div add (61) circ
+l1w neg bev nl add add bev 0.8 mul add nh 0.95 mul bev 2 div add (62) circ
+l1w neg bev nl add add bev 1.6 mul add nh 0.8 mul bev 2 div add (63) circ
+l1w neg bev nl add add bev 2.2 mul add nh 0.6 mul (64) circ
+
+l1w neg bev nl add add bev 2.2 mul add nh 0.6 mul neg (66) circ
+l1w neg bev nl add add bev 1.6 mul add nh 0.8 mul bev 2 div add neg (66) circ
+l1w neg bev nl add add bev 0.8 mul add nh 0.95 mul bev 2 div add neg (67) circ
+l1w neg bev nl add add nh bev 2 div add neg (68) circ
+l1w neg bev add nh bev 2 div add neg (69) circ
+
+l1w neg bev add l1h neg bev add (70) circ
+l1w neg bev add nh add nl 2 mul add l1h neg bev add (71) circ
+l1w bev sub l1h neg bev add (72) circ
+l1w bev sub l1h bev sub (73) circ
+
+l1w neg bev add nh add nl 2 mul add l1h bev sub (74) circ
+l1w neg bev add l1h bev sub (75) circ
+grestore

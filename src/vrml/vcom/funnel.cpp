@@ -154,6 +154,21 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
     }
 
     // validate parameters
+    if ((square) && (bev > 0.0))
+    {
+        if (bev*2.0 >= d2)
+        {
+            ERRBLURB;
+            cerr << "invalid for d2 (<= bevel/2)\n";
+            return -1;
+        }
+        if (bev*2.0 >= w2)
+        {
+            ERRBLURB;
+            cerr << "invalid for w2 (<= bevel/2)\n";
+            return -1;
+        }
+    }
     if (w1 <= 0.0)
     {
         ERRBLURB;
@@ -226,6 +241,7 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
                 poly = NULL;
                 return -1;
             }
+            static_cast <Rectangle *> (poly[i])->SetBevel(bev);
         }
     }
     else
@@ -354,9 +370,10 @@ void Funnel::cleanup(void)
     npoly = 0;
 }
 
-void Funnel::SetShape(bool square)
+void Funnel::SetShape(bool square, double bev)
 {
     if (valid) cleanup();
     Funnel::square = square;
+    Funnel::bev = bev;
     return;
 }

@@ -1,0 +1,1003 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{longtable}
+
+% Check the following in dip_pin.cpp:
+%  p33z
+%  p34y
+%  p46y
+
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{-0.5in}
+%\setlength{\headsep}{0in}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16.5cm}
+\setlength{\oddsidemargin}{0cm}
+%\setlength{\evensidemargin}{2cm}
+%\setlength{\parindent}{0.25in}
+%\setlength{\parskip}{0.25in}
+
+\begin{document}
+
+\section{Introduction}
+KiCad uses VRML97\footnote{\raisebox{-2ex}{\parbox{\textwidth}{http://www.web3d.org/x3d/specifications/vrml\\http://gun.teipir.gr/VRML-amgem/spec/vrmlspec.pdf}}}
+to describe the 3D models used.
+I would recommend reading the specification to gain a better understanding of it, but that is not essential to creating 3D models for KiCad.  In my
+version of KiCad (0.0.20071129a-1, from the Debian Lenny archives) many features of the VRML specification are not supported and the 3D renderer also
+has its peculiar non-conformant behavior.  This tutorial aims to provide enough information to be able to create VRML97 models which will be
+correctly rendered by KiCad. Although Wings3D is often mentioned as a tool for creating the KiCad models, I find that Wings3D is not an appropriate
+tool for the job.  KiCad makes use of a very small subset of the VRML specification and hand crafting the VRML document is not difficult.
+In the rest of this section I make various comments about the VRML specification in relation to KiCad; most of it will be of no interest to
+you unless you have read the standard but you must pay attention to the list of reserved keywords. The reserved keywords are always interpreted by the
+VRML viewer in a specific way and must therefore only be used in accordance with the VRML specification.
+
+VRML97 reserves the following keywords:
+
+\begin{itemize}
+\item {DEF}
+\item {USE}
+\item {IS}
+\item {TO}
+\item {PROTO}
+\item {EXTERNPROTO}
+\item {TRUE}
+\item {FALSE}
+\item {eventIn}
+\item {eventOut}
+\item {ROUTE}
+\item {field}
+\item {exposedField}
+\end{itemize}
+
+Of those keywords, I only use the following in creating 3D models for KiCad:
+\begin{itemize}
+\item {DEF}
+\item {USE}
+\end{itemize}
+
+I have tested the PROTO feature and found that it does not work in KiCad; I have not tested the use of the other keywords in KiCad.
+
+The following is a list of nodes, fields, and types which I have found to work with KiCad:
+
+\begin{itemize}
+\item Transform
+  \begin{itemize}
+    \item children
+  \end{itemize}
+\item Shape
+  \begin{itemize}
+    \item appearance
+      \begin{itemize}
+        \item material
+      \end{itemize}
+    \item geometry
+      \begin{itemize}
+        \item IndexedFaceSet
+      \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+Within the geometry node I have tried the types Extrusion and IndexedFaceSet and only found IndexedFaceSet to work so this tutorial will
+make exclusive use of the IndexedFaceSet to describe a model component.
+
+\section{VRML Basics}
+ A VRML file is a plain text file which uses utf8 text encoding; this encoding is similar enough to ASCII that we should rarely care about the differences.
+We can create VRML files using plain text editors and view the files using free VRML viewers. I have used WhiteDune on Linux and Cortona3D on
+MS Windows; I have also tried FreeWRL (version 1.22.10) but it had severe defects which made it unusable for verifying the KiCad models.
+For editors, if you are developing on Windows, the Notepad editor works fine.
+
+Every VRML97 file must begin with the line \verb~#VRML V2.0 utf8~ and the filename must end with `.wrl'. An object within the VRML file must
+be associated with an appearance or else it will not be rendered. For KiCad the object's surfaces must be described using the IndexedFaceSet.
+The following is a valid VRML file which we shall use as our starting point:
+
+\begin{verbatim}
+#VRML V2.0 utf8
+
+# surface appearance of an IC pin
+DEF mat_pin Appearance {
+  material  Material {
+    diffuseColor 0.73 0.73 0.75
+    emissiveColor 0 0 0
+    specularColor 0.73 0.73 0.75
+    ambientIntensity 0.9
+    transparency 0
+    shininess 0.80
+}}
+
+Shape {
+  appearance USE mat_pin
+  geometry IndexedFaceSet {
+    coord Coordinate { point [
+      -1 -1 0, 1 -1 0, 1 1 0, -1 1 0
+    ]}
+    coordIndex [
+      0, 1, 2, 3, -1
+    ]
+  }
+}
+\end{verbatim}
+
+The \textbf{coord} field lists the points used to create a surface; the points are listed in triplets representing the X (left-right),
+Y (down-up), and Z (back-front) dimensions of the display; the XYZ values are separated by a space and each coordinate point is
+separated by a comma. The \textbf{coordIndex} field lists the elements of the \textbf{coord} field to produce \textbf{facets} (surfaces).
+In this example we used elements 0, 1, 2, and 3 to create a single facet; each facet is composed of a list of element indices
+which are separated by commas and the end of a set is represented by the index -1. In the example I use the \textbf{DEF} keyword
+to define a material appearance which I named \textbf{mat\_pin}. Definitions allow us to reuse entities without typing the entire
+description over and over again; this is a very useful feature to have when you are describing a 44-pin DIL package or perhaps a
+416-pin BGA.  The material field uses an RGB color scheme to describe the color parameters of the surface; refer to the VRML
+specification if you wish to learn more about the material parameters.
+
+If you view the example you should see a large silver square with a surface texture which somewhat resembles that of a tinned IC pin.
+If you rotate the square you will notice that it is not visible from the back side; if you imagine the points composing a facet, that facet
+is visible from the direction in which the points form a counterclockwise sequence. In the example, change the index sequence to 3, 2, 1, 0, -1
+and the square will now be visible from the other side only. If you want the square to be visible from both sides you can define two facets:
+
+\begin{verbatim}
+    coordIndex [
+      0, 1, 2, 3, -1,
+      3, 2, 1, 0, -1
+    ]
+\end{verbatim}
+
+For the next exercise we will create a facet shaped like an hourglass; this exercise will illustrate a limitation of the rendering
+routines and the means by which we can make the object look the way we intended. In the example below, the vertices of the hourglass
+are enumerated in a fashion similar to the way we would read a page of text, beginning with the top left vertex and proceeding to the
+right then moving down to the next vertex and going right. In this first part we will attempt to use all six points to create a single
+facet.
+
+\begin{verbatim}
+#VRML V2.0 utf8
+
+DEF mat_pin Appearance {
+  material  Material {
+    diffuseColor 0.73 0.73 0.75
+    emissiveColor 0 0 0
+    specularColor 0.73 0.73 0.75
+    ambientIntensity 0.9
+    transparency 0
+    shininess 0.80
+}}
+
+Shape {
+  appearance USE mat_pin
+  geometry IndexedFaceSet {
+    coord Coordinate { point [
+      -2 2 0, 2 2 0, # (points 0,1) top part of hourglass
+      -1 0 0, 1 0 0, # (points 2,3) middle of hourglass
+      -2 -2 0, 2 -2 0, # (points 4,5) bottom of hourglass
+    ]}
+    coordIndex [
+      0, 2, 4, 5, 3, 1, -1 # all points in a single facet
+    ]
+  }
+}
+\end{verbatim}
+
+Now go and view that file; you will have to rotate the object to see what was rendered.  So what went wrong?
+The facet which we attempted to create had concave features; for a facet to render correctly it must be convex.
+Imagine drawing a line between every vertex in a facet. If any of those lines lie outside the facet then we
+have a concave facet and it will not render correctly. In this instance it is easy to see that the line between
+points 0 and 4 (the top and bottom left hand vertices) lies outside the hourglass. Concave facets must be
+divided into convex facets to render our image correctly. In this example we simply divide the hourglass into
+two trapezoidal facets using the following \textbf{coordIndex}:
+
+\begin{verbatim}
+    coordIndex [
+      0, 2, 3, 1, -1, # top trapezoid
+      2, 4, 5, 3, -1  # bottom trapezoid
+    ]
+\end{verbatim}
+
+For the next example let's create a tetrahedron; type up the VRML file as it appears and supply your own facet
+indices to get some practice in getting the facet to render as desired; remember that a facet is only visible
+when the enumerated vertices are seen from a counterclockwise perspective. It was not necessary for me to
+define an entity called \textbf{tetrahedron} (\verb~DEF tetrahedron~) in this example, but I put in the definition
+so that we can play with the defined object later.
+
+\begin{verbatim}
+#VRML V2.0 utf8
+
+DEF mat_pin Appearance {
+  material  Material {
+    diffuseColor 0.73 0.73 0.75
+    emissiveColor 0 0 0
+    specularColor 0.73 0.73 0.75
+    ambientIntensity 0.9
+    transparency 0
+    shininess 0.80
+}}
+
+DEF tetrahedron Shape {
+  appearance USE mat_pin
+  geometry IndexedFaceSet {
+    coord Coordinate { point [
+      0 1.5 0,      # (point 0) top of tetrahedron
+      -1 0 0,       # (point 1) bottom left
+      0.5 0 0.866,  # (point 2) bottom right front
+      0.5 0 -0.866, # (point 3) bottom right rear
+    ]}
+    coordIndex [
+      (insert your facet sets)
+    ]
+}
+}
+\end{verbatim}
+
+The following is just one of a number of valid facet sets which would render the tetrahedron as desired:
+
+\begin{verbatim}
+    coordIndex [
+      0, 1, 2, -1, # front face
+      0, 2, 3, -1, # right hand face
+      0, 3, 1, -1, # rear face
+      1, 3, 2, -1  # bottom face
+    ]
+\end{verbatim}
+
+So far we have seen examples of \textbf{DEF} and \textbf{USE}, \textbf{Appearance}, and \textbf{Shape};
+the last element I would like to introduce is the \textbf{Transform}. A Transform has the fields
+\textbf{translation}, \textbf{rotation}, \textbf{scale}, and \textbf{children}.  A translation shifts
+the coordinate origin relative to the current coordinate origin; transforms can be nested and each
+nested transform may shift the origin relative to that of the previous transform.  The scale determines
+the proportions of the X, Y, Z values relative to the current proportions and is applied \textbf{after}
+the translation assigned to any particular transform; keep in mind that a scale will affect the
+proportions of any translation within a nested transform. As with the translation, scales within nested
+transforms are also cumulative. Rotations
+define an axis of rotation using four parameters (X, Y, Z, angle). The angle is in radians and specifies
+a counterclockwise rotation about the specified axis. For example, \verb~rotation 0 1 0 1.5707963~ will
+rotate the coordinate system $\pi/2$ radians counterclockwise as seen when staring down the axis towards
+the origin; the exact same rotation can be achieved with \verb~rotation 0 -1 0 -1.5707963~. 
+A rotation is applied before translating the origin. Be careful when nesting transforms which have
+a scale or rotation speficied.  When you use a transform you may specify at least one of translation,
+rotation, or scale --- if none of these are specified then no transform is performed but the Transform
+section is still valid VRML.
+
+Add the following to the end of the tetrahedron file to see how \textbf{scale} is applied after \textbf{translation}
+and how it also affects nested transforms.
+
+\begin{verbatim}
+Transform {
+  translation 2 0 0
+  children [
+    USE tetrahedron
+    Transform {
+      scale 0.5 0.5 0.5
+      translation 2 0 0
+      children [
+        USE tetrahedron
+        Transform {
+          scale 0.5 0.5 0.5
+          translation 2 0 0
+          children [
+            USE tetrahedron
+] } ] } ] }
+\end{verbatim}
+
+The following code can be added as well; it illustrates how \textbf{rotation} is applied before \textbf{translation}
+and how it affects nested transforms.
+
+\begin{verbatim}
+Transform {
+  translation 0 0 4
+  rotation 0 1 0 0.5236
+  children [
+    USE tetrahedron
+    Transform {
+      translation 0 0 1
+      rotation 0 1 0 0.5236
+      scale 0.8 0.8 0.8
+      children [
+        USE tetrahedron
+        Transform {
+          translation 0 0 1
+          rotation 0 1 0 0.5236
+          scale 0.8 0.8 0.8
+          children [
+            USE tetrahedron
+            Transform {
+              translation 0 0 1
+              rotation 0 1 0 0.5236
+              scale 0.8 0.8 0.8
+              children [
+                USE tetrahedron
+                Transform {
+                  translation 0 0 1
+                  rotation 0 1 0 0.5236
+                  scale 0.8 0.8 0.8
+                  children USE tetrahedron
+} ] } ] } ] } ] }
+\end{verbatim}
+
+Play around a little and enjoy your basic VRML skills; soon we will jump into the details of creating a
+3D model which KiCad can render. The tetrahedra in this short tutorial will not render in KiCad due to
+limitations of its VRML engine, but what is important is that you develop some familiarity with writing
+VRML files and are comfortable using the elements described so far. Unfortunately KiCad does not seem to
+support \textbf{translation}, \textbf{rotation}, and \textbf{scale} as per the VRML specification so these
+useful tools will not be available to us in describing a component.
+
+\section{Elements of a VRML Description for KiCad}
+In the previous section we created some VRML objects but never discussed the units used. According to the VRML97
+specification one unit is one meter (39.370079 inches or 3.2808399 feet); that specification allows disparate
+groups to create 3D objects with a uniform unit of size so that, for example, if one group created a realistic
+house and another group created a realistic human then a third group can create a virtual world and the human
+would fit nicely into the house without any fiddling about to determine appropriate scaling factors. KiCad
+detracts from the VRML specification and uses a scale of 1 unit = 0.1 inches (2.54mm). This choice is rather
+unfortunate since it makes the description of metric sized components a nuisance and we would need to use a
+shrink ray on our board model before we can put the model into the hands of our virtual electronics hobbyist,
+but those are some of the quirks of the implementation of KiCad.
+
+To give our 3D models some aesthetic appeal we need to compromise between ease of description and rendering
+complexity.  Increased complexity doesn't really matter if we're talking about a handful of components, but if you
+were designing something fairly complex like a computer motherboard it's much nicer to work with, say, half a million
+facets to render rather than 8 million facets. Components with very few facets simply do not look good. For example, you
+can describe the case of a DIL package using a simple box (6 facets) but it will look nothing like a real
+IC package because it does not have the notch (or if you wish, the dimple) and annoying rendering artifacts
+will be obvious at the edges. If we bevel the edges of the box we get a much nicer representation with 26 facets
+and although this is a huge improvement on the 6-facet box this still does not look so pleasing to the
+board designer since there is still no notch. In the parametric description of a DIL package in a later section
+we will use quite a few facets --- about 77 for the case and 48 for each pin, or 365 facets for a DIL6 and
+2189 facets for a DIL44. Hopefully you will agree that we end up with a more beautiful description of the DIL packages
+by employing so many bevels.
+
+Before we design a component we must be familiar with how KiCad expects the VRML object to be oriented. For any
+standards compliant VRML viewer, the X axis runs from left (negative) to right (positive), Y runs from the
+bottom (negative) to the top (positive) and Z runs from the rear (negative) to the front (positive). When a
+component is composed for KiCad, the default view in VRML will be a top view of the component rather than a
+side view. If you designed a part so that the default view was a side view then you will need to perform a
+remapping of coordinate points so that $X_1=X_0$, $Y_1=Z_0$, $Z_1=-Y_0$. Open up one of the wrl files supplied with KiCad so you
+can see the orientation expected by KiCad. Using the file \verb~dil_8.wrl~ as an example, the top and
+bottom of the case would be a positive Z value (meaning both are above the surface of the PCB) and the point at
+which Pin 1 attaches to the case will meet the conditions $X<0$, $Y<0$, $Z>0$. KiCad expects the component to be centered
+on $X=Y=0$ and, at least in the case of a DIL IC, Pin 1 to be at the bottom left corner of the default VRML view.
+
+\subsection{Structure}
+KiCad expects a VRML model to have a very specific structure; not all valid VRML documents will render
+correctly in KiCad, but all KiCad 3D models are valid VRML.  In other words, we must follow a number of
+restrictions when developing VRML models for KiCad. The general structure is as follows:
+
+\begin{verbatim}
+#VRML V2.0 utf8
+
+DEF subpart_1 Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material DEF material_type Material {
+          (material parameters)
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          (vertex list) ]
+        }
+        coordIndex [ (vertex indices per facet) ]
+      }
+    }
+  ]
+}
+
+DEF subpart_2 Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material USE material_type
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          (vertex list) ]
+        }
+        coordIndex [ (vertex indices per facet) ]
+      }
+    }
+  ]
+}
+\end{verbatim}
+
+\subsection{Transform, Children and Shape}
+In the VRML standard the \textbf{Transform} node has the elements \textbf{translation},
+\textbf{rotation}, \textbf{scale}, and \textbf{children}. In KiCad the transform must only
+have a \textbf{children} list since the other elements are ignored.
+The children list in turn may have shape nodes and other
+transform nodes; however, to keep things simple I only use a single shape node within
+the children list. A \textbf{Shape} node contains an \textbf{appearance} element and a
+\textbf{geometry} element.
+
+\subsection{Appearance and Materials}
+The \textbf{appearance} element defines the material appearance of a surface. Although the VRML
+standard permits a variety of options, for KiCad we will only use the \textbf{Material} node.
+The \textbf{material} element and \textbf{Material} node describe the surface properties of
+the facet including \textbf{diffuseColor} which is the reflective property of the surface when it is
+not viewed at the same angle as the reflected light source, \textbf{emissiveColor} which is the
+intensity of light emitted by an object (the value is usually set to 0 0 0 unless you want
+a glow-in-the-dark component), \textbf{specularColor} which is the reflective property of the
+surface when viewed at the angle of reflection of a light, \textbf{ambientIntensity} which is the
+amount of ambient light blended in, \textbf{transparency}, and \textbf{shininess} which
+controls the glossy appearance of the surface. VRML only supports the RGB color model and the
+individual channel values must be in the range 0 to 1. Below are examples of materials which I have used
+to describe a DIL case and its pins.
+
+\begin{verbatim}
+  material  DEF mat_pin Material {
+    diffuseColor 0.73 0.73 0.75
+    emissiveColor 0 0 0
+    specularColor 0.73 0.73 0.75
+    ambientIntensity 0.9
+    transparency 0
+    shininess 0.80
+  }
+
+  material DEF mat_case Material {
+    diffuseColor 0.35 0.3 0.23
+    emissiveColor 0 0 0
+    specularColor 0.25 0.22 0.2
+    ambientIntensity 0.5
+    transparency 0
+    shininess 0.05
+  }
+\end{verbatim}
+
+\subsection{Geometry}
+The \textbf{geometry} element in KiCad may only be of type \textbf{IndexedFaceSet} which must contain a
+\textbf{coord} list of vertices and a \textbf{coordIndex} list of vertices composing each facet.
+The \textbf{coord} element is a list of vertex coordinates in the order X Y Z and separated by spaces;
+each vertex is separated from the next via a comma. The \textbf{coordIndex} element is a list of points
+describing each facet; the index starts with 0, indices are separated by commas, and each set of facets
+ends with the index -1. For example:
+
+\begin{verbatim}
+  geometry IndexedFaceSet {
+    coord Coordinate { point [
+        -1 -1 0, 1 -1 0, 1 1 0, -1 1 0,
+        -1 -1 1, 1 -1 1, 1 1 1, -1 1 1 ]
+    }
+    coordIndex [
+      3, 2, 1, 0, -1,
+      4, 5, 6, 7, -1,
+      0, 1, 5, 4, -1,
+      1, 2, 6, 5, -1,
+      2, 3, 7, 6, -1,
+      3, 0, 4, 7, -1 ]
+  }
+\end{verbatim}
+
+\subsection{Hints}
+Comments can be used when hand crafting a VRML file; comment lines begin with a ``\verb~#~''. Due to
+limitations of the KiCad VRML engine, do not put comments within any Transform node.
+
+Use bevels; this may make an arduous task of describing even a simple component but there is a significant
+change in the appearance of the final rendered product. Some experimentation will help you get a feel for
+which corners can be left unbeveled without compromising the appearance.
+
+When describing a large cylindrical object, use a polygon with at least 16 sides. The resulting component
+may not look as smooth as a real cylinder but it will be pretty enough to use in the assembly model.
+
+When describing a small cylindrical object such as a test pin, use an 8-sided polygon. The component may
+look ugly but it will be good enough. If you think the component looks too ugly go ahead and use a 12 or
+16-sided polygon.
+
+When describing the wire leads of an object, use an 8-sided polygon and don't put bevels at the ends
+of the wires. A 12-sided polygon will make a noticeable improvement to the wire but this may not be a
+worthwhile improvement. Small wires may use 6-sided polygons with no significant deterioration in
+appearance.
+
+For many classes of components you can define one instance, parameterize the component, and write a simple
+program to automatically generate models. The DIL packages are a good example of this; the length and
+width of the package can be used as parameters to generate the case while the pin count and spacing can be
+used to generate all the pins. To make the algorithm more general you might consider allowing different
+thickness packages and parameterizing the pin so that it can change dimensions to suit the thickness. If you
+had produced a beautiful component description which can be parameterized and used to generate a whole
+family of useful 3D models, you may consider writing a program to do it.
+
+\section{Example 3D Model: Electrolytic capacitor}
+In this section we will create an electrolytic capacitor; the basic dimensions are a radius of 4mm, height of
+7mm, radial lead spacing 3.5mm, lead diameter 0.45mm, trimmed lead length of 4mm. We will put a 0.5mm bevel on
+either end of the cylinder. First we convert the dimensions into our virtual world units (0.1 inch = 1 unit):
+
+\begin{tabular}{|r|l|l|}
+\hline
+Item & Size (mm) & Size (world) \\
+\hline
+radius & 4 & 1.574\\
+height & 7 & 2.756\\
+lead spacing & 3.5 & 1.378\\
+lead dia. & 0.45 & 0.177\\
+lead length & 4 & 1.574\\
+bevel & 0.5 & 0.197\\
+\hline
+\end{tabular}
+
+In this example we will use 3 different materials --- a blue cylinder for the capacitor, a black stripe to
+indicate the negative side, and a silver material for the leads. We can use a spreadsheet to calculate the
+vertices for each polygon describing the capacitor and its leads. Let us list the vertex points of each
+polygon starting with the uppermost point as seen when we view the model from above (highest Y value) and
+put the vertices in a counterclockwise order as seen from above.
+We will use 16 sides for the capacitor's body and 6 sides for each lead; the radius for the beveled portion is
+equal to the radius of the unbeveled portion minus the bevel size. The bottom of the capacitor will sit flush
+with the board; a more realistic model would have a small gap between the board and the bottom of the
+component. For the stripe we will need to add four points to the facet which will bear the stripe; when creating
+the body facets we must not render the area of the stripe since a surface cannot have two appearances and this
+will lead to rendering artifacts. Also keep in mind that the facets are flat so we need to perform a linear
+interpolation to place the vertices for the stripe.  In this example I used 1/3 the width of a facet for the stripe
+and I centered the stripe on the body facet. The facet with the stripe must be rendered as four trapezoidal facets
+so that a gap is left for the stripe. In this model the negative lead is on the left.
+
+\begin{tabular}{|l|l|l|l||l|l|l|l|}
+\hline
+\multicolumn{8}{|c|}{\textbf{Bevel and Body Vertices}}\\
+\hline
+Bevel X & Y & Lower Z & Upper Z & Body X & Y & Lower Z & Upper Z\\
+\hline
+ 0.000 &  1.377 & 0    & 2.756 &  0.000 &  1.574 & 0.197 & 2.559\\
+-0.527 &  1.272 & ---  & ---   & -0.602 &  1.454 & ---   & ---\\
+-0.974 &  0.974 & ---  & ---   & -1.113 &  1.113 & ---   & ---\\
+-1.272 &  0.527 & ---  & ---   & -1.454 &  0.602 & ---   & ---\\
+-1.377 &  0.000 & ---  & ---   & -1.574 &  0.000 & ---   & ---\\
+-1.272 & -0.527 & ---  & ---   & -1.454 & -0.602 & ---   & ---\\
+-0.974 & -0.974 & ---  & ---   & -1.113 & -1.113 & ---   & ---\\
+-0.527 & -1.272 & ---  & ---   & -0.602 & -1.454 & ---   & ---\\
+ 0.000 & -1.377 & ---  & ---   &  0.000 & -1.574 & ---   & ---\\
+ 0.527 & -1.272 & ---  & ---   &  0.602 & -1.454 & ---   & ---\\
+ 0.974 & -0.974 & ---  & ---   &  1.113 & -1.113 & ---   & ---\\
+ 1.272 & -0.527 & ---  & ---   &  1.454 & -0.602 & ---   & ---\\
+ 1.377 &  0.000 & ---  & ---   &  1.574 &  0.000 & ---   & ---\\
+ 1.272 &  0.527 & ---  & ---   &  1.454 &  0.602 & ---   & ---\\
+ 0.974 &  0.974 & ---  & ---   &  1.113 &  1.113 & ---   & ---\\
+ 0.527 &  1.272 & ---  & ---   &  0.602 &  1.454 & ---   & ---\\
+\hline
+\end{tabular}
+
+
+\begin{tabular}{|l|l||l|l||l|l|}
+\hline
+\multicolumn{6}{|c|}{\textbf{Lead Vertices}}\\
+\hline
+Lead+ X & Y & Lead- X & Y & Lower Z & Upper Z\\
+\hline
+0.689 &  0.089 & -0.689 &  0.089 & 0   & -1.574\\
+0.612 &  0.044 & -0.766 &  0.044 & --- & ---\\
+0.612 & -0.044 & -0.766 & -0.044 & --- & ---\\
+0.689 & -0.088 & -0.689 & -0.088 & --- & ---\\
+0.766 & -0.044 & -0.612 & -0.044 & --- & ---\\
+0.766 &  0.044 & -0.612 &  0.044 & --- & ---\\
+\hline
+\end{tabular}
+
+Remember that when forming facets, the vertices must be enumerated so that they appear
+in a counterclockwise order as viewed from the visible side.  We want to take one facet
+near the negative lead and color it black for reference. The resulting VRML file may
+look like the following; for a little exercise, try specifying the facets yourself.
+Use a VRML viewer like whitedune frequently to ensure that you are placing the facet
+indices in the correct order and that the indices are correct.
+
+\begin{verbatim}
+#VRML V2.0 utf8
+
+# Capacitor Body
+# Vertices are in the order:
+#   lower bevel (0 .. 15)
+#   lower body  (16 .. 31)
+#   upper body  (32 .. 47)
+#   upper bevel (48 .. 63)
+#   stripe (64 .. 67)
+# Facets are in the order:
+#   lower polygon, upper polygon, lower bevel, upper bevel, body, stripe
+DEF capbody Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material DEF cap_blue Material {
+          diffuseColor 0.3 0.3 1
+          emissiveColor 0 0 0
+          specularColor 0.3 0.3 1
+          ambientIntensity 0.7
+          transparency 0
+          shininess 0.3
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+           0.000  1.377 0, -0.527  1.272 0, -0.974  0.974 0, -1.272  0.527 0,
+          -1.377  0.000 0, -1.272 -0.527 0, -0.974 -0.974 0, -0.527 -1.272 0,
+           0.000 -1.377 0,  0.527 -1.272 0,  0.974 -0.974 0,  1.272 -0.527 0,
+           1.377  0.000 0,  1.272  0.527 0,  0.974  0.974 0,  0.527  1.272 0,
+           0.000  1.574 0.197, -0.602  1.454 0.197,
+          -1.113  1.113 0.197, -1.454  0.602 0.197,
+          -1.574  0.000 0.197, -1.454 -0.602 0.197,
+          -1.113 -1.113 0.197, -0.602 -1.454 0.197,
+           0.000 -1.574 0.197,  0.602 -1.454 0.197,
+           1.113 -1.113 0.197,  1.454 -0.602 0.197,
+           1.574  0.000 0.197,  1.454  0.602 0.197,
+           1.113  1.113 0.197,  0.602  1.454 0.197,
+           0.000  1.574 2.559, -0.602  1.454 2.559,
+          -1.113  1.113 2.559, -1.454  0.602 2.559,
+          -1.574  0.000 2.559, -1.454 -0.602 2.559,
+          -1.113 -1.113 2.559, -0.602 -1.454 2.559,
+           0.000 -1.574 2.559,  0.602 -1.454 2.559,
+           1.113 -1.113 2.559,  1.454 -0.602 2.559,
+           1.574  0.000 2.559,  1.454  0.602 2.559,
+           1.113  1.113 2.559,  0.602  1.454 2.559,
+           0.000  1.377 2.756, -0.527  1.272 2.756,
+          -0.974  0.974 2.756, -1.272  0.527 2.756,
+          -1.377  0.000 2.756, -1.272 -0.527 2.756,
+          -0.974 -0.974 2.756, -0.527 -1.272 2.756,
+           0.000 -1.377 2.756,  0.527 -1.272 2.756,
+           0.974 -0.974 2.756,  1.272 -0.527 2.756,
+           1.377  0.000 2.756,  1.272  0.527 2.756,
+           0.974  0.974 2.756,  0.527  1.272 2.756,
+          -1.534 -0.200 0.697, -1.494 -0.400 0.697,
+          -1.494 -0.400 2.059, -1.534 -0.200 2.059 ]
+        }
+        coordIndex [
+          15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,
+          48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,-1,
+          0,1,17,16,-1, 1,2,18,17,-1, 2,3,19,18,-1, 3,4,20,19,-1,
+          4,5,21,20,-1, 5,6,22,21,-1, 6,7,23,22,-1, 7,8,24,23,-1,
+          8,9,25,24,-1, 9,10,26,25,-1, 10,11,27,26,-1, 11,12,28,27,-1,
+          12,13,29,28,-1, 13,14,30,29,-1, 14,15,31,30,-1, 15,0,16,31,-1,
+          32,33,49,48,-1, 33,34,50,49,-1, 34,35,51,50,-1, 35,36,52,51,-1,
+          36,37,53,52,-1, 37,38,54,53,-1, 38,39,55,54,-1, 39,40,56,55,-1,
+          40,41,57,56,-1, 41,42,58,57,-1, 42,43,59,58,-1, 43,44,60,59,-1,
+          44,45,61,60,-1, 45,46,62,61,-1, 46,47,63,62,-1, 47,32,48,63,-1,
+          16,17,33,32,-1, 17,18,34,33,-1, 18,19,35,34,-1, 19,20,36,35,-1,
+          21,22,38,37,-1, 22,23,39,38,-1, 23,24,40,39,-1,
+          24,25,41,40,-1, 25,26,42,41,-1, 26,27,43,42,-1, 27,28,44,43,-1,
+          28,29,45,44,-1, 29,30,46,45,-1, 30,31,47,46,-1, 31,16,32,47,-1,
+          20,21,65,64,-1, 21,37,66,65,-1, 37,36,67,66,-1, 36,20,64,67,-1 ]
+      }
+    }
+  ]
+}
+
+# Stripe on - side
+DEF capbody Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material DEF cap_black Material {
+          diffuseColor 0 0 0
+          emissiveColor 0 0 0
+          specularColor 0 0 0
+          ambientIntensity 0.1
+          transparency 0
+          shininess 0.3
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          -1.534 -0.200 0.697, -1.494 -0.400 0.697,
+          -1.494 -0.400 2.059, -1.534 -0.200 2.059 ]
+        }
+        coordIndex [
+          0,1,2,3,-1 ]
+      }
+    }
+  ]
+}
+
+# Positive lead
+DEF capleadp Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material DEF cap_lead Material {
+          diffuseColor 0.7 0.7 0.7
+          emissiveColor 0 0 0
+          specularColor 0.7 0.7 0.7
+          ambientIntensity 0.8
+          transparency 0
+          shininess 0.6
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+        0.689  0.089 0, 0.612  0.044 0, 0.612 -0.044 0,
+        0.689 -0.088 0, 0.766 -0.044 0, 0.766  0.044 0,
+        0.689  0.089 -1.574, 0.612  0.044 -1.574, 0.612 -0.044 -1.574,
+        0.689 -0.088 -1.574, 0.766 -0.044 -1.574, 0.766  0.044 -1.574 ]
+        }
+        coordIndex [
+          0,1,2,3,4,5,-1, 11,10,9,8,7,6,-1,
+          1,0,6,7,-1, 2,1,7,8,-1, 3,2,8,9,-1,
+          4,3,9,10,-1, 5,4,10,11,-1, 0,5,11,6,-1 ]
+      }
+    }
+  ]
+}
+
+# Negative lead
+DEF capleadm Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material USE cap_lead
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          -0.689  0.089 0, -0.766  0.044 0, -0.766 -0.044 0,
+          -0.689 -0.088 0, -0.612 -0.044 0, -0.612  0.044 0,
+          -0.689  0.089 -1.574, -0.766  0.044 -1.574, -0.766 -0.044 -1.574,
+          -0.689 -0.088 -1.574, -0.612 -0.044 -1.574, -0.612  0.044 -1.574 ]
+        }
+        coordIndex [
+          0,1,2,3,4,5,-1, 11,10,9,8,7,6,-1,
+          1,0,6,7,-1, 2,1,7,8,-1, 3,2,8,9,-1,
+          4,3,9,10,-1, 5,4,10,11,-1, 0,5,11,6,-1 ]
+      }
+    }
+  ]
+}
+\end{verbatim}
+
+
+\section{A Parametric Description of the DIL Package}
+In this section I will describe the process of creating a parametric model to generate
+VRML files for use in KiCad.  I have chosen the DIL package since it provides a simple
+example; every DIL package from a series is the same except for the length of the package
+and the number of pins. The pins are identical except for a translation and rotation
+operation, so to describe an entire family of DIL packages we only need to describe a
+single pin and the package.
+
+ In this example I imagine the pin as consisting of a horizontal, vertical, and a 45 degree
+ portion. The pin is beveled along all edges except for where it attaches to the case.
+ Figure~\ref{fig:dilpin} shows the vertices comprising a single pin, Table~\ref{tab:dilparams}
+ lists the parameters needed to describe a generic DIL package and Table~\ref{tab:pinvertices}
+ shows the equations for each vertex. Additional parameters needed to position the pins
+ correctly are the pin spacing and the number of pins. If we have N pins, $\mathrm{Pin}_1$
+ is located at $X = [(2-N)/4*\mathrm{spacing}]$ and $\mathrm{Pin}_{N/2+1}$ is rotated 180 degrees
+ about the Z axis and located at $X = [(N-2)/4*\mathrm{spacing}]$.
+
+\begin{table}
+\caption{Parameters describing a DIL package.}
+\label{tab:dilparams}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Parameter} & \textbf{Description}\\
+\hline
+D & Case length\\
+E1 & Case width\\
+M & Depth of untapered middle section of case; pins attach here.\\
+A1 & Case base height; distance between the PCB and bottom of the case.\\
+A2 & Case depth\\
+S & Case taper (DILs typically taper from the middle as seen from the side)\\
+NW & Notch width\\
+NL & Notch length\\
+ND & Notch depth\\
+CB & Case bevel\\
+\hline
+%\multicolumn{2}{|c|}{}\\
+\hline
+PB & Pin bevel\\
+B & Pin width through PCB\\
+B1 & Pin width at case\\
+B2 & Length of tapered portion\\
+C1 & Length of top bent portion (where the leg bends from horizontal to vertical)\\
+C2 & Offset of lower bent portion\\
+C  & Pin thickness\\
+E  & Pin row spacing\\
+L  & Pin length (narrow part which goes through PCB)\\
+E2 & Pin-to-pin spacing\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\includegraphics[height=0.8\textheight]{eps/pin.eps}
+\end{center}
+\caption{Vertices describing a beveled DIL pin.}
+\label{fig:dilpin}
+\end{figure}
+
+\begin{longtable}{|l|l|l|l|}
+\caption{Equations for vertices of a generic DIL pin\label{tab:pinvertices}}\\
+\hline
+& \multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Equation}}}\\\cline{2-4}
+\textbf{Vertex} & \raisebox{0pt}[2.5ex][5pt]{\textbf{X}} & \textbf{Y} &
+\textbf{Z}\endhead
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Top}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{0}
+   & $-B1/2$   & $0$                 & $A1+(A2+C)/2$\\
+1  & $-B1/2$   & $(E1-E-C)/2+C1$     & $A1+(A2+C)/2$\\
+2  & $B1/2$    & $(E1-E-C)/2+C1$     & $A1+(A2+C)/2$\\
+3  & $B1/2$    & $0$                 & $A1+(A2+C)/2$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Front}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{4}
+   & $-B1/2$   & $(E1-E-C)/2$        & $A1+(A2+C)/2-C1$\\
+5  & $-B1/2$   & $(E1-E-C)/2$        & $B2$\\
+6  & $-B/2$    & $(E1-E-C)/2$        & $0$\\
+7  & $-B/2$    & $(E1-E-C)/2$        & $PB-L$\\
+8  & $B/2$     & $(E1-E-C)/2$        & $PB-L$\\
+9  & $B/2$     & $(E1-E-C)/2$        & $0$\\
+10 & $B1/2$    & $(E1-E-C)/2$        & $B2$\\
+11 & $B1/2$    & $(E1-E-C)/2$        & $A1+(A2+C)/2-C1$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Lower Top}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{12}
+   & $-B1/2$   & $0$                 & $A1+(A2-C)/2$\\
+13 & $-B1/2$   & $(E1-E+C)/2+C2$     & $A1+(A2-C)/2$\\
+14 & $B1/2$    & $(E1-E+C)/2+C2$     & $A1+(A2-C)/2$\\
+15 & $B1/2$    & $0$                 & $A1+(A2-C)/2$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Rear}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{16}
+   & $-B1/2$   & $(E1-E+C)/2$        & $A1+(A2-C)/2-C2$\\
+17 & $-B1/2$   & $(E1-E+C)/2$        & $B2$\\
+18 & $-B/2$    & $(E1-E+C)/2$        & $0$\\
+19 & $-B/2$    & $(E1-E+C)/2$        & $PB-L$\\
+20 & $B/2$     & $(E1-E+C)/2$        & $PB-L$\\
+21 & $B/2$     & $(E1-E+C)/2$        & $0$\\
+22 & $B1/2$    & $(E1-E+C)/2$        & $B2$\\
+23 & $B1/2$    & $(E1-E+C)/2$        & $A1+(A2-C)/2-C2$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Left Face}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{24}
+   & $-B1/2-PB$ & $0$                & $A1+(A2-C)/2+PB$\\
+25 & $-B1/2-PB$ & $(E1-E+C)/2+C2-PB$ & $A1+(A2-C)/2+PB$\\
+26 & $-B1/2-PB$ & $(E1-E+C)/2-PB$    & $A1+(A2-C)/2+PB-C2$\\
+27 & $-B1/2-PB$ & $(E1-E+C)/2-PB$    & $B2$\\
+28 & $-B1/2-PB$ & $(E1-E+C)/2-PB$    & $0$\\
+29 & $-B1/2-PB$ & $(E1-E+C)/2-PB$    & $PB-L$\\
+30 & $-B1/2-PB$ & $(E1-E-C)/2+PB$    & $PB-L$\\
+31 & $-B1/2-PB$ & $(E1-E-C)/2+PB$    & $0$\\
+32 & $-B1/2-PB$ & $(E1-E-C)/2+PB$    & $A1+(A2-C)/2-C2$\\
+33 & $-B1/2-PB$ & $(E1-E-C)/2+PB$    & $A1+(A2+C)/2-C1-PB$\\
+34 & $-B1/2-PB$ & $(E1-E-C)/2+C1+PB$ & $A1+(A2+C)/2-PB$\\
+35 & $-B1/2-PB$ & $0$                & $A1+(A2+C)/2-PB$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Right Face}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{36}
+   & $B1/2+PB$  & $0$                & $A1+(A2+C)/2-PB$\\
+37 & $B1/2+PB$  & $(E1-E-C)/2+C1+PB$ & $A1+(A2+C)/2-PB$\\
+38 & $B1/2+PB$  & $(E1-E-C)/2+PB$    & $A1+(A2+C)/2-C1-PB$\\
+39 & $B1/2+PB$  & $(E1-E-C)/2+PB$    & $B2$\\
+40 & $B1/2+PB$  & $(E1-E-C)/2+PB$    & $0$\\
+41 & $B1/2+PB$  & $(E1-E-C)/2+PB$    & $PB-L$\\
+42 & $B1/2+PB$  & $(E1-E+C)/2-PB$    & $PB-L$\\
+43 & $B1/2+PB$  & $(E1-E+C)/2-PB$    & $0$\\
+44 & $B1/2+PB$  & $(E1-E+C)/2-PB$    & $B2$\\
+45 & $B1/2+PB$  & $(E1-E+C)/2-PB$    & $A1+(A2-C)/2-C2$\\
+46 & $B1/2+PB$  & $(E1-E+C)/2+PB$    & $A1+(A2-C)/2+PB$\\
+47 & $B1/2+PB$  & $0$                & $A1+(A2-C)/2+PB$\\
+\cline{2-4}
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Bottom}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{48}
+   & $B/2-PB$  & $(E1-E-C)/2+PB$     & $-L$\\
+49 & $-B/2+PB$ & $(E1-E-C)/2+PB$     & $-L$\\
+50 & $-B/2+PB$ & $(E1-E+C)/2-PB$     & $-L$\\
+51 & $B/2-PB$  & $(E1-E+C)/2-PB$     & $-L$\\
+\hline
+\end{longtable}
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[height=0.8\textheight]{eps/case.eps}
+\end{center}
+\caption{Vertices describing a beveled DIL case.}
+\label{fig:dilcase}
+\end{figure}
+
+
+\begin{longtable}{|l|l|l|l|}
+\caption{Equations for vertices of a generic DIL case\label{tab:casevertices}}\\
+\hline
+& \multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Equation}}}\\\cline{2-4}
+\textbf{Vertex} & \raisebox{0pt}[2.5ex][5pt]{\textbf{X}} & \textbf{Y} &
+\textbf{Z}\endhead
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Bottom}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{0}
+   & $-D/2+S+CB$ & $-E1/2+S+CB$        & $A1$\\
+1  & $D/2-S-CB$  & $-E1/2+S+CB$        & $A1$\\
+2  & $D/2-S-CB$  & $E1/2-S-CB$         & $A1$\\
+3  & $-D/2+S+CB$ & $E1/2-S-CB$         & $A1$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Lower Bevel}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{4}
+   & $-D/2+S$    & $-E1/2+S+CB$        & $A1+CB$\\
+5  & $-D/2+S+CB$ & $-E1/2+S$           & $A1+CB$\\
+6  & $D/2-S-CB$  & $-E1/2+S$           & $A1+CB$\\
+7  & $D/2-S$     & $-E1/2+S+CB$        & $A1+CB$\\
+8  & $D/2-S$     & $E1/2-S-CB$         & $A1+CB$\\
+9  & $D/2-S-CB$  & $E1/2-S$            & $A1+CB$\\
+10 & $-D/2+S+CB$ & $E1/2-S$            & $A1+CB$\\
+11 & $-D/2+S$    & $E1/2-S-CB$         & $A1+CB$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Lower Midsection}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{12}
+   & $-D/2$      & $-E1/2+CB$          & $A1+(A2-M)/2$\\
+13 & $-D/2+CB$   & $-E1/2$             & $A1+(A2-M)/2$\\
+14 & $D/2-CB$    & $-E1/2$             & $A1+(A2-M)/2$\\
+15 & $D/2$       & $-E1/2+CB$          & $A1+(A2-M)/2$\\
+16 & $D/2$       & $E1/2-CB$           & $A1+(A2-M)/2$\\
+17 & $D/2-CB$    & $E1/2$              & $A1+(A2-M)/2$\\
+18 & $-D/2+CB$   & $E1/2$              & $A1+(A2-M)/2$\\
+19 & $-D/2$      & $E1/2-CB$           & $A1+(A2-M)/2$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Midsection}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{20}
+   & $-D/2$      & $-E1/2+CB$          & $A1+(A2+M)/2$\\
+21 & $-D/2+CB$   & $-E1/2$             & $A1+(A2+M)/2$\\
+22 & $D/2-CB$    & $-E1/2$             & $A1+(A2+M)/2$\\
+23 & $D/2$       & $-E1/2+CB$          & $A1+(A2+M)/2$\\
+24 & $D/2$       & $E1/2-CB$           & $A1+(A2+M)/2$\\
+25 & $D/2-CB$    & $E1/2$              & $A1+(A2+M)/2$\\
+26 & $-D/2+CB$   & $E1/2$              & $A1+(A2+M)/2$\\
+27 & $-D/2$      & $E1/2-CB$           & $A1+(A2+M)/2$\\
+
+\hline
+\multicolumn{2}{|l|}{Height ($H$)}  & \multicolumn{2}{|l|}{$A1+A2-ND-2*CB$}\\
+\multicolumn{2}{|l|}{Slope ($G$)}   & \multicolumn{2}{|l|}{$2*S/(A2-M-2*BEV)$}\\
+\multicolumn{2}{|l|}{Offset ($O$)}  & \multicolumn{2}{|l|}{$(H-(A1+(A2+M)/2))*G$}\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Lower Notch Bevel}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{28}
+   & $-D/2+O$       & $NW/2+CB$     & $H$\\
+29 & $-D/2+O$       & $-NW/2-CB$    & $H$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Lower Notch}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{30}
+   & $-D/2+O+CB$                      & $NW/2$                & $H+CB$\\
+31 & $-D/2+NL-NW/2$                   & $NW/2$                & $H+CB$\\
+32 & $-D/2+NL-NW/2*(1-\cos(3/8*\pi))$ & $NW/2*\sin(3/8*\pi)$  & $H+CB$\\
+33 & $-D/2+NL-NW/2*(1-\cos(\pi/4))$   & $NW/2*\sin(\pi/4)$    & $H+CB$\\
+34 & $-D/2+NL-NW/2*(1-\cos(\pi/8))$   & $NW/2*\sin(\pi/8)$    & $H+CB$\\
+35 & $-D/2+NL-NW/2*(1-\cos(\pi/8))$   & $-NW/2*\sin(\pi/8)$   & $H+CB$\\
+36 & $-D/2+NL-NW/2*(1-\cos(\pi/4))$   & $-NW/2*\sin(\pi/4)$   & $H+CB$\\
+37 & $-D/2+NL-NW/2*(1-\cos(3/8*\pi))$ & $-NW/2*\sin(3/8*\pi)$ & $H+CB$\\
+38 & $-D/2+NL-NW/2$                   & $-NW/2$               & $H+CB$\\
+39 & $-D/2+O+CB$                      & $-NW/2$               & $H+CB$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Notch Bevel}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{40}
+   & $-D/2 + S$                       & $NW/2 + CB$           & $A1+A2-CB$\\
+41 & $-D/2 + S + CB$                  & $NW/2$                & $A1+A2-CB$\\
+42 & $-D/2+NL-NW/2$                   & $NW/2$                & $A1+A2-CB$\\
+43 & $-D/2+NL-NW/2*(1-\cos(3/8*\pi))$ & $NW/2*\sin(3/8*\pi)$  & $A1+A2-CB$\\
+44 & $-D/2+NL-NW/2*(1-\cos(\pi/4))$   & $NW/2*\sin(\pi/4)$    & $A1+A2-CB$\\
+45 & $-D/2+NL-NW/2*(1-\cos(\pi/8))$   & $NW/2*\sin(\pi/8)$    & $A1+A2-CB$\\
+46 & $-D/2+NL-NW/2*(1-\cos(\pi/8))$   & $-NW/2*\sin(\pi/8)$   & $A1+A2-CB$\\
+47 & $-D/2+NL-NW/2*(1-\cos(\pi/4))$   & $-NW/2*\sin(\pi/4)$   & $A1+A2-CB$\\
+48 & $-D/2+NL-NW/2*(1-\cos(3/8*\pi))$ & $-NW/2*\sin(3/8*\pi)$ & $A1+A2-CB$\\
+49 & $-D/2+NL-NW/2$                   & $-NW/2$               & $A1+A2-CB$\\
+50 & $-D/2 + S + CB$                  & $-NW/2$               & $A1+A2-CB$\\
+51 & $-D/2 + S$                       & $-NW/2 - CB$          & $A1+A2-CB$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Case Bevel}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{52}
+   & $-D/2+S$    & $-E1/2+S+CB$ & $A1+A2-CB$\\
+53 & $-D/2+S+CB$ & $-E1/2+S$    & $A1+A2-CB$\\
+54 & $D/2-S-CB$  & $-E1/2+S$    & $A1+A2-CB$\\
+55 & $D/2-S$     & $-E1/2+S+CB$ & $A1+A2-CB$\\
+56 & $D/2-S$     & $E1/2-S-CB$  & $A1+A2-CB$\\
+57 & $D/2-S-CB$  & $E1/2-S$     & $A1+A2-CB$\\
+58 & $-D/2+S+CB$ & $E1/2-S$     & $A1+A2-CB$\\
+59 & $-D/2+S$    & $E1/2-S-CB$  & $A1+A2-CB$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Case Notch}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{60}
+   & $-D/2 + S + CB$                             & $(NW/2 + CB)$               & $A1+A2$\\
+61 & $-D/2 + NL - NW/2$                          & $(NW/2 + CB)$               & $A1+A2$\\
+62 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(3/8*\pi))$ & $(NW/2 + CB)*\sin(3/8*PI)$  & $A1+A2$\\
+63 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(\pi/4))$   & $(NW/2 + CB)*\sin(PI/4)$    & $A1+A2$\\
+64 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(\pi/8))$   & $(NW/2 + CB)*\sin(PI/8)$    & $A1+A2$\\
+65 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(\pi/8))$   & $-(NW/2 + CB)*\sin(PI/8)$   & $A1+A2$\\
+66 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(\pi/4))$   & $-(NW/2 + CB)*\sin(PI/4)$   & $A1+A2$\\
+67 & $-D/2 + NL - (NW/2 + CB)*(1-\cos(3/8*\pi))$ & $-(NW/2 + CB)*\sin(3/8*PI)$ & $A1+A2$\\
+68 & $-D/2 + NL - NW/2$                          & $-(NW/2 + CB)$              & $A1+A2$\\
+69 & $-D/2 + S + CB$                             & $-(NW/2 + CB)$              & $A1+A2$\\
+\hline
+&\multicolumn{3}{|c|}{\raisebox{0pt}[2.5ex][5pt]{\textbf{Upper Case}}}\\\cline{2-4}
+\raisebox{0pt}[2.5ex][0pt]{70}
+   & $-D/2 + S + CB$  & $-E1/2 + S + CB$ & $A1+A2$\\
+71 & $-D/2 + NL + NW$ & $-E1/2 + S + CB$ & $A1+A2$\\
+72 & $D/2 - S - CB$   & $-E1/2 + S + CB$ & $A1+A2$\\
+73 & $D/2 - S - CB$   & $E1/2 - S - CB$  & $A1+A2$\\
+74 & $-D/2 + NL + NW$ & $E1/2 - S - CB$  & $A1+A2$\\
+75 & $-D/2 + S + CB$  & $E1/2 - S - CB$  & $A1+A2$\\
+\hline
+\end{longtable}
+
+\end{document}

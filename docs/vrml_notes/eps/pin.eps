@@ -1,0 +1,350 @@
+%!PS-Adobe-2.0
+%%Author: Cirilo Bernardo
+%%BoundingBox: 0 0 550 840
+%%EndComments
+
+%
+% dimensions for the case
+%
+% base height
+/a1 0.015 def
+% case depth
+/a2 0.13 def
+% thru width
+/b0 0.018 def
+% pin breadth
+/b1 0.06 def
+% thru length
+/l0 0.15 def
+% taper height
+/b2 0.015 def
+% bevel
+/bev 0.002 def
+% pin material thickness
+/c0 0.01 def
+% dogear
+/c1 0.01 def
+% dogear offset
+/c2 0.0025 def
+% package width
+/e1 0.26 def
+% pin row spacing
+/e0 0.3 def
+
+% set the scale for inches*20
+/mag 72 16 mul def
+mag dup scale
+/pt {mag div} def
+
+
+0.5 mag div setlinewidth
+/Times-Roman findfont
+8 mag div  scalefont setfont
+
+% define the center for the top front face of the pin
+% the page center is ~(0.127,0.193)
+/xwidth 550 mag div def
+/ywidth 840 mag div def
+/xmid xwidth 2 div def
+/ymid ywidth 2 div 0.06 add def
+/bheight 0.08 def
+
+% the levels of divisions
+% q0 = approx. middle of the page; used for top face
+/q0 0 def
+% q1 = below p0, for front face and bulk of side faces
+/q1 -0.045 def
+% q2 = above q0, for top rear face
+/q2 q0 0.02 add def
+% q3 = above q2, for rear face
+/q3 q0 0.065 add def
+% q4 = between q0 and q1, for top portion of side faces
+% (E1 - E + C)/2.0 + C1
+% q4 q1 e1 e0 sub c0 add 2 div c1 add sub def
+/q4 q1 .02 add def
+% q5 = position of bottom points
+/q5 bheight .01 sub def
+% p0 = left hand side, left face
+/p0 0.02 def
+% p1 = right hand side, right face
+/p1 xwidth p0 sub def
+
+
+% circle with numbers
+/circ {
+  /val exch def
+  gsave
+  translate
+% determine the bounding box
+  newpath
+  0 0 moveto
+  val true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+  newpath
+    moveto
+    val show
+  newpath
+    0 0 0.006 0 360 arc
+    stroke
+  grestore
+} def
+
+% dividers
+% [] 0 setdash = solid line
+% [ a b ... ] 0 setdash = alternating pattern of ink and space
+gsave
+% above the top face
+newpath
+0 ymid 0.01 add moveto
+xwidth 0 rlineto
+stroke
+% below the top face
+newpath
+xmid ymid 0.035 sub moveto
+-.05 0 rmoveto
+.1 0 rlineto
+[5 pt 3 pt] 0 setdash
+stroke
+% above the top rear face
+newpath
+xmid ymid 0.055 add moveto
+-.05 0 rmoveto
+.1 0 rlineto
+[5 pt 3 pt] 0 setdash
+stroke
+% below the front face
+newpath
+xmid bheight moveto
+-.05 0 rmoveto
+.1 0 rlineto
+[5 pt 3 pt] 0 setdash
+stroke
+% left hand divider
+newpath
+xmid -.06 add 0 moveto
+0 ywidth rlineto
+stroke
+% right hand divider
+newpath
+xmid .06 add 0 moveto
+0 ywidth rlineto
+stroke
+grestore
+
+% colors
+/setFrontColor { 0 setgray } def
+/setSideColor { 1 0 1 setrgbcolor } def
+/setRearColor { 0 0 1 setrgbcolor } def
+/setBottomColor { 0 0.6 0.6 setrgbcolor } def
+
+% labels
+/label {
+  /text exch def
+  newpath
+  0 0 moveto text true charpath
+  flattenpath
+  pathbbox
+    /ury exch def /urx exch def
+    /lly exch def
+    urx exch sub 2 div neg
+    ury lly sub 2 div neg
+    moveto text show
+} def
+gsave
+/Times-Roman findfont
+11 mag div  scalefont setfont
+gsave
+xmid ymid q0 add translate
+0 0 moveto
+setFrontColor
+(Upper Top) label
+grestore
+gsave
+xmid ymid q1 add translate
+0 0 moveto
+setFrontColor
+(Front) label
+grestore
+gsave
+xmid ymid q2 add translate
+0 0 moveto
+setRearColor
+(Lower Top) label
+grestore
+gsave
+xmid ymid q3 add translate
+0 0 moveto
+setRearColor
+(Rear) label
+grestore
+gsave
+p0 0.035 add ymid q0 add translate
+0 0 moveto
+setSideColor
+(Left Face) label
+grestore
+gsave
+p1 0.035 sub ymid q0 add translate
+0 0 moveto
+setSideColor
+(Right Face) label
+grestore
+gsave
+setBottomColor
+xmid q5 -.04 add translate
+(Bottom) label
+grestore
+grestore
+
+
+% top face
+gsave
+setFrontColor
+xmid ymid q0 add translate
+% x = B1/2
+/x0 b1 2 div def
+x0 neg 0 (0) circ
+x0 0 (3) circ
+% y = (E1 - E - C)/2.0 + C1
+/y0 e1 e0 c0 add sub 2 div c1 add def
+x0 neg y0 (1) circ
+x0 y0 (2) circ
+grestore
+
+% front face
+gsave
+setFrontColor
+xmid ymid q1 add translate
+% x = B1/2
+/x0 b1 2 div def
+% z0 = A1 + (A2 + C)/2.0 - C1
+/z0 a2 c0 2 div add a1 add c1 sub def
+x0 neg 0 (4) circ
+x0 0 (11) circ
+% z = B2
+x0 neg b2 z0 sub (5) circ
+x0 b2 z0 sub (10) circ
+% x = b/2, z = 0
+/x1 b0 2 div def
+x1 neg z0 neg (6) circ
+x1 z0 neg (9) circ
+% z = -L + BEV
+/z1 bev l0 sub def
+x1 neg z1 z0 sub (7) circ
+x1 z1 z0 sub (8) circ
+grestore
+
+% top rear face
+gsave
+setRearColor
+xmid ymid q2 add translate
+% x = B1/2
+/x0 b1 2 div def
+x0 neg 0 (12) circ
+x0 0 (15) circ
+% y = (E1 - E + C)/2.0 + C2
+/y0 e1 e0 sub c0 add 2 div c2 add def
+x0 neg y0 neg (13) circ
+x0 y0 neg (14) circ
+grestore
+
+% rear face
+gsave
+setRearColor
+xmid ymid q3 add translate
+% x = B1/2
+/x0 b1 2 div def
+% z = A1 + (A2 - C)/2.0
+/z0 a2 c0 sub 2 div a1 add def
+x0 neg 0 (16) circ
+x0 0 (23) circ
+% z = B2
+x0 neg b2 z0 sub neg (17) circ
+x0 b2 z0 sub neg (22) circ
+% z = 0, x = b/2
+/x1 b0 2 div def
+x1 neg z0 (18) circ
+x1 z0 (21) circ
+% z = -L
+/z1 l0 z0 add def
+x1 neg z1 (19) circ
+x1 z1 (20) circ
+grestore
+
+% left face (Y, Z)
+gsave
+setSideColor
+% points 35, 36 are 0displaced upward by .02 for clarity
+% horizontal dimensions x4 for clarity
+p0 ymid q1 add translate
+% z[25] = A1 + (A2 + C)/2.0 - BEV
+% y = 0
+/off0 .03 def
+/off1 .005 def
+0 off0 (35) circ
+0 off1 (24) circ
+% y = (E1 - E + C)/2.0 + C2 - BEV
+/y0 e1 e0 sub c0 add 2 div c2 sub neg 4 mul def
+y0 off0 (34) circ
+/y1 y0 bev 10 mul sub def
+y1 off1 (25) circ
+% [33] z = 
+% [33] y = (E1 - E + C)/2.0 - bev -c1 
+/y3 y0 bev 25 mul add def
+y3 off0 off1 add 2 div (33) circ
+% [26] z = A1 + (A2 - C)/2.0 -C2 +BEV = z[25] -C -C2
+/y2 y0 bev 10 mul add def
+/z1 c0 c2 add neg def
+y2 z1 off1 add (26) circ
+/z0 a2 c0 2 div add a1 add c1 sub def
+y2 b2 z0 sub (27) circ
+y3 b2 z0 sub (32) circ
+y2 z0 neg (28) circ
+y3 z0 neg (31) circ
+/z1 bev l0 sub def
+y2 z1 z0 sub (29) circ
+y3 z1 z0 sub (30) circ
+grestore
+
+% right face
+gsave
+setSideColor
+p1 ymid q1 add translate
+/y0 e1 e0 sub c0 add 2 div c2 sub 4 mul def
+/y1 y0 bev 10 mul add def
+/y2 y0 bev 10 mul sub def
+/y3 y0 bev 25 mul sub def
+/off0 .03 def
+/off1 .005 def
+0 off0 (36) circ
+0 off1 (47) circ
+y0 off0 (37) circ
+y1 off1 (46) circ
+y3 off0 off1 add 2 div (38) circ
+/z1 c0 c2 add neg def
+y2 z1 off1 add (45) circ
+/z0 a2 c0 2 div add a1 add c1 sub def
+y2 b2 z0 sub (44) circ
+y3 b2 z0 sub (39) circ
+y2 z0 neg (43) circ
+y3 z0 neg (40) circ
+/z1 bev l0 sub def
+y2 z1 z0 sub (42) circ
+y3 z1 z0 sub (41) circ
+grestore
+
+% bottom face
+gsave
+setBottomColor
+xmid q5 translate
+/x0 b0 2 div def
+x0 0 (48) circ
+x0 neg 0 (49) circ
+x0 neg -.02 (50) circ
+x0 -.02 (51) circ
+grestore

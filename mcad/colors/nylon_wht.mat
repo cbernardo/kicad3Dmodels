@@ -1,0 +1,11 @@
+# Translucent white nylon
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: nylon_wht
+diffuse: 0.92 0.92 0.92
+emissive: 0 0 0
+specular: 0.84 0.84 0.84
+ambient: 0.9
+transparency: 0.1
+shininess: 0.05
