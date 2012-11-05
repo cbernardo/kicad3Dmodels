@@ -61,6 +61,7 @@ int Material::Load(const std::string &name)
 {
     KeyValParser kp;
     int nl = 0;     // number of required keys parsed
+    Material::name.clear();
 
     if (kp.LoadKeys(name) <= 0) return -1;
 
@@ -77,6 +78,7 @@ int Material::Load(const std::string &name)
     }
     else
     {
+        ERRBLURB;
         cerr << "No material name found in file '" << name << "'\n";
         return -1;
     }
@@ -88,6 +90,8 @@ int Material::Load(const std::string &name)
     {
         if (parseRGB(diffuse, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse diffuse values in string '" << ki->second << "'\n";
         }
         else
@@ -97,7 +101,9 @@ int Material::Load(const std::string &name)
     }
     else
     {
-        cerr << "\tno diffuse coefficients specified\n";
+        ERRBLURB;
+        cerr << "file: " << name << "\n";
+        cerr << "\t[info] no diffuse coefficients specified\n";
     }
 
     // emissivity (optional)
@@ -106,6 +112,8 @@ int Material::Load(const std::string &name)
     {
         if (parseRGB(emissive, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse emissive values in string '" << ki->second << "'\n";
         }
     }
@@ -116,6 +124,8 @@ int Material::Load(const std::string &name)
     {
         if (parseRGB(specular, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse specular values in string '" << ki->second << "'\n";
         }
         else
@@ -125,11 +135,15 @@ int Material::Load(const std::string &name)
     }
     else
     {
-        cerr << "\tno specular coefficients specified\n";
+        ERRBLURB;
+        cerr << "file: " << name << "\n";
+        cerr << "\t[info] no specular coefficients specified\n";
     }
     if (nl < 1)
     {
-        cerr << "\t**WARNING** neither diffuse nor specular reflection were specified\n";
+        ERRBLURB;
+        cerr << "file: " << name << "\n";
+        cerr << "\t[warn] neither diffuse nor specular reflection were specified\n";
     }
 
     // ambient (optional)
@@ -138,6 +152,8 @@ int Material::Load(const std::string &name)
     {
         if (parseFloat(ambient, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse ambient intensity value in string '" << ki->second << "'\n";
         }
     }
@@ -148,6 +164,8 @@ int Material::Load(const std::string &name)
     {
         if (parseFloat(transparency, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse transparency value in string '" << ki->second << "'\n";
         }
     }
@@ -158,10 +176,13 @@ int Material::Load(const std::string &name)
     {
         if (parseFloat(shininess, ki->second))
         {
+            ERRBLURB;
+            cerr << "file: " << name << "\n";
             cerr << "\tfailed to parse shininess value in string '" << ki->second << "'\n";
         }
     }
 
+    Material::name = name;
     return 0;
 }
 
@@ -176,6 +197,8 @@ int Material::parseRGB(float rgb[3], const std::string val)
     istr >> r >> g >> b;
     if ((r < 0.0)||(r > 1.0)||(g < 0.0)||(g > 1.0)||(b < 0.0)||(b > 1.0))
     {
+        ERRBLURB;
+        cerr << "file: " << name << "\n";
         cerr << "\tinvalid RGB values (range is 0 .. 1); see message below\n";
         return -1;
     }
@@ -194,6 +217,8 @@ int Material::parseFloat(float &param, const std::string val)
     istr >> v;
     if ((v < 0.0)||(v > 1.0))
     {
+        ERRBLURB;
+        cerr << "file: " << name << "\n";
         cerr << "\tinvalid coefficient (range is 0 .. 1); see message below\n";
         return -1;
     }
@@ -238,6 +263,7 @@ int Material::SetDiffuse(const float rgb[3])
 {
     if (validateRGB(rgb, diffuse))
     {
+        ERRBLURB;
         cerr << "Error setting diffuse values; see message above\n";
         return -1;
     }
@@ -258,6 +284,7 @@ int Material::SetEmissivity(const float rgb[3])
 {
     if (validateRGB(rgb, emissive))
     {
+        ERRBLURB;
         cerr << "Error setting emissivity values; see message above\n";
         return -1;
     }
@@ -278,6 +305,7 @@ int Material::SetSpecular(const float rgb[3])
 {
     if (validateRGB(rgb, specular))
     {
+        ERRBLURB;
         cerr << "Error setting specular values; see message above\n";
         return -1;
     }

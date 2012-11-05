@@ -180,10 +180,10 @@ int makeHdr(int np)
     t0.setScale(scale);
 
     // Add the shoulders
-    t0.setTranslation(0, 1.25*scale, 0);
+    t0.setTranslation(0, 1.25, 0);
     acc += bump.Build(t0, bcol, false, output, 2);
     t0.setRotation(M_PI, 0, 0, 1);
-    t0.setTranslation(0, -1.25*scale, 0);
+    t0.setTranslation(0, -1.25, 0);
     acc += bump.Build(t0, bcol, true, output, 2);
 
     // Add the casing and shroud
@@ -202,23 +202,23 @@ int makeHdr(int np)
         acc += bh[0].Build(false, t0, bcol, true, output, 2);
         break;
     case 2:
-        t0.setTranslation((dx - 0.0625)*scale, 0, 0);
+        t0.setTranslation((dx - 0.0625), 0, 0);
         acc += bh[0].Build(false, t0, bcol, true, output, 2);
         acc += th[0].Build(true, t0, bcol, true, output, 2);
-        t0.setTranslation((-dx + 0.0625)*scale, 0, 0);
+        t0.setTranslation((-dx + 0.0625), 0, 0);
         acc += bh[2].Build(false, t0, bcol, true, output, 2);
         acc += th[2].Build(true, t0, bcol, true, output, 2);
         break;
     default:
-        t0.setTranslation((dx - 0.0625)*scale, 0, 0);
+        t0.setTranslation((dx - 0.0625), 0, 0);
         acc += bh[0].Build(false, t0, bcol, true, output, 2);
         acc += th[0].Build(true, t0, bcol, true, output, 2);
-        t0.setTranslation((-dx + 0.0625)*scale, 0, 0);
+        t0.setTranslation((-dx + 0.0625), 0, 0);
         acc += bh[2].Build(false, t0, bcol, true, output, 2);
         acc += th[2].Build(true, t0, bcol, true, output, 2);
         for (i = 1; i < np -1; ++i)
         {
-            t0.setTranslation((dx + 2.54*i)*scale, 0, 0);
+            t0.setTranslation((dx + 2.54*i), 0, 0);
             acc += bh[1].Build(false, t0, bcol, true, output, 2);
             acc += th[1].Build(true, t0, bcol, true, output, 2);
         }
@@ -229,7 +229,7 @@ int makeHdr(int np)
     bool reuse = false;
     for (i = 0; i < np; ++i)
     {
-        t0.setTranslation((dx + 2.54*i)*scale, 0, 0);
+        t0.setTranslation((dx + 2.54*i), 0, 0);
         acc += pin.Build(true, false, t0, pcol, reuse, output, 2);
         reuse = true;
         acc += fun.Build(true, t0, bcol, true, pcol, true, output, 2);

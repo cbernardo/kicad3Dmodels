@@ -640,8 +640,8 @@ void Transform::transform(double *x, double *y, double *z, int np)
     for (i = 0; i < np; ++i)
     {
         r.rotate(*X, *Y, *Z);
-        s.scale(*X, *Y, *Z);
         t.translate(*X, *Y, *Z);
+        s.scale(*X, *Y, *Z);
         ++X;
         ++Y;
         ++Z;

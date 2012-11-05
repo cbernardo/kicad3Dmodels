@@ -32,15 +32,15 @@ int VRMLMat::WriteMaterial(std::ofstream &file, int tabs)
     string fmt(4*tabs, ' ');
 
     file << fmt << "material DEF " << material << " Material {\n";
-    file << fmt << "    diffuseColor " << setprecision(2) << diffuse[0] <<
+    file << fmt << "    diffuseColor " << setprecision(5) << diffuse[0] <<
             " " << diffuse[1] << " " << diffuse[2] << "\n";
-    file << fmt << "    emissiveColor " << setprecision(2) << emissive[0] <<
+    file << fmt << "    emissiveColor " << setprecision(5) << emissive[0] <<
             " " << emissive[1] << " " << emissive[2] << "\n";
-    file << fmt << "    specularColor " << setprecision(2) << specular[0] <<
+    file << fmt << "    specularColor " << setprecision(5) << specular[0] <<
             " " << specular[1] << " " << specular[2] << "\n";
-    file << fmt << "    ambientIntensity " << setprecision(2) << ambient << "\n";
-    file << fmt << "    transparency " << setprecision(2) << transparency << "\n";
-    file << fmt << "    shininess " << setprecision(2) << shininess << "\n";
+    file << fmt << "    ambientIntensity " << setprecision(5) << ambient << "\n";
+    file << fmt << "    transparency " << setprecision(5) << transparency << "\n";
+    file << fmt << "    shininess " << setprecision(5) << shininess << "\n";
     file << fmt << "}\n";
     return file.good() ? 0 : -1;
 }

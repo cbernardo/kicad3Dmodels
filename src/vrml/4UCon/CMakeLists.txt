@@ -3,7 +3,7 @@
 # Parametric model for 4UCon SIL header packages, Drawing 19950
 #
 
-include_directories(${K3D_SOURCE_DIR}/src/common ${K3D_SOURCE_DIR}/src/mat
+include_directories(${K3D_SOURCE_DIR}/src/common 
   ${K3D_SOURCE_DIR}/src/vrml/vcom)
 
 link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/mat

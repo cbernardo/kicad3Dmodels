@@ -18,3 +18,6 @@ add_subdirectory (4UCon)
 # PCC-SMP/OST Thermocouple connectors
 add_subdirectory (pcc)
 
+# VRML stitching and assembly tools
+add_subdirectory (stitch)
+

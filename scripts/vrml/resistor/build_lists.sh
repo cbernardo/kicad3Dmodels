@@ -11,5 +11,5 @@ mkdir -p out_lists
 ../../bin/makeEnnn -p MFR -l 0 -u 7 -t G -e 96  > out_lists/Generic_E48_2.list
 
 # Generic CCR, 5%
-../../bin/makeEnnn -p CCR -l 0 -u 9 -t J -e 48  > out_lists/Generic_E24_5.list
+../../bin/makeEnnn -p CCR -l 0 -u 9 -t J -e 24  > out_lists/Generic_E24_5.list
 

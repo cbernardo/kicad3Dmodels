@@ -52,6 +52,7 @@ private:
     int parseRGB(float rgb[3], const std::string val);
     int parseFloat(float &param, const std::string val);
     int validateRGB(const float rgb[3], float target[3]);
+    std::string name;
 
 protected:
     std::string material;   ///< user given material name

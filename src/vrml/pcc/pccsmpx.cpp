@@ -208,7 +208,7 @@ int main()
     shroud[0].Build(false, t0, bcolor, false, bcolor, false, out, 2);
     shroud[1].Build(false, t0, bcolor, false, bcolor, false, out, 2);
     shroud[2].Build(false, t0, bcolor, false, bcolor, false, out, 2);
-    // female pins and their chrouds
+    // female pins and their shrouds
     fn[0].Build(true, t0, pcolor, false, pcolor, false, out, 2);
     fn[1].Build(true, t0, pcolor, false, pcolor, false, out, 2);
     fn[2].Build(true, t0, bcolor, false, bcolor, false, out, 2);
@@ -217,25 +217,25 @@ int main()
     hole[0].Build(true, t0, bcolor, false, out, 2);
     hole[1].Build(true, t0, bcolor, false, out, 2);
     // Thru pins
-    t0.setTranslation(-13.7*0.5*s, 0, 0);
+    t0.setTranslation(-13.7*0.5, 0, 0);
     thru[0].Build(true, true, t0, pcolor, false, out, 2);
     thru[1].Build(true, true, t0, pcolor, false, out, 2);
     thru[2].Build(true, true, t0, pcolor, false, out, 2);
     t0.setTranslation((13.7*0.5 - 6.8)*s, 0, 0);
     thru[2].Build(true, true, t0, pcolor, false, out, 2);
     // band
-    t0.setTranslation(-7.85*s, -13.5*s, 0);
+    t0.setTranslation(-7.85, -13.5, 0);
     band.Build(true, false, t0, pcolor, false, out, 2);
     t0.setTranslation(0, 0, 0);
     // plastic feedthroughs
     feed[0].Build(true, false, t0, bcolor, false, out, 2);
     feed[1].Build(true, false, t0, bcolor, false, out, 2);
     // Create the mirrored parts
-    t0.setTranslation(13.7*0.5*s, 0, 0);
+    t0.setTranslation(13.7*0.5, 0, 0);
     t0.setRotation(M_PI, 0, 0, 1);
     thru[0].Build(true, true, t0, pcolor, false, out, 2);
     thru[1].Build(true, true, t0, pcolor, false, out, 2);
-    t0.setTranslation(7.85*s, -13.5*s, 0);
+    t0.setTranslation(7.85, -13.5, 0);
     band.Build(true, false, t0, pcolor, false, out, 2);
 
     CloseXForm(out, 1);

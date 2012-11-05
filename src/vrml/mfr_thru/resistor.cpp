@@ -147,7 +147,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
     Transform t0;
     t0.setScale(params.scale);
     // keep in mind that the translation is the last transform and is unaffected by scale
-    t0.setTranslation(params.shift*params.scale, 0, 0);
+    t0.setTranslation(params.shift, 0, 0);
     lvert[0].Paint(false, t0, params.colors[13], false, fp, 2);
     lvert[0].Stitch(lvert[1], true, t0, params.colors[13], true, fp, 2);
     // stitch the bend
@@ -166,7 +166,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
 
     // repeat the paint and stitch operations but transform the positions
     t0.setRotation(M_PI, 0, 0, 1);
-    t0.setTranslation((params.p + params.shift)*params.scale, 0, 0);
+    t0.setTranslation(params.p + params.shift, 0, 0);
     // vertical part
     lvert[0].Paint(false, t0, params.colors[13], true, fp, 2);
     lvert[0].Stitch(lvert[1], true, t0, params.colors[13], true, fp, 2);
@@ -257,7 +257,7 @@ int Resistor::makeVtLead(std::ofstream &fp)
     lp.d = params.d;
     lead[1].Calc(lp, t0);
 
-    t0.setTranslation(params.scale*params.shift, 0, 0);
+    t0.setTranslation(params.shift, 0, 0);
     t0.setScale(params.scale);
 
     int acc = 0;
@@ -483,13 +483,12 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     // the translation depends on orientation
     if (params.horiz)
     {
-        tx.setTranslation(((params.p - params.L)/2.0 + params.shift)*params.scale,
-                0, (params.D + params.d)/2.0*params.scale);
+        tx.setTranslation((params.p - params.L)/2.0 + params.shift,
+                0, (params.D + params.d)/2.0);
     }
     else
     {
-        tx.setTranslation( params.shift*params.scale,
-                0, 2.0*params.d*params.scale);
+        tx.setTranslation( params.shift, 0, 2.0*params.d);
     }
     body[0].Paint(false, tx, params.colors[12], false, fp, 2);
     for (i = 0; i < nend -1; ++i)

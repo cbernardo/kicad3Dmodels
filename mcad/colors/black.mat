@@ -1,11 +1,13 @@
-# Black plastic
+# Black plastic (glossy)
 # Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
 # License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+#
+# VRML color scheme contributed by Sugeng
 
 name: black
-diffuse: 0.02 0.02 0.02
-emissive: 0 0 0
-specular: 0.05 0.05 0.05
-ambient: 0.5
+diffuse: 0.0676 0.0676 0.0676
+emissive: 0.001 0.001 0.001
+specular: 1.0 1.0 1.0
+ambient: 1.0
 transparency: 0
-shininess: 0.1
+shininess: 1.0
