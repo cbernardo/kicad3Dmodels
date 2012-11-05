@@ -837,7 +837,8 @@ int parsePart(std::ofstream &ofile, INFO &glob,
                 lc = ' ';
                 continue;
             }
-            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-'))
+            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-')
+                    && (oc != 'e') && (oc != 'E'))
             {
                 ERRBLURB;
                 cerr << "problems parsing triplet0 for transformation at line " << part.ln << "\n";
@@ -877,7 +878,8 @@ int parsePart(std::ofstream &ofile, INFO &glob,
                 lc = ' ';
                 continue;
             }
-            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-'))
+            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-')
+                    && (oc != 'e') && (oc != 'E'))
             {
                 ERRBLURB;
                 cerr << "problems parsing triplet1 for transformation at line " << part.ln << "\n";
@@ -904,7 +906,8 @@ int parsePart(std::ofstream &ofile, INFO &glob,
             break;
         case 6:
             /* 6: building up triplet2 */
-            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-'))
+            if ((!isdigit(oc)) && (oc != '.') && (oc != '+') && (oc != '-')
+                    && (oc != 'e') && (oc != 'E'))
             {
                 istringstream os;
                 os.str(out);
@@ -933,6 +936,7 @@ int parsePart(std::ofstream &ofile, INFO &glob,
                     {
                         while (start != end) out += *start++;
                         ofile << out << "\n";
+                        fs.ofs = 0;
                         if (!ofile.good())
                         {
                             ERRBLURB;
