@@ -34,20 +34,48 @@
 class Transform;
 class VRMLMat;
 
+/**
+ * This class represents the ridge found on the
+ * bottom of some components such as SIL headers.
+ */
 class Shoulder
 {
 private:
-    bool valid;
-    bool square;
-    double p0[3][7], p1[3][7];  // the 2 polygons defining the shoulder
-    int np; // number of points defining the shoulder
+    bool valid;     ///< TRUE if the class holds a valid set of parameters
+    double p0[3][7], p1[3][7];  ///< 2 polygons defining the shoulder
+    int np; ///< number of points defining the shoulder
 
 public:
     Shoulder();
     virtual ~Shoulder();
 
+    /**
+     * Calculate the outline of the shoulder.
+     *
+     * @param l [in] length of top part
+     * @param h [in] height of the shoulder
+     * @param w [in] depth of the shoulder
+     * @param t [in] taper angle (radians) of the ends of the shoulder
+     * @param r [in] radius of the lower inner edge of the shoulder
+     * @param tx [in] local transformation to apply to results
+     * @return 0 for success, -1 for failure
+     */
     int Calc(double l, double h, double w, double t, double r, Transform &tx);
 
+    /**
+     * \brief Write out shoulder data
+     *
+     * Write out multiple VRML2.0 Shape blocks to define
+     * the shoulder. The user must have made a previous
+     * call to SetupXForm to create the encompassing Transform block.
+     *
+     * @param t     [in] transform to apply to the output coordinates
+     * @param color [in] VRMLMat material appearance specification
+     * @param reuse [in] TRUE to reuse a previously written material name
+     * @param fp    [in] open output file
+     * @param tabs  [in] indent level for formatting
+     * @return 0 for success, -1 for failure
+     */
     int Build(Transform &t, VRMLMat &color, bool reuse,
             std::ofstream &fp, int tabs = 0);
 };

@@ -18,27 +18,39 @@
  *
  */
 
-/*
- *  This program takes a list of VRML parts and transforms and produces
- *  an assembly.
+/**
+ *  \brief This program takes a list of VRML parts and transforms and produces
+ *  an assembly compatible with the KiCAD 3D Viewer.
+ *
+ *  Usage: vrmlstitch <input_file>
  *
  *  Input format:
  *  #           =   comment
+ *  file:       =   output basename specification
+ *  grot:       =   global rotation parameters N X Y Z; N = coefficient to PI
+ *                  for example 0.5, 0, 0, 1 is a 90-degree rotation about the Z axis
+ *  gtr:        =   global translation parameters X Y Z
+ *  gsc:        =   global scaling parameters X Y Z
  *  .begin      =   start of a part information block
  *  name:       =   path to VRML file
- *  r:          =   rotation matrix as N X Y Z where N is a coefficient for PI;
- *                  for example 0.5, 0, 0, 1 is a 90-degree rotation about the Z axis
- *  s:          =   X Y Z scale to apply to model
+ *  r:          =   rotation matrix N X Y Z to apply to model
  *  t:          =   X Y Z translation to apply to model
+ *  s:          =   X Y Z scale to apply to model
  *  .end        =   end of a part information block
  *
+ *  The input file may contain multiple .begin .. .end blocks, 1 for each
+ *  component in the assembly.
+ */
+
+/*
  *  Note: The rotations are about an axis which passes through (0,0,0) by default.
  *      The order of operations in a transform is:
  *          (1) Rotation
  *          (2) Translation
  *          (3) Scale
  *
- *      The rotation matrix must be normalized or else the scale is distorted
+ *      The rotation matrix, if it appears in a VRML Transform{} block,
+ *      must be normalized or else the scale is distorted.
  *
  *  The Scheme:
  *
@@ -443,12 +455,13 @@ int getRot(const std::string &val, Rotation &rot)
         cerr << "\tcould not parse R X Y Z values\n";
         return -1;
     }
-    if ((ang < -2.0*M_PI) || (ang > 2.0*M_PI))
+    if ((ang < -2.0) || (ang > 2.0))
     {
         ERRBLURB;
-        cerr << "\tinvalid angle (" << setprecision(12) << ang << "); valid range is -2PI .. 2PI\n";
+        cerr << "\tinvalid angle coefficient (" << setprecision(12) << ang << "); valid range is -2.0 .. 2.0\n";
         return -1;
     }
+    ang *= M_PI;
     rot.set(ang, tx, ty, tz);
 
     return 0;

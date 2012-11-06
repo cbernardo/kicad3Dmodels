@@ -40,29 +40,119 @@
 
 class VRMLMat;
 
-// Create the VRML header and ancillary comments
+/**
+ * \brief Create the VRML header and ancillary comments.
+ *
+ * This procedure opens the specified file and writes out
+ * a boilerplate VRML2.0 header which includes a permissive
+ * license for the use and distribution of the output file.
+ *
+ * @param filename [in] name of file to create or open
+ * @param fp [in,out]
+ * @return 0 for success, -1 for failure
+ */
 int SetupVRML(std::string filename, std::ofstream &fp);
 
-// Set up a VRML Transform block
+/**
+ * \brief Set up a VRML Transform block
+ *
+ * This procedure writes the opening statements of
+ * a VRML2.0 Transform block. In its most basic
+ * usage it is called after SetupVRML then information
+ * is added via calls to SetupShape, WriteCoord,
+ * SetupCoordIndex, CloseCoordIndex, CloseShape,
+ * and finally CloseXForm is invoked to close the
+ * transform block.
+ *
+ * @param name [in] a VRML2.0 compliant name for the Transform block
+ * @param fp   [in] open output file
+ * @param tabs [in] indent level for formatting
+ * @return 0 for success, -1 for failure
+ */
 int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0);
 
-// Close a VRML Transform block
+/**
+ * \brief Close a VRML Transform block
+ *
+ * Write out the closing braces to match a previous
+ * call to SetupXForm.
+ *
+ * @param fp    [in] open output file
+ * @param tabs  [in] indent level for formatting
+ * @return 0 for success, -1 for failure
+ */
 int CloseXForm(std::ofstream &fp, int tabs = 0);
 
-// Set up a VRML Shape block (includes appearance and geometry)
+/**
+ * \brief Set up a VRML Shape block
+ *
+ * Write the opening statements of a VRML2.0 Shape block. The
+ * statements include Appearance and Geometry opening statements.
+ *
+ * @param color         [in] VRMLMat material appearance specification
+ * @param reuse_color   [in] If FALSE the entire material specification is written, otherwise a previous definition is reused
+ * @param fp            [in] open output file
+ * @param tabs          [in] indent level for formatting
+ * @return 0 for success, -1 for failure
+ */
 int SetupShape(VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs = 0);
 
-// Close a VRML Shape block
+/**
+ * \brief Close a VRML Shape block
+ *
+ * Write the closing braces for a VRML2.0 Shape block previously
+ * opened via a call to SetupShape.
+ *
+ * @param fp    [in] open output file
+ * @param tabs  [in] indent level for formatting
+ * @return
+ */
 int CloseShape(std::ofstream &fp, int tabs = 0);
 
-// Write a VRML coordinate block
+/**
+ * \brief Write a VRML coordinate block
+ *
+ * This procedure writes out a VRML2.0 Coordinate block
+ * to specify vertices for use within a Geometry block.
+ *
+ * @param x     [in] pointer to array of vertex X coordinates
+ * @param y     [in] pointer to array of vertex Y coordinates
+ * @param z     [in] pointer to array of vertex Z coordinates
+ * @param np    [in] number of points to write
+ * @param fp    [in] open output file
+ * @param tabs  [in] indent level for formatting
+ * @return  0 for success, -1 for failure
+ */
 int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int tabs = 0);
 
-// Set up a VRML coordIndex block
+/**
+ * \brief Set up a VRML coordIndex block
+ *
+ * This procedure writes the opening statement to a VRML2.0
+ * coordinateIndex block for use within a Geometry block to
+ * specify the vertices which make up each surface facet of
+ * an object. The indices themselves must be written out by
+ * the user before closing the block via CloseCoordIndex.
+ * See the VRML2.0 specification for information on the
+ * formatting of the vertex list.
+ *
+ * @param fp    [in] open output file
+ * @param tabs  [in] indent level for formatting
+ * @return 0 for success, -1 for failure
+ */
 int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
 
-// Close a VRML coordIndex block
+/**
+ * \brief Close a VRML coordIndex block
+ *
+ * Close a VRML2.0 coordIndex block which was previously
+ * opened via a call to SetupCoordIndex.
+ *
+ * @param fp    [in] open output file
+ * @param tabs  [in] indent level for formatting
+ * @return
+ */
 int CloseCoordIndex(std::ofstream &fp, int tabs = 0);
 
 #endif /* VCOM_H_ */

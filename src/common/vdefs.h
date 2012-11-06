@@ -19,6 +19,10 @@
  *      #defines commonly used by the VRML tools
  */
 
+/**
+ * \brief Macros common to K3D tools
+ */
+
 #ifndef VDEFS_H_
 #define VDEFS_H_
 

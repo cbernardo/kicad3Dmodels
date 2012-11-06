@@ -26,9 +26,23 @@
 
 #include "material.h"
 
+/**
+ * \brief VRML2.0 Material Specification
+ *
+ * This class derives from the Material class and
+ * implements a procedure to write the information
+ * to a VRML2.0 output file
+ */
 class VRMLMat : public Material
 {
 public:
+    /**
+     * Write out a VRML2.0 compliant material block
+     *
+     * @param file  [in]    output file
+     * @param tabs  [in]    indentation depth of the text block
+     * @return 0 for success, -1 for failure
+     */
     int WriteMaterial(std::ofstream &file, int tabs = 0);
 };
 

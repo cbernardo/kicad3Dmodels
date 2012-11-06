@@ -31,7 +31,7 @@ class Transform;
 class Rectangle: public Polygon
 {
 private:
-  double bev;
+  double bev;   ///< the length of the bevel at each corner
   
 public:
     Rectangle();
@@ -41,18 +41,38 @@ public:
 
     Rectangle &operator=(const Rectangle &p);
 
-    // Clone the object
+    /**
+     * Create a duplicate instance of this Rectangle
+     *
+     * @return Duplicate of *this
+     */
     Polygon *clone(void);
 
-    // Return values: 0 for success otherwise -1
-    // Inscribes a polygon within an ellipse. Use xrad=yrad to obtain
-    // regular polygons.
-    /// @param xl length along the X axis
-    /// @param yl length along the Y axis
-    /// @param t Transform to place the polygon in an appropriate orientation in space
+    /**
+     * \brief Calculate the rectangle's vertices
+     *
+     * Calculate the vertices representing the rectangle; the rectangle
+     * may be plain or beveled. The rectangle is centered on (0,0,0)
+     * but may be transformed as the user specifies.
+     *
+     * @param xl [in] length along X axis
+     * @param yl [in] length along Y axis
+     * @param t  [in] local transform to apply to results
+     * @return 0 for success, -1 for failure
+     */
     virtual int Calc(double xl, double yl, Transform &t);
 
     /// @param bev   bevel; < 0 means no bevel
+    /**
+     * \brief Set the length of the bevel.
+     *
+     * Set the length of the bevel.
+     * A bevel <= 0 results in a plain rectangle (default). The bevel
+     * must be less than half the length of the shortest side of
+     * the rectangle.
+     *
+     * @param bevel [in] length of the bevel
+     */
     void SetBevel(double bevel);
 };
 

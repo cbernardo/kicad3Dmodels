@@ -41,7 +41,13 @@ public:
 
     Circle &operator=(const Circle &p);
 
-    // Clone the object
+    /**
+     * Create a duplicate instance of this Circle.
+     * Caveat: if system resources are low, the copy may
+     * not be a valid duplicate.
+     *
+     * @return Duplicate of *this
+     */
     Polygon *clone(void);
 
     // Return values: 0 for success otherwise -1
@@ -51,8 +57,48 @@ public:
     /// @param xdia Diameter along the X axis
     /// @param ydia Diameter along the Y axis
     /// @param t Transform to place the polygon in an appropriate orientation in space
+
+    /**
+     * \brief Calculate the rectangle's vertices
+     *
+     * Calculate the vertices representing the rectangle; the rectangle
+     * may be plain or beveled. The rectangle is centered on (0,0,0)
+     * but may be transformed as the user specifies.
+     *
+     * @param xl [in] length along X axis
+     * @param yl [in] length along Y axis
+     * @param t  [in] local transform to apply to results
+     * @return 0 for success, -1 for failure
+     */
+
+    /**
+     * \brief Calculate the vertices of an ellipse
+     *
+     * This method calculates the vertices representing an ellipse.
+     * By default the ellipse will contain 16 vertices; call
+     * SetNVertices prior to invoking this method to set a different
+     * number of vertices.  The ellipse is centered on (0,0,0)
+     * but may be transformed as the user specifies.
+     *
+     * This method may be abused to create general polygons
+     * inscribed within an ellipse; the first vertex will
+     * always be at the coordinate (xdia, 0, 0) and subsequent
+     * vertices will be created in a counter-clockwise direction
+     * when viewing the XY plane from a point at +Z.
+     *
+     * @param xdia [in] diameter of the ellipse along the X axis
+     * @param ydia [in] diameter of the ellipse along the Y axis
+     * @param t    [in] local transformation to apply to the results
+     * @return 0 for success, -1 for failure
+     */
     virtual int Calc(double xdia, double ydia, Transform &t);
 
+    /**
+     * Set the number of vertices used to represent an ellipse
+     *
+     * @param nvert [in] number of vertices; valid range is 3 .. 360
+     * @return 0 for success, -1 for failure
+     */
     int SetNVertices(int nvert);
 };
 

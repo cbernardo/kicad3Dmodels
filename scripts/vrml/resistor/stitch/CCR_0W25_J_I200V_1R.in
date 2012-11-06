@@ -1,0 +1,189 @@
+# Input file for 'vrmlstitch'; places all of Decade 1R of the
+# horizontal 0.4" pitch 0.25W CCR series into a single VRML
+# file which can be viewed in the KiCAD 3D viewer
+
+file:     CCR_0W25_J_I200V_1R
+
+#
+#	FIRST ROW
+#
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R0_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-7 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R1_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-5 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R2_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-3 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R3_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-1 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R5_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	1 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R6_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	3 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_1R8_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	5 5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_2R0_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	7 5 0
+s:	1.0 1.0 1.0
+.end
+
+#
+#	SECOND ROW
+#
+
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_2R2_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-7 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_2R4_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-5 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_2R7_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-3 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_3R0_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-1 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_3R3_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	1 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_3R6_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	3 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_3R9_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	5 0 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_4R3_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	7 0 0
+s:	1.0 1.0 1.0
+.end
+
+#
+#	THIRD ROW
+#
+
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_4R7_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-7 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_5R1_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-5 -5 0
+s:	1.0 1.0 1.0
+.end
+
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_5R6_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-3 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_6R2_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	-1 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_6R8_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	1 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_7R5_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	3 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_8R2_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	5 -5 0
+s:	1.0 1.0 1.0
+.end
+
+.begin
+name : ../../../../mcad/vrml/thru/res/vert/CCR_5/0W25/0I20/1R/CCR_9R1_J-B_0W25_0I20V.wrl
+r: 	0.5 0 0 1
+t:	7 -5 0
+s:	1.0 1.0 1.0
+.end
+

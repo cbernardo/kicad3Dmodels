@@ -39,119 +39,6 @@ Polygon::Polygon()
     return;
 }
 
-/*
-Polygon::Polygon(const Polygon &p)
-{
-    valid = p.valid;
-    nv = p.nv;
-
-    x = NULL;
-    y = NULL;
-    z = NULL;
-
-    if (!valid) return;
-    if (nv == 0) return;
-
-    x = new (nothrow) double [nv];
-    if (x == NULL)
-    {
-        valid = false;
-        return;
-    }
-
-    y = new (nothrow) double [nv];
-    if (y == NULL)
-    {
-        delete [] x;
-        valid = false;
-        return;
-    }
-
-    z = new (nothrow) double [nv];
-    if (z == NULL)
-    {
-        delete [] x;
-        delete [] y;
-        valid = false;
-        return;
-    }
-
-    int i;
-    for (i = 0; i < nv; ++i)
-    {
-        x[i] = p.x[i];
-        y[i] = p.y[i];
-        z[i] = p.z[i];
-    }
-
-    return;
-}   //Polygon(const Polygon &p)
-*/
-
-/*
-Polygon & Polygon::operator=(const Polygon &p)
-{
-    if (this == &p) return *this;
-
-    if (nv)
-    {
-        delete [] x;
-        delete [] y;
-        delete [] z;
-        nv = 0;
-        valid = false;
-    }
-
-    valid = p.valid;
-    nv = p.nv;
-
-    x = NULL;
-    y = NULL;
-    z = NULL;
-
-    if (!valid) return *this;
-    if (nv == 0) return *this;
-
-    x = new (nothrow) double [nv];
-    if (x == NULL)
-    {
-        valid = false;
-        nv = 0;
-        return *this;
-    }
-
-    y = new (nothrow) double [nv];
-    if (y == NULL)
-    {
-        delete [] x;
-        valid = false;
-        nv = 0;
-        return *this;
-    }
-
-    z = new (nothrow) double [nv];
-    if (z == NULL)
-    {
-        delete [] x;
-        delete [] y;
-        valid = false;
-        nv = 0;
-        return *this;
-    }
-
-    int i;
-    for (i = 0; i < nv; ++i)
-    {
-        x[i] = p.x[i];
-        y[i] = p.y[i];
-        z[i] = p.z[i];
-    }
-
-    return *this;
-}   // operator=(const Polygon &p)
-*/
-
-
 Polygon::~Polygon()
 {
     if (x) delete [] x;
@@ -159,6 +46,11 @@ Polygon::~Polygon()
     if (z) delete [] z;
     init();
     return;
+}
+
+bool Polygon::IsValid(void)
+{
+    return valid;
 }
 
 void Polygon::init(void)

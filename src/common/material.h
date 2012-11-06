@@ -25,6 +25,8 @@
 #include <string>
 
 /**
+ * \brief Material appearance
+ *
  *  Class Material represents the material appearance according to the
  *  VRML2.0 specification.  KiCAD only supports the most basic material
  *  color definitions and does not support textures. The appearance of
@@ -44,14 +46,20 @@
  *  white light the object would appear red while in a dim light the object
  *  will glow green. See the VRML2.0 specification for more details of the
  *  lighting calculations.
+ *
+ *  It is anticipated that the VRML material appearance can be used to
+ *  create material appearance specifications for models other than
+ *  VRML and that reusing the VRML material appearance specifications
+ *  may promote a more uniform appearance of models regardless of the
+ *  type.
  */
 class Material
 {
 private:
-    void init(void);    ///< initialize material values
-    int parseRGB(float rgb[3], const std::string val);
-    int parseFloat(float &param, const std::string val);
-    int validateRGB(const float rgb[3], float target[3]);
+    void init(void);                                        ///< initialize material values
+    int parseRGB(float rgb[3], const std::string val);      ///< read an R G B triplet
+    int parseFloat(float &param, const std::string val);    ///< read a floating point
+    int validateRGB(const float rgb[3], float target[3]);   ///< validate
     std::string name;
 
 protected:
@@ -67,29 +75,110 @@ public:
     Material();
     virtual ~Material();
 
+    /**
+     * Load a material appearance specification file.
+     *
+     * @param name [in] path to material specification file
+     * @return 0 for success, -1 for failure
+     */
     int  Load(const std::string &name);
-    // XXX - no clear benefit to the Save command
-    // int  Save(const std::string &name);
 
+    /**
+     * Set the name of the material appearance.  This name may be used when writing out the
+     * material information.
+     *
+     * @param name [in] material name
+     */
     void SetName(const std::string &name);
+    /**
+     * Retrieve the material name.
+     *
+     * @return material name.
+     */
     const std::string &GetName(void);
 
+    /**
+     * Set the material diffuse reflectance values
+     *
+     * @param rgb [in] VRML2.0 RGB values for diffuse reflectance (range: 0..1)
+     * @return 0 for success, -1 for failure
+     */
     int  SetDiffuse(const float rgb[3]);
+    /**
+     * Retrieve the material's diffuse reflectance parameters
+     *
+     * @param rgb [out] RGB diffuse reflectance values (range: 0..1)
+     */
     void GetDiffuse(float rgb[3]);
 
+    /**
+     * Set the material emissivity values
+     *
+     * @param rgb [in] VRML2.0 RGB values for emissivity (range: 0..1)
+     * @return 0 for success, -1 for failure
+     */
     int  SetEmissivity(const float rgb[3]);
+    /**
+     * Retrieve the material emissivity values
+     *
+     * @param rgb [out] RGB emissivity values (range: 0..1)
+     */
     void GetEmissivity(float rgb[3]);
 
+    /**
+     * Set the material specular reflectance values.
+     *
+     * @param rgb [in] VRML2.0 RGB values for specular reflectance (range: 0..1)
+     * @return 0 for success, -1 for failure
+     */
     int  SetSpecular(const float rgb[3]);
+    /**
+     * Retrieve the material specular reflectance values
+     *
+     * @param rgb [out] RGB values for specular reflectance (range: 0..1)
+     */
     void GetSpecular(float rgb[3]);
 
+    /**
+     * Set the material ambient intensity value
+     *
+     * @param coeff [in] VRML2.0 Ambient Intensity coefficient
+     * @return 0 for success, -1 for failure
+     */
     int  SetAmbientIntensity(float coeff);
+    /**
+     * Retrieve the material ambient intensity value
+     *
+     * @return ambient intensity (as per VRML2.0 specification)
+     */
     float GetAmbientIntensity(void);
 
+    /**
+     * Set the material transparency
+     *
+     * @param coeff [in] transparency; range is 0 (opaque) to 1 (completely transparent)
+     * @return 0 for success, -1 for failure
+     */
     int  SetTransparency(float coeff);
+    /**
+     * Retrieve the material transparency
+     *
+     * @return material transparency; range 0 (opaque) to 1 (transparent)
+     */
     float GetTransparency(void);
 
+    /**
+     * Set the material shininess parameter
+     *
+     * @param coeff [in] range 0 (no glint) to 1 (mirror surface)
+     * @return 0 for success, -1 for failure
+     */
     int  SetShininess(float coeff);
+    /**
+     * Retrieve the material shininess
+     *
+     * @return shininess; 0 (no glint) to 1 (mirror)
+     */
     float GetShininess(void);
 };
 
