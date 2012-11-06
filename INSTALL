@@ -1,0 +1,34 @@
+This source code requires CMake version 2.8 or greater for
+configuration and a standards compliant C++ compiler with
+the STLPort implementation of the C++ Standard Template
+Libraries. Although many of the classes should be portable
+across platforms, some source files such as the stand-alone
+executable files depend on GNU getopt and thus require a
+GNU build environment.
+
+LINUX
+=====
+To configure, create the build directory within the top
+level project directory and invoke CMake from the build
+directory:
+
+mkdir build
+cd build
+cmake ..
+
+The source can now be built and installed to the directory
+../scripts/bin:
+make install
+
+The ../scripts directory contains a number of scripts for
+running the various programs to generate VRML component
+models, install the models in the ../mcad/vrml directory,
+and package sets of models as tarballs.
+
+At the moment the tools are not intended to be installed
+into the system directories since they are of no great
+use once they have been run to generate sets of models.
+In the future the tools may be repackaged with Python
+bindings to make it possible to use Python scripts to
+create new component models.
+
