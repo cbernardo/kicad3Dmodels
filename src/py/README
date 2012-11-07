@@ -1,0 +1,44 @@
+These are the Python bindings for Kicad3DModels.
+For now they will only be suporting the VRML
+models and all tools will be crammed into the
+one library. In the future it may be necessary
+to split libraries into kc3d (common), kc3dvrml,
+and kc3dfc (FreeCAD).
+
+Generation of all models via Python is desirable
+for a number of reasons including:
+	+ the source code requires much less storage
+		space than the suite of models
+	+ users can invoke the models to produce
+		more specialized parts
+	+ users can invoke the tools to build new
+		models
+
+
+Some notes on Boost-Python:
+===========================
+1. The library name must match the module name; with
+	CMake the module begins with 'lib' so the
+	resulting module names within python must
+	be lib*.  This is rather inconvenient.
+        Surely the CMakeLists.txt file can be
+	altered to name the lib as we please or
+	else to rename it after building. A symlink
+	offers an alternative.
+2. PYTHONPATH must be set to include the directory
+	that the module resides in.
+
+
+STRATEGY:
+=========
+The src/py directory will contain files which in
+turn include *.pyinc  and *.pydef files from
+individual C++ source directories to provide the
+monolithic Python module. This may not be the best
+choice in the long term but we shall see how things go.
+
+The *.pyinc files contain export definitions used
+within a BOOST_PYTHON_MODULE() block while the
+*.pydef files contain any necessary override
+wrappers.
+

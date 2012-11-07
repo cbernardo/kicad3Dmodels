@@ -6,3 +6,7 @@ add_subdirectory (common)
 
 # VRML models and tools
 add_subdirectory (vrml)
+
+# Python bindings
+add_subdirectory (py)
+

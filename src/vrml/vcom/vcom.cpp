@@ -42,6 +42,8 @@ int SetupVRML(std::string filename, std::ofstream &fp)
         return -1;
     }
 
+    if (fp.is_open()) fp.close();
+
     fp.open(filename.c_str());
     if (!fp.good())
     {
@@ -74,6 +76,13 @@ int SetupXForm(std::string name, std::ofstream &fp, int tabs)
     {
         ERRBLURB;
         cerr << "empty VRML Transform name\n";
+        return -1;
+    }
+
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
         return -1;
     }
 
@@ -110,6 +119,13 @@ int CloseXForm(std::ofstream &fp, int tabs)
         return -1;
     }
 
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
+        return -1;
+    }
+
     if (tabs < 0) tabs = 0;
     if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
@@ -137,6 +153,13 @@ int SetupShape(VRMLMat &color, bool reuse_color,
     {
         ERRBLURB;
         cerr << "bad stream for VRML Shape\n";
+        return -1;
+    }
+
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
         return -1;
     }
 
@@ -191,6 +214,13 @@ int CloseShape(std::ofstream &fp, int tabs)
         return -1;
     }
 
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
+        return -1;
+    }
+
     if (tabs < 0) tabs = 0;
     if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
@@ -215,6 +245,13 @@ int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int t
     {
         ERRBLURB;
         cerr << "bad stream for VRML Coord\n";
+        return -1;
+    }
+
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
         return -1;
     }
 
@@ -274,6 +311,13 @@ int SetupCoordIndex(std::ofstream &fp, int tabs)
         return -1;
     }
 
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
+        return -1;
+    }
+
     if (tabs < 0) tabs = 0;
     if (tabs > MAX_TABS) tabs = MAX_TABS;
     string fmt(tabs*4, ' ');
@@ -296,6 +340,13 @@ int CloseCoordIndex(std::ofstream &fp, int tabs)
     {
         ERRBLURB;
         cerr << "bad stream for VRML CoordIndex\n";
+        return -1;
+    }
+
+    if (!fp.is_open())
+    {
+        ERRBLURB;
+        cerr << "no open file\n";
         return -1;
     }
 

@@ -1,0 +1,136 @@
+/*
+    file: transform.pyinc
+    
+    Python bindings for kc3d::Transform and related classes
+    
+    Copyright 2012, Cirilo Bernardo
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+
+
+
+//
+//  class kc3d::Quat
+//
+class_<kc3d::Quat>("Quat", init<>())
+    .def(init<const kc3d::Quat &>())
+    .def(init<double, double, double, double>())
+    
+    // operators
+    .def(- self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(self * double())
+    .def(double() * self)
+    .def(self / double())
+    .def("normalize", &kc3d::Quat::normalize)
+    .def("vnormalize", &kc3d::Quat::vnormalize)
+    
+    // member variables
+    .def_readwrite("w", &kc3d::Quat::w)
+    .def_readwrite("x", &kc3d::Quat::x)
+    .def_readwrite("y", &kc3d::Quat::y)
+    .def_readwrite("z", &kc3d::Quat::z)
+    ;
+
+
+
+//
+//  class kc3d::Translation
+//
+class_<kc3d::Translation>("Translation", init<>())
+    .def(init<kc3d::Quat>())
+    .def(init<const kc3d::Translation &>())
+    .def(init<double, double, double>())
+
+    // operators
+    .def(- self)
+    .def(self + kc3d::Quat())
+    .def(self + self)
+    .def(self - kc3d::Quat())
+    .def(self - self)
+    .def(self * double())
+    .def(double() * self)
+    .def(self / double())
+    
+    // member functions
+    .def("set", k3d_tra_set1)
+    .def("set", k3d_tra_set2)
+    .def("translate", k3d_tra_tran1)
+    .def("translate", k3d_tra_tran2)
+    .def("isUnity", &kc3d::Translation::isUnity)
+    ;    
+
+
+
+//
+//  class kc3d::Rotation
+//
+class_<kc3d::Rotation>("Rotation", init<>())
+    .def(init<kc3d::Quat>())
+    .def(init<double, double, double, double>())
+
+    // member functions
+    .def("rotate", k3d_rot_rot1)
+    .def("rotate", k3d_rot_rot2)
+    .def("set", k3d_rot_set1)
+    .def("set", k3d_rot_set2)
+    .def("get", &kc3d::Rotation::get)
+    .def("isUnity", &kc3d::Rotation::isUnity)
+    ;
+
+
+
+//
+//  class kc3d::Scale
+//
+class_<kc3d::Scale>("Scale", init<>())
+    .def(init<kc3d::Quat>())
+    .def(init<double, double, double>())
+    
+    // member functions
+    .def("scale", k3d_scale_scale1)
+    .def("scale", k3d_scale_scale2)
+    .def("set", &kc3d::Scale::set)
+    .def("isUnity", &kc3d::Scale::isUnity)
+    ;
+
+    
+    
+//
+//  class kc3d::Transform
+//
+class_<kc3d::Transform>("Transform", init<>())
+    .def(init<kc3d::Translation, kc3d::Rotation, kc3d::Scale>())
+
+    // member functions
+    .def("set", &kc3d::Transform::set)
+    .def("setTranslation", k3d_xf_setTra1)
+    .def("setTranslation", k3d_xf_setTra2)
+    .def("setTranslation", k3d_xf_setTra3)
+    .def("setRotation", k3d_xf_setRot1)
+    .def("setRotation", k3d_xf_setRot2)
+    .def("setRotation", k3d_xf_setRot3)
+    .def("setScale", k3d_xf_setSca1)
+    .def("setScale", k3d_xf_setSca2)
+    .def("setScale", k3d_xf_setSca3)
+    .def("setScale", k3d_xf_setSca4)
+    .def("xform", k3d_xf_xform1)
+    .def("xform", k3d_xf_xform2)
+    .def("xform", k3d_xf_xform3)
+    .def("xform", k3d_xf_xform4)
+    ;
