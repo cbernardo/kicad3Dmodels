@@ -84,6 +84,8 @@ extern char *optarg;
 extern int optopt;
 
 using namespace std;
+using namespace kc3d;
+using namespace kc3dresistor;
 
 void printUsage(void)
 {

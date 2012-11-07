@@ -1,0 +1,69 @@
+Modifications to make to existing code:
+=======================================
++ ALL MODELS AND LIBRARY: Add Python bindings.  This should
+	allow us to get rid of the GNU getopt dependence and
+	provide better cross-platform capability. The Python
+	dependence is not a big issue since KiCAD already
+	depends on Python. Exposing the library to Python
+	allows other users to create Python scripts to
+	generate models.
++ DIP-N:
+	+ expose parameters and routines
+	+ allow control of which pins to create - for example a
+		reed relay may be in a DIP-24 package but only
+		have 4 pins.
+	+ rewrite the dip_pin class to exploit the Pin class
++ Resistors:
+	+ expose parameters and routines, include general
+		routines such as color code generators
++ Connectors:
+	+ PCC: expose parameters and routines (low priority
+		since there is only a single component)
+	+ 4UCon Drawing 19950: expose parameters and
+		routines
+
+
+Possible new tools to add to the list:
+======================================
+
+Helix: Create a helical wire.
+	+ The wire may be rectangular or circular
+	+ The wire is coiled along an elliptical helix
+		with a minimum of 6 vertices in the ellipse
+	+ The wire will always coil in 1 dimension; rotating
+		orthogonal to the helical axis will yield
+		a wire with the opposite rotation
+        + The wire has an X and Y dimension
+        + The pitch of the helix must be >= the wire X dimension
+        + The helix ends will terminate in a plane parallel to
+		the helical axis
+	+ The minimum coiling diameter is 2 x the wire's Y dimension;
+		this would yield an extremely tightly wound coil
+		which is rare in actual devices.
+
+Paired vertices:
+	Paired vertices allow the description of a fairly complex cross-section
+	which can be extruded as circles and rectangles are extruded into wire
+	(pin) sections. The surface described by a list of paired vertices may
+	be rendered by rendering two sets of paired vertices at a time to form
+	quadrilateral facets. Unlike circles and rectangles, paired vertices
+	are not constrained to a plane. Facets may join two lists of paired
+	vertices in the same way that facets may join two circles to form a tube.
+
+Spheroid:
+	Some packages may be marked with a dimple while BGA packages are studded
+	with hemispheres on their bottom side - these are really all the same
+	kind of feature but with different sides rendered visible. A hemispheroid
+	shall be defined by a major and minor diameter, a depth, a minimum feature
+	scaling factor, and number of polygons. The minimum scale factor is used
+	to determine the size of the ellipse at the bottom of the hemispheroid.
+	For simplicity the hemispheroid is called a Spheroid.
+
+Text:
+	Renders simple text strings as extrusions of a given depth, pensize, and
+	character height. The font shall be a fixed-width font and shall resemble
+	the typical font used on PCBs. Minimal character set shall include:
+	A..Z  a..z , 0..9 . + -
+
+
+

@@ -33,6 +33,7 @@ extern char *optarg;
 extern int optopt;
 
 using namespace std;
+using namespace kc3dresistor;
 
 // minimum and maximum decades
 #define MIN_DECADE (0)

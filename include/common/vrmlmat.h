@@ -1,5 +1,5 @@
 /*
- *      file: vdefs.h
+ *      file: vrmlmat.h
  *
  *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
@@ -16,16 +16,44 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
- *      #defines commonly used by the VRML tools
+ */
+
+
+#ifndef VRMLMAT_H_
+#define VRMLMAT_H_
+
+#include <fstream>
+
+#include "material.h"
+
+namespace kc3d {
+
+/**
+ * \file
+ * \defgroup vrml_tools VRML Tools
  */
 
 /**
- * \brief Macros common to K3D tools
+ * \ingroup vrml_tools
+ * \brief VRML2.0 Material Specification
+ *
+ * This class derives from the Material class and
+ * implements a procedure to write the information
+ * to a VRML2.0 output file
  */
+class VRMLMat : public Material
+{
+public:
+    /**
+     * Write out a VRML2.0 compliant material block
+     *
+     * @param file  [in]    output file
+     * @param tabs  [in]    indentation depth of the text block
+     * @return 0 for success, -1 for failure
+     */
+    int WriteMaterial(std::ofstream &file, int tabs = 0);
+};
 
-#ifndef VDEFS_H_
-#define VDEFS_H_
+}   // namespace kc3d
 
-#define ERRBLURB cerr << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(): "
-
-#endif /* VDEFS_H_ */
+#endif /* VRMLMAT_H_ */

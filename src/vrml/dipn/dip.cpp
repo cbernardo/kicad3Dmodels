@@ -46,6 +46,8 @@
 #include "dip_pin.h"
 
 using namespace std;
+using namespace kc3d;
+using namespace kc3ddip;
 
 #define ERROUT(...) do {\
     fprintf(stderr, "%s:%d: %s(): ", __FILE__, __LINE__, __FUNCTION__);\

@@ -35,6 +35,8 @@
 
 #include "vrmlmat.h"
 
+namespace kc3ddip {
+
 struct dipparams
 {
     bool   metric;  ///< true if we wish to calculate with metric dimensions
@@ -64,8 +66,8 @@ struct dipparams
     double S;       ///< [CaseTaper] deviation of unbeveled top and bottom edges
     double DW;      ///< [CaseAlw]  allowance on case length
 
-    VRMLMat pinmaterial;
-    VRMLMat casematerial;
+    kc3d::VRMLMat pinmaterial;
+    kc3d::VRMLMat casematerial;
 
     dipparams();
 };
@@ -79,5 +81,7 @@ class dip {
     int Calc(int pins, std::string filename);
     int SetParams(const dipparams &p);
 };
+
+}   // namespace kc3ddip
 
 #endif

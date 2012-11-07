@@ -35,6 +35,7 @@
 #include "vrmlmat.h"
 
 using namespace std;
+using namespace kc3d;
 
 Funnel::Funnel()
 {

@@ -38,9 +38,15 @@
 
 #include <iosfwd>
 
+namespace kc3d {
+
 class VRMLMat;
 
+/** \file */
+
 /**
+ * \ingroup vrml_tools
+ * \fn int SetupVRML(std::string filename, std::ofstream &fp)
  * \brief Create the VRML header and ancillary comments.
  *
  * This procedure opens the specified file and writes out
@@ -54,6 +60,8 @@ class VRMLMat;
 int SetupVRML(std::string filename, std::ofstream &fp);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0)
  * \brief Set up a VRML Transform block
  *
  * This procedure writes the opening statements of
@@ -72,6 +80,8 @@ int SetupVRML(std::string filename, std::ofstream &fp);
 int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int CloseXForm(std::ofstream &fp, int tabs = 0)
  * \brief Close a VRML Transform block
  *
  * Write out the closing braces to match a previous
@@ -84,6 +94,8 @@ int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0);
 int CloseXForm(std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int SetupShape(VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0)
  * \brief Set up a VRML Shape block
  *
  * Write the opening statements of a VRML2.0 Shape block. The
@@ -99,6 +111,8 @@ int SetupShape(VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int CloseShape(std::ofstream &fp, int tabs = 0)
  * \brief Close a VRML Shape block
  *
  * Write the closing braces for a VRML2.0 Shape block previously
@@ -111,6 +125,8 @@ int SetupShape(VRMLMat &color, bool reuse_color,
 int CloseShape(std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int tabs = 0)
  * \brief Write a VRML coordinate block
  *
  * This procedure writes out a VRML2.0 Coordinate block
@@ -127,6 +143,8 @@ int CloseShape(std::ofstream &fp, int tabs = 0);
 int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int SetupCoordIndex(std::ofstream &fp, int tabs = 0)
  * \brief Set up a VRML coordIndex block
  *
  * This procedure writes the opening statement to a VRML2.0
@@ -144,6 +162,8 @@ int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int t
 int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
 
 /**
+ * \ingroup vrml_tools
+ * \fn int CloseCoordIndex(std::ofstream &fp, int tabs = 0)
  * \brief Close a VRML coordIndex block
  *
  * Close a VRML2.0 coordIndex block which was previously
@@ -154,5 +174,7 @@ int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
  * @return
  */
 int CloseCoordIndex(std::ofstream &fp, int tabs = 0);
+
+} // namespace kc3d
 
 #endif /* VCOM_H_ */

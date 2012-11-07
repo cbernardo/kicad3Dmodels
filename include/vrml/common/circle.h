@@ -28,9 +28,18 @@
 #include <iosfwd>
 
 #include "polygon.h"
+
+namespace kc3d {
+
 class Transform;
 class VRMLMat;
 
+/**
+ * \ingroup vrml_tools
+ * This class represents an ellipse, or more precisely
+ * an inscribed regular convex polygon of 3 to 360 vertices
+ * which may be independently scaled along the X and Y axes.
+ */
 class Circle : public Polygon
 {
 public:
@@ -49,27 +58,6 @@ public:
      * @return Duplicate of *this
      */
     Polygon *clone(void);
-
-    // Return values: 0 for success otherwise -1
-    // Inscribes a polygon within an ellipse. Use xrad=yrad to obtain
-    // regular polygons.
-    /// @param np The number of vertices; must be 3..360 inclusive
-    /// @param xdia Diameter along the X axis
-    /// @param ydia Diameter along the Y axis
-    /// @param t Transform to place the polygon in an appropriate orientation in space
-
-    /**
-     * \brief Calculate the rectangle's vertices
-     *
-     * Calculate the vertices representing the rectangle; the rectangle
-     * may be plain or beveled. The rectangle is centered on (0,0,0)
-     * but may be transformed as the user specifies.
-     *
-     * @param xl [in] length along X axis
-     * @param yl [in] length along Y axis
-     * @param t  [in] local transform to apply to results
-     * @return 0 for success, -1 for failure
-     */
 
     /**
      * \brief Calculate the vertices of an ellipse
@@ -102,6 +90,6 @@ public:
     int SetNVertices(int nvert);
 };
 
-
+}   // namespace kc3d
 
 #endif /* CIRCLE_H_ */

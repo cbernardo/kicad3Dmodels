@@ -35,6 +35,7 @@
 #include "rectangle.h"
 
 using namespace std;
+using namespace kc3d;
 
 #define MIN_LEN (0.000001)
 

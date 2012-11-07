@@ -26,11 +26,14 @@
 
 #include <iosfwd>
 
+namespace kc3d {
+
 class Polygon;
 class Transform;
 class VRMLMat;
 
 /**
+ * \ingroup vrml_tools
  * This class represents a rectangular face with a
  * rectangular or elliptical hole within its boundaries.
  */
@@ -115,5 +118,7 @@ public:
             std::ofstream &fp, int tabs = 0);
 
 };
+
+}   // namespace kc3d
 
 #endif /* HOLE_H_ */

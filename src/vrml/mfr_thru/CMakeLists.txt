@@ -1,11 +1,10 @@
 # file: ${K3D_SOURCE_DIR}/src/vrml/mfr_thru/CMakeLists.txt
 #
 
-include_directories(${K3D_SOURCE_DIR}/src/common ${K3D_SOURCE_DIR}/src/mat
-  ${K3D_SOURCE_DIR}/src/vrml/vcom)
+include_directories(${K3D_SOURCE_DIR}/include/common ${K3D_SOURCE_DIR}/include/vrml/common
+  ${K3D_SOURCE_DIR}/include/vrml/models) 
 
-link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/mat
-  ${K3D_BINARY_DIR}/src/vrml/vcom)
+link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/vrml/vcom)
 
 # Tool for generating E192, E96, E48, E24, or E12 series ouput
 # specification files for use by makeMFR

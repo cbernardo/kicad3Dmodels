@@ -23,12 +23,15 @@
 
 #include <iosfwd>
 
+namespace kc3d {
+
 class Polygon;
 class PolyRect;
 class VRMLMat;
 class Transform;
 
 /**
+ * \ingroup vrml_tools
  * Parameters describing a rectangular or elliptical wire or pin
  */
 struct PParams
@@ -50,6 +53,16 @@ struct PParams
     PParams();
 };
 
+
+/**
+ * \ingroup vrml_tools
+ * This class represent a wire or pin. The nominal orientation
+ * is vertical with an optional bend of 0..PI degrees towards the
+ * right (+X axis) and an optional second straight segment.
+ * The pin may have a rectangular or an elliptical cross-section.
+ * A rectangular section may be beveled and an elliptical section
+ * may have 3..360 vertices.
+ */
 class Pin
 {
 private:
@@ -109,5 +122,7 @@ public:
      */
     void SetShape(bool square);
 };
+
+}   // namespace kc3d
 
 #endif /* PIN_H_ */

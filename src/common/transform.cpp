@@ -41,6 +41,7 @@
 #define MIN_TRANS (1e-8)
 
 using namespace std;
+using namespace kc3d;
 
 /*
  *
@@ -168,7 +169,7 @@ Quat Quat::operator/(double arg)
     return local;
 }
 
-Quat operator*(double d, Quat q)
+Quat kc3d::operator*(double d, Quat q)
 {
     return q * d;
 }
@@ -280,7 +281,7 @@ Translation Translation::operator*(double arg)
     return local;
 }
 
-Translation operator*(double d, Translation t)
+Translation kc3d::operator*(double d, Translation t)
 {
     Translation local = t*d;
     return local;

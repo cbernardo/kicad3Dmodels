@@ -58,10 +58,13 @@
 #include <iosfwd>
 #include "polygon.h"
 
+namespace kc3d {
+
 class VRMLMat;
 class Transform;
 
 /**
+ * \ingroup vrml_tools
  * This class represents a funnel.  A funnel consists of
  * a flute and a stem which are only visible from the inside.
  * A funnel may be used to render a receptacle. The shape may
@@ -134,5 +137,7 @@ public:
      */
     void SetShape(bool square, double bev = -1.0);
 };
+
+}   // namespace kc3d
 
 #endif /* FUNNEL_H_ */

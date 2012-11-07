@@ -27,6 +27,7 @@
 #include "keyvalparser.h"
 
 using namespace std;
+using namespace kc3d;
 
 Material::Material()
 {

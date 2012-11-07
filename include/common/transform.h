@@ -33,12 +33,17 @@
 
 #include <cmath>
 
+namespace kc3d {
+
+/** \file */
+
 /// Value of PI used for internal calculations; this is sufficient for 80-bit floats
 #ifndef M_PI
     #define M_PI 3.1415926535897932384626433832795
 #endif
 
 /**
+ * \ingroup common_tools
  * \brief Basic Quaternion
  *
  * This is a basic Quaternion implementation providing
@@ -87,6 +92,7 @@ Quat operator*(double d, Quat q);
 
 
 /**
+ *  * \ingroup common_tools
  * \brief Geometric Translation
  *
  *  This class stores information for and
@@ -172,6 +178,7 @@ Translation operator*(double d, Translation t);
 
 
 /**
+ *  * \ingroup common_tools
  * \brief Geometric Rotation
  *
  *  This class stores information for and
@@ -240,6 +247,7 @@ public:
 
 
 /**
+ *  * \ingroup common_tools
  * \brief Geometric Scale
  *
  *  This class stores information for and
@@ -297,6 +305,7 @@ public:
 
 
 /**
+ *  * \ingroup common_tools
  * \brief Geometric Transform
  *
  *  This class stores information for and performs a geometric
@@ -425,5 +434,8 @@ public:
      */
     void transform(double *x, double *y, double *z, int np);
 };
+
+
+}   // namespace kc3d
 
 #endif // TRANSFORM_H

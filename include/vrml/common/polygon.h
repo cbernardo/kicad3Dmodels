@@ -30,6 +30,13 @@
 #include "vrmlmat.h"
 #include "transform.h"
 
+namespace kc3d {
+
+/**
+ * \ingroup vrml_tools
+ * This class represents a generic polygon and has
+ * procedures implemented for rendering convex polygons.
+ */
 class Polygon
 {
 private:
@@ -137,6 +144,6 @@ public:
     int GetVertices(double **px, double **py, double **pz);
 };
 
-
+}   // namespace kc3d
 
 #endif /* POLYGON_H_ */

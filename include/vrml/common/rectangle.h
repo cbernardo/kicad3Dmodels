@@ -26,8 +26,16 @@
 #define RECTANGLE_H_
 
 #include "polygon.h"
+
+namespace kc3d {
+
 class Transform;
 
+/**
+ * \ingroup vrml_tools
+ * This class represents a rectangle; the rectangle
+ * may be plain or beveled.
+ */
 class Rectangle: public Polygon
 {
 private:
@@ -75,5 +83,7 @@ public:
      */
     void SetBevel(double bevel);
 };
+
+}   // namespace kc3d
 
 #endif /* RECTANGLE_H_ */

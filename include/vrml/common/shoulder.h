@@ -31,10 +31,13 @@
 #ifndef SHOULDER_H_
 #define SHOULDER_H_
 
+namespace kc3d {
+
 class Transform;
 class VRMLMat;
 
 /**
+ * \ingroup vrml_tools
  * This class represents the ridge found on the
  * bottom of some components such as SIL headers.
  */
@@ -79,5 +82,7 @@ public:
     int Build(Transform &t, VRMLMat &color, bool reuse,
             std::ofstream &fp, int tabs = 0);
 };
+
+}   // namespace kc3d
 
 #endif /* SHOULDER_H_ */

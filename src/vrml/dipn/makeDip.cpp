@@ -41,6 +41,8 @@
 
 #include "k3dconfig.h"
 
+using namespace kc3ddip;
+
 int main()
 {
   dip dil;

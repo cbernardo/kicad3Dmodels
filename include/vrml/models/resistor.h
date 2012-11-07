@@ -92,7 +92,10 @@
 #define RESISTOR_H_
 
 #include <iosfwd>
-class VRMLMat;
+
+#include "vrmlmat.h"
+
+namespace kc3dresistor {
 
 struct RParams
 {
@@ -110,7 +113,7 @@ struct RParams
     int rsides;     // number of sides on the resistor (default 48)
     std::string pwrsuf;     // suffix for power rating
     std::string spcsuf;     // suffix for pin spacing
-    VRMLMat colors[14]; // color values for 0..9, Gold, Silver, body color, wire color
+    kc3d::VRMLMat colors[14]; // color values for 0..9, Gold, Silver, body color, wire color
 
     RParams();
 };
@@ -131,5 +134,6 @@ public:
 
 };
 
+}   // namespace kc3dresistor
 
 #endif /* RESISTOR_H_ */

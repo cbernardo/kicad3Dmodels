@@ -31,6 +31,7 @@
 
 
 using namespace std;
+using namespace kc3d;
 
 Polygon::Polygon()
 {

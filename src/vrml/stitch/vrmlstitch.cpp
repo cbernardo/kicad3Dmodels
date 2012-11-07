@@ -89,6 +89,7 @@
 #include "vcom.h"
 
 using namespace std;
+using namespace kc3d;
 
 
 void printUsage(void)

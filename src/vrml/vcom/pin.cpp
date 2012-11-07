@@ -31,6 +31,7 @@
 #include "rectangle.h"
 
 using namespace std;
+using namespace kc3d;
 
 PParams::PParams()
 {

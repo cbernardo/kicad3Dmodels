@@ -23,6 +23,8 @@
 
 #include <iosfwd>
 
+namespace kc3dresistor {
+
 // Return an index into the color table for the given tolerance code.
 // If the code is invalid -1 is returned.
 // Tolerances codes are as follows:
@@ -81,5 +83,7 @@ int GetValueCode5(int value, int exp, std::string &vcode);
 //  exponent may be -2 .. 8. Fractional value resistances
 //  are a special case not represented here.
 int GetValueCode4(int value, int exp, std::string &vcode);
+
+}   // namespace kc3dresistor
 
 #endif /* COLORCODES_H_ */

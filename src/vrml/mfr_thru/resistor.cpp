@@ -37,6 +37,8 @@
 #include "pin.h"
 
 using namespace std;
+using namespace kc3d;
+using namespace kc3dresistor;
 
 
 RParams::RParams()

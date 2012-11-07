@@ -30,6 +30,8 @@ using namespace std;
 #define MIN_EXP (-2)
 #define MAX_EXP (9)
 
+namespace kc3dresistor {
+
 // Return an index into the color table for the given tolerance code.
 int GetToleranceIndex(const char c)
 {
@@ -384,3 +386,5 @@ int GetValueCode4(int value, int exp, std::string &vcode)
     vcode = os.str();
     return 0;
 }
+
+}   // namespace kc3dresistor

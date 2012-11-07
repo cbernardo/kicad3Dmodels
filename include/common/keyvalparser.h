@@ -18,6 +18,11 @@
  *
  */
 
+/**
+ * \file
+ * \defgroup common_tools Common Tools
+*/
+
 
 #ifndef KEYVALPARSER_H
 #define KEYVALPARSER_H
@@ -25,7 +30,10 @@
 #include <string>
 #include <map>
 
+namespace kc3d {
+
 /**
+ *      \ingroup common_tools
  *      \brief Key:Value parser
  *
  *      Class KeyValParser reads a file and extracts
@@ -61,5 +69,7 @@ public:
      */
     const std::map<std::string, std::string> &GetKeys(void);
 };
+
+}   // namespace kc3d
 
 #endif  // KEYVALPARSER_H

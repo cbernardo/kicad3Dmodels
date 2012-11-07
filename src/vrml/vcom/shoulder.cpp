@@ -33,6 +33,7 @@
 #include "transform.h"
 
 using namespace std;
+using namespace kc3d;
 
 Shoulder::Shoulder()
 {

@@ -4,7 +4,7 @@
 #
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
-include_directories(${K3D_SOURCE_DIR}/src/common ${K3D_SOURCE_DIR}/src/vrml/vcom)
+include_directories(${K3D_SOURCE_DIR}/include/common ${K3D_SOURCE_DIR}/include/vrml/common) 
 
 link_directories(${K3D_BINARY_DIR}/src/vrml/vcom)
 

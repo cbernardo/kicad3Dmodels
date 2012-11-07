@@ -56,6 +56,7 @@
 #include "k3dconfig.h"
 
 using namespace std;
+using namespace kc3d;
 
 int makeHdr(int np);
 

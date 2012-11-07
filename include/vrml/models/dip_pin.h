@@ -32,10 +32,12 @@
 
 #define PIN_NP (52)
 
+namespace kc3ddip {
+
 class dippin
 {
 private:
-    Quat p[PIN_NP];
+    kc3d::Quat p[PIN_NP];
     double BEV;     ///< pin edge bevel (not yet exposed)
     double scale;   ///< world scale parameter; needed to keep KiCad happy
     bool valid;     ///< true when the computed vertices are valid
@@ -149,11 +151,13 @@ public:
     }
 
     /// calculate the vertices
-    Quat *calc(void);
+    kc3d::Quat *calc(void);
     /// write the point list as a VRML Coordinate{}
-    int writeCoord(std::ofstream &fp, int tabs = 0, Transform *t = NULL);
+    int writeCoord(std::ofstream &fp, int tabs = 0, kc3d::Transform *t = NULL);
     /// write the facet list as a VRML coordIndex[]
     int writeFacets(std::ofstream &fp, int tabs);
 };
+
+}   // namespace kc3ddip
 
 #endif /* DIP_PIN_H */

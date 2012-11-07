@@ -1,0 +1,11 @@
+Namespaces are used to segregate grouped components. At the
+moment the planned namespaces are:
+
+kc3d: for all low-level operations shared between models
+
+Other namespaces should be named after the class of components, for example:
+
+kc3dresistor: for models related to resistors
+kc3ddip: for models related to DIPs
+kc3dconn: for models related to connectors [this namespace is not currently used]
+

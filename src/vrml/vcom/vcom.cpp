@@ -30,6 +30,8 @@ using namespace std;
 
 #define MAX_TABS (6)
 
+namespace kc3d {
+
 // Create the VRML header and ancillary comments
 int SetupVRML(std::string filename, std::ofstream &fp)
 {
@@ -311,3 +313,5 @@ int CloseCoordIndex(std::ofstream &fp, int tabs)
     }
     return 0;
 }
+
+}   // namespace kc3d

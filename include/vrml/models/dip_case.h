@@ -32,10 +32,12 @@
 
 #define CASE_NP (76)
 
+namespace kc3ddip {
+
 class dipcase
 {
 private:
-    Quat p[CASE_NP];
+    kc3d::Quat p[CASE_NP];
     double NW;      ///< [NotchWidth]
     double ND;      ///< [NotchDepth]
     double BEV;     ///< [CaseBevel]
@@ -137,16 +139,18 @@ public:
     }
 
     /// calculate the vertices
-    Quat *calc(void);
+    kc3d::Quat *calc(void);
     /// retrieve the total number of points
     int getNP(void)
     {
         return CASE_NP;
     }
     /// write the point list as a VRML Coordinate{}
-    int writeCoord(std::ofstream &fp, int tabs = 0, Transform *t = NULL);
+    int writeCoord(std::ofstream &fp, int tabs = 0, kc3d::Transform *t = NULL);
     /// write the facet list as a VRML coordIndex[]
     int writeFacets(std::ofstream &fp, int tabs = 0);
 };
+
+}   // namespace kc3ddip
 
 #endif /* DIP_CASE_H */

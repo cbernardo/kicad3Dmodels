@@ -24,6 +24,7 @@
 #include "vrmlmat.h"
 
 using namespace std;
+using namespace kc3d;
 
 int VRMLMat::WriteMaterial(std::ofstream &file, int tabs)
 {

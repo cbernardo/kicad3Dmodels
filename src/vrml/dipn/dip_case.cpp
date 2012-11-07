@@ -31,6 +31,8 @@
 #include "dip_limits.h"
 
 using namespace std;
+using namespace kc3d;
+using namespace kc3ddip;
 
 dipcase::dipcase()
 {

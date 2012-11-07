@@ -24,7 +24,10 @@
 
 #include <string>
 
+namespace kc3d {
+
 /**
+ * \ingroup common_tools
  * \brief Material appearance
  *
  *  Class Material represents the material appearance according to the
@@ -181,5 +184,7 @@ public:
      */
     float GetShininess(void);
 };
+
+}   // namespace kc3d
 
 #endif  // MATERIAL_H
