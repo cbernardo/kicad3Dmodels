@@ -98,7 +98,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+    virtual int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     /**
@@ -119,7 +119,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return
      */
-    int Stitch(Polygon &p2, bool ccw, Transform &t,
+    virtual int Stitch(Polygon &p2, bool ccw, Transform &t,
             VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
 
     /**

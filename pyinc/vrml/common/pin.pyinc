@@ -1,0 +1,47 @@
+/*
+    file: pin.pyinc
+    
+    Python bindings for kc3d::Pin
+    
+    Copyright 2012, Cirilo Bernardo
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+
+    class_<kc3d::PParams>("PParams")
+        .def_readwrite("w", &kc3d::PParams::w)
+        .def_readwrite("d", &kc3d::PParams::d)
+        .def_readwrite("tap", &kc3d::PParams::tap)
+        .def_readwrite("stw", &kc3d::PParams::stw)
+        .def_readwrite("std", &kc3d::PParams::std)
+        .def_readwrite("dbltap", &kc3d::PParams::dbltap)
+        .def_readwrite("h", &kc3d::PParams::h)
+        .def_readwrite("r", &kc3d::PParams::r)
+        .def_readwrite("nb", &kc3d::PParams::nb)
+        .def_readwrite("l", &kc3d::PParams::l)
+        .def_readwrite("bev", &kc3d::PParams::bev)
+        .def_readwrite("bend", &kc3d::PParams::bend)
+        .def_readwrite("ns", &kc3d::PParams::ns)
+    ;
+
+    
+    
+    class_<kc3d::Pin>("Pin", init<>())
+        .def(init<const kc3d::Pin &>())
+        
+        .def("calc", &kc3d::Pin::Calc)
+        .def("build", &kc3d::Pin::Build)
+        .def("setShape", &kc3d::Pin::SetShape)
+    ;

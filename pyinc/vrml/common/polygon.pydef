@@ -1,0 +1,81 @@
+/*
+    file: polygon.pydef
+    
+    Python bindings for kc3d::Polygon
+    
+    Copyright 2012, Cirilo Bernardo
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+namespace kc3d {
+
+struct PolyWrap : Polygon, wrapper<Polygon>
+{
+    /* PURE VIRTUAL FUNCTIONS */
+    Polygon *clone(void)
+    {
+        return this->get_override("clone")();
+    }
+    
+    int Calc(double x, double y, Transform &t)
+    {
+        return this->get_override("Calc")(x, y, t);
+    }
+    
+    /* IMPLEMENTED VIRTUAL FUNCTIONS */
+    bool isValid(void)
+    {
+        if (override IsValid = this->get_override("IsValid"))
+            return IsValid();
+        return Polygon::IsValid();
+    }
+    
+    bool default_IsValid(void) { return this->Polygon::IsValid(); }
+
+    
+    
+    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+            std::ofstream &fp, int tabs)
+    {
+        if (override Paint = this->get_override("Paint"))
+            return Paint(ccw, t, color, reuse_color, fp, tabs);
+        return Polygon::Paint(ccw, t, color, reuse_color, fp, tabs);
+    }
+
+    int default_Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+            std::ofstream &fp, int tabs )
+    {
+        return this->Polygon::Paint(ccw, t, color, reuse_color, fp, tabs);
+    }
+
+    
+    
+    int Stitch(Polygon &p2, bool ccw, Transform &t,
+            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
+    {
+        if (override Stitch = this->get_override("Stitch"))
+            return Stitch(p2, ccw, t, color, reuse_color, fp, tabs);
+        return Polygon::Stitch(p2, ccw, t, color, reuse_color, fp, tabs);
+    }
+
+    int default_Stitch(Polygon &p2, bool ccw, Transform &t,
+            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
+    {
+        return this->Polygon::Stitch(p2, ccw, t, color, reuse_color, fp, tabs);
+    }
+
+};
+
+}   // namespace kc3d
