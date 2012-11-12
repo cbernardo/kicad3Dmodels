@@ -81,7 +81,7 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
     if (!male) val += fcolor.WriteMaterial(fp, tabs, true);
     val += SetupXForm(part, fp, tabs);
 
-    val += makeCase(t, fp, tabs);
+    val += makeCase(t, fp, tabs+2);
     if (val)
     {
         ERRBLURB;
@@ -89,7 +89,7 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    val += makePins(t, fp, tabs);
+    val += makePins(t, fp, tabs+2);
     if (val)
     {
         ERRBLURB;
@@ -97,7 +97,7 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    if ((!male) && (!square)) val += makeShrouds(t, fp, tabs);
+    if ((!male) && (!square)) val += makeShrouds(t, fp, tabs+2);
     if (val)
     {
         ERRBLURB;
@@ -105,7 +105,7 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    if (!male) val += makeFunnels(t, fp, tabs);
+    if (!male) val += makeFunnels(t, fp, tabs+2);
     if (val)
     {
         ERRBLURB;
@@ -323,7 +323,7 @@ int Genhdr::makeCase(kc3d::Transform &t, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    val += hbase.Build(t, bcolor, true, fp, tabs + 2);
+    val += hbase.Build(t, bcolor, true, fp, tabs);
 
     if (val) return -1;
     return 0;

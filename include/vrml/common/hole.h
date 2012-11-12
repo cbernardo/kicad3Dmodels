@@ -79,7 +79,7 @@ private:
      * @return
      */
     int writeFacets(int v0, int v1, int h0, int h1, int lp,
-            std::ofstream &fp, int tabs = 0);
+            std::ofstream &fp, int tabs = 0, bool term = false);
 
     // Hide the default copy and assignment operators
     Hole(const Hole &p);

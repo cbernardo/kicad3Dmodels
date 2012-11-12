@@ -233,7 +233,7 @@ int Hole::Build(Transform &t, VRMLMat &color, bool reuse,
         acc += writeFacets(0, 1, 4+np*3/4, 3+np, 4, fp, tabs +2);
         acc += writeFacets(1, 2, 4, 3+np/4, 4+np/4, fp, tabs +2);
         acc += writeFacets(2, 3, 4+np/4, 3+np/2, 4+np/2, fp, tabs +2);
-        acc += writeFacets(3, 0, 4+np/2, 3+np*3/4, 4+np*3/4, fp, tabs +2);
+        acc += writeFacets(3, 0, 4+np/2, 3+np*3/4, 4+np*3/4, fp, tabs +2, true);
     }
     acc += CloseCoordIndex(fp, tabs +1);
     acc += CloseShape(fp, tabs);
@@ -249,7 +249,7 @@ int Hole::Build(Transform &t, VRMLMat &color, bool reuse,
 
 
 int Hole::writeFacets(int v0, int v1, int h0, int h1, int lp,
-        std::ofstream &fp, int tabs)
+        std::ofstream &fp, int tabs, bool term)
 {
     int i;
 
@@ -270,13 +270,16 @@ int Hole::writeFacets(int v0, int v1, int h0, int h1, int lp,
     fp << fmt;
     for (i = h0; i < h1; ++i)
     {
-        fp << i << "," << v0 << "," << i+1 << ",-1,";
+        fp << v0 << "," << i << "," << i+1 << ",-1,";
         if (!((i + 1) % 18))
             fp << "\n" << fmt;
     }
     fp << v0 << "," << h1 << "," << lp << ",-1,\n";
     // large triangular facet
-    fp << fmt << v1 << "," << v0 << "," << lp << ",-1\n";
+    if (term)
+        fp << fmt << v1 << "," << v0 << "," << lp << ",-1\n";
+    else
+        fp << fmt << v1 << "," << v0 << "," << lp << ",-1,\n";
 
     if (!fp.good()) return -1;
     return 0;
