@@ -1,0 +1,466 @@
+\documentclass[a4paper, dvipdfm]{article}
+\usepackage{graphicx}
+
+\setlength\oddsidemargin{-.25 in}
+\setlength\textwidth{6.75 in}
+\setlength\topmargin{-.5 in}
+\setlength\textheight{9.75 in}
+
+\makeatletter
+\def\maketitle{%
+  \null
+  \thispagestyle{empty}%
+  \vfill
+  \begin{center}\leavevmode
+    \normalfont
+{\LARGE \@title\par}%
+    \vskip 1cm
+{\Large \@author\par}%
+    \vskip 1cm
+{\Large \@date\par}%
+  \end{center}%
+  \vfill
+  \null
+  \cleardoublepage
+}
+\makeatother
+
+\pagestyle{myheadings}
+\markboth{KiCAD 3D VRML Models, Python bindings}{}
+
+
+\title{TUTORIAL\\
+KiCAD 3D VRML Models\\
+and\\
+Python Bindings}
+\date{Version 0.1\\
+12 Nov 2012}
+\author{Dr. Cirilo Bernardo}
+
+\begin{document}
+
+\maketitle
+
+% Revision history, if desired
+%\pagenumbering{roman}
+%\textbf{\Large{Revision History}}
+%\vspace{1 ex}
+%
+%\begin{tabular}{|l|l|p{4.5in}|}
+%\hline
+%\textbf{Revision} & \textbf{Date} & \textbf{Comments}\\
+%\hline
+%RevA.1 & 2012-11-12 & Initial draft\\
+%\hline
+%\end{tabular}
+%
+%\clearpage
+
+% start main numbering sequence
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\section{Introduction}
+The Kicad 3D Models project aims to produce high-quality parametric models for use
+with KiCAD.  Initially these will be VRML2.0 models for use in the KiCAD 3D Viewer
+but as the Free-CAD project matures, Free-CAD solid models will also be added with
+the intention of providing a means of generating a solid model of the board to aid
+users with their mechanical integration requirements.
+
+This document describes the installation and use of the Python modules for generating
+VRML models from existing parametric models as well as how to use the existing
+parameterized features from the toolbox to create new parametric models within Python.
+
+For an introduction to using VRML2.0 with KiCAD, see the document \emph{kicad\_3d\_vrml.pdf}
+``Tutorial: VRML2.0 and KiCAD'' and references therein.
+
+This document assumes the user is familiar with the VRML2.0 specification and the
+current limitations of the KiCAD 3D viewer which restrict the VRML features used
+in the 3D models. The user is also assumed to have a basic familiarity with
+the GNU compiler and the Python interpreter.
+
+This tutorial is aimed at users with a GNU/Linux system since the source code has
+been developed on such a system; users with experience on other systems are
+encouraged to make appropriate adjustments to the source code and build tools and
+to report results to the author via the project website (http://kicad3dmodels.sourceforge.net).
+
+To view the VRML models, use a viewer such as \verb#whitedune# on Linux or \verb#Cortona3D#
+on MSWindows.
+
+\section{Installation}
+The current requirements for installation of the Kicad 3D parametric models are:
+\begin{itemize}
+\item git version 1.7 or later (earlier versions may work)\\
+\item Kicad3DModels source code\\
+\item GNU C++ compiler\\
+\item CMake version 2.8 or later (earlier versions may work)\\
+\item Python version 2.6 or later\\
+\item Boost::Python version 1.49 or later (earlier versions may work)\\
+\end{itemize}
+
+To retrieve the source code via git, change to your preferred working directory
+then invoke git to create the project's subdirectory:
+
+\verb#git clone git://git.code.sf.net/p/kicad3dmodels/code kicad3d#
+
+Change to the top level project directory:
+
+\verb#cd kicad3d#
+
+The project uses the CMake build tool and each subdirectory contains a
+\verb#CMakeLists.txt# file with instructions for CMake. Since the 
+instructions to build the Python bindings depends on the specific setup
+of your system, you will need to edit the file \verb#src/py/CMakeLists.txt#
+and check the following:
+
+\verb#SET(ENV{BOOST_ROOT} "/usr/lib")# Set the path to your BOOST installation
+
+\verb#SET(PYTHON_INCLUDE "/usr/include/python2.7")# Set the path to the header
+files for the version of Python you wish to use.
+
+\verb#SET(PYTHON_VERSION python2.7)# Set to the version of Python you wish to use.
+
+\verb#find_package(Boost 1.49 EXACT REQUIRED COMPONENTS python)# Set the BOOST version
+to the version installed on your system.
+
+Once those changes are made we should be ready to configure and build the tools.
+To keep the source tree free of temporary build files, we will create a build
+directory in the top level project directory (\verb#kicad3d#) then build and install
+the files:
+
+\begin{verbatim}
+mkdir build
+cd build
+cmake ..
+make install
+\end{verbatim}
+
+The various tools and libraries will be built; executable files will be installed within
+the \verb#scripts/bin# directory in the project tree and the Python modules will be
+installed within the \verb#scripts/lib# directory. The Python modules will have names
+such as \verb#libkc3d.so# while Python expects names such as \verb#kc3d.so#; you may work
+around this issue by renaming the files or by using symlinks, for example:
+
+\begin{verbatim}
+cd scripts/lib
+ln -s libkc3d.so kc3d.so
+ln -s libkc3dconn.so kc3dconn.so
+\end{verbatim}
+
+This software is in its early development stages so it is recommended that the modules
+remain in the \verb#scripts/lib# directory. To check that everything is fine, set the
+\verb#PYTHONPATH# environment variable to include the \verb#scripts/lib# directory;
+if the environment variable is not set, one way to set its value is to change to the
+\verb#script/lib# directory and then execute the command \verb#export PYTHONPATH=$PWD#.
+We should now be able to load the modules from within Python:
+
+\begin{verbatim}
+python
+Python 2.7.3rc2 (default, Apr 22 2012, 22:35:38) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import kc3d
+>>> import kc3dconn
+\end{verbatim}
+
+\section{Quick Example}
+In this brief example we will invoke a single parametric model to
+build a variety of 6x2 DIL headers as a demonstration of the
+flexibility of parametric models.
+
+For consistency in the appearance of materials in the models, material
+appearances are defined in files within the directory \verb#mcad/colors#.
+For the convenience of this exerice and all future exercises in this
+tutorial, we will create models from the directory \verb#mcad/test#;
+create the test directory and change to it. Ensure that the PYTHONPATH
+had been set as discussed in the section on installing the software.
+Run Python and execute the following Python commands (ignore lines
+beginning with `\#' - these are merely code comments):
+
+\begin{verbatim}
+# load the tools
+import kc3d
+import kc3dconn
+
+# instantiate necessary objects
+out = kc3d.ofstream()
+hdr = kc3dconn.Genhdr()
+tx = kc3d.Transform()
+# set the scale to 1/2.54 so that the VRML units correspond to
+# the 0.1 inch used by KiCAD.
+tx.setScale(0.3937)
+
+# create a male 6x2 header with square pins 8mm high, 2.54mm pitch, and beveled case
+kc3d.SetupVRML("testhdr_MS_6x2_8mm.wrl", out)
+hdr.setColors("../colors/black.mat", "../colors/gold.mat", "../colors/gold.mat")
+hdr.setCase(6, 2, 2.54, 2.54, 2.72, .72, 0.4)
+hdr.setPins(1, 1, 2, 10, 0.64, 0.64, 0.64, 0.3, 0.8, 4, 0)
+hdr.build(tx, "HDR_MALE_SP_6x2_8MM", out, 0)
+out.close()
+
+# create a female 6x2 header with square pins, 8mm high beveled case, 2.54mm pitch
+kc3d.SetupVRML("testhdr_FS_6x2_8mm.wrl", out)
+hdr.setColors("../colors/black.mat", "../colors/tin.mat", "../colors/gold.mat")
+hdr.setCase(6, 2, 2.54, 2.54, 8, .72, 0.4)
+hdr.setPins(1, 0, 2, 10, 0.64, 1.6, 0.72, 0.3, 0.8, 24, 0.5)
+hdr.build(tx, "HDR_FEMALE_SP_6x2_8MM", out, 0)
+out.close()
+
+# create a female 6x2 header with round pins, 8mm high beveled case, 2.54mm pitch
+kc3d.SetupVRML("testhdr_FR_6x2_8mm.wrl", out)
+hdr.setCase(6, 2, 2.54, 2.54, 8, .72, 0.4)
+hdr.setPins(0, 0, 2, 10, 0.64, 1.6, 0.96, 0.3, 0.8, 24, 0.1)
+hdr.build(tx, "HDR_FEMALE_RP_6x2_8MM", out, 0)
+out.close()
+\end{verbatim}
+
+Exit the python interpreter and inspect the model files with a VRML viewer.
+This is only a very brief introduction to a parametric model. For this
+particular model (\verb#Genhdr#), many parameters can be changed to produce
+a different model - for example, the number of rows or columns can be changed
+and the case can be plain with no bevel. The model only produces vertical
+headers with straight pins but the model itself relies on other components
+which describe the shape of a pin and the shape of the case; these more
+basic components can be used to create models for generating 90-degree
+headers, SMD headers, and so on.
+
+% XXX - put in pretty pictures
+
+\section{KC3D: The VRML Toolbox}
+As mentioned in the previous section, parametric models may be built on more
+basic components which can be used in a variety of models. This section
+describes these basic components and the details of their parameters. The
+basic models are organized into the \verb#kc3d# module. As with many Python
+modules, interactive information can be displayed about the module and
+its components, for example:
+
+\begin{verbatim}
+import kc3d
+help("kc3d")
+help("kc3d.Polygon")
+help("kc3d.Circle")
+\end{verbatim}
+
+This section aims to present the details of each component of the kc3d module
+in a more intelligible fashion, but while working within the Python interpreter
+the built-in information is very helpful tool.
+
+
+\subsection{kc3d.ofstream()}
+This object is a simple wrapper for the C++ std::ofstream which is used as
+a parameter to all routines which write data to a file. The exposed methods
+are as follows:
+
+\textbf{kc3d.ofstream.open(filename)} : opens the file with the given filename.
+
+\textbf{kc3d.ofstream.close()} : closes the file.
+
+\textbf{kc3d.ofstream.good()} : returns 1 if the file stream is in a good state
+and 0 if there are errors.
+
+\textbf{kc3d.ofstream.is\_open()} : returns 1 if a file is currently open.
+
+\subsection{kc3d VRML File Operations}
+There are a number of methods which can be called directly from the
+kc3d module to operate on VRML files.
+
+\textbf{kc3d.SetupVRML(filename, file)} : Open a VRML file with the given
+filename and write the header information. The argument \textbf{file}
+is an object of type \textbf{kc3d.ofstream()}.  Return values are
+0 for success and -1 for failure.
+
+\textbf{kc3d.SetupXForm(name, file, tabs)} : Creates the opening
+text for a VRML Transform block.  The \textbf{name} is the name
+of the transform, \textbf{file} is a file which was previously opened
+via a call to \textbf{SetupVRML}, and \textbf{tabs} is the
+formatting indentation level. Return values are 0 for success and
+-1 for failure.
+
+\textbf{kc3d.CloseXForm(file, tabs)} : Close a VRML Transform block previously
+opened by a call to \textbf{SetupXForm}. Return values are 0 for
+success and -1 for failure.
+
+\textbf{kc3d.SetupShape(color, reuse, file, tabs)} : Creates the
+opening text for a VRML Shape block; the text includes the 
+appearance specification. The argument \textbf{color} is of
+type \textbf{kc3d.VRMLMat} and it must already have loaded its
+color definition from a file. If \textbf{reuse} is 1, the
+Shape block will assume that the material appearance had
+previously been written to the VRML file and will employ the
+VRML USE directive to reuse the previous definition.
+The argument \textbf{file} is an open VRML file. Return values
+are 0 for success and -1 for failure.
+
+\textbf{kc3d.CloseShape(file, tabs)} : Closes a VRML Shape block previously
+opened via \textbf{SetupShape}. In a typical sequence of operations
+a Shape block is opened and a geometry and coordIndex block is written
+to describe a surface. Multiple Shape blocks are written to a
+Transform block to describe the entire component. Return values are
+0 for success and -1 for failure.
+
+\textbf{kc3d.WriteCoord(*X, *Y, *Z, np, file, tabs)} : \textbf{*X},
+\textbf{*Y}, and \textbf{*Z} are pointers to arrays containing the
+coordinates of vertices and \textbf{np} is the number of vertices.
+This method writes the series of coordinate points to a
+coordinate block. Return values are 0 for success and -1 for failure.
+
+\textbf{kc3d.SetupCoordIndex(file, tabs)} : Create the opening text
+of a VRML coordIndex block. After opening such a block, the user
+must write a list of indices defining each facet to be rendered.
+Return values are 0 for success and -1 for failure.
+
+\textbf{kc3d.CloseCoordIndex(file, tabs)} : Closes a coordIndex
+block. Return values are 0 for success and -1 for failure.
+
+\subsection{kc3d.Material() and kc3d.VRMLMat()}
+The \textbf{Material} class is the representation of the VRML2.0 material
+appearance as described in individual files in the project's \verb#mcad/colors#
+directory. The base class is meant to hold the basic data while derived classes
+implement input and output functions specific to the class of 3D models such
+as VRML, Free-CAD, etc. Only the \textbf{Load} function has been exposed to
+Python and it has the following form:
+
+\textbf{Material.Load(filename)}: where the filename is the path to a
+material definition file. Return values are 0 for success and -1 for failure.
+
+The \textbf{VRMLMat} class is derived from \textbf{Material} and implements
+the \textbf{Write} routine to write a VRML2.0 material appearance block to
+a file:
+
+\textbf{VRMLMat.Write(file, tabs, mainblock)}: where \textbf{file} is an open
+output file of type \textbf{kc3d.ofstream()}, \textbf{tabs} is an integer
+specifying the formatting indentation level, and \textbf{mainblock} is a boolean
+which controls the content of the output information; if the value is 0 then
+a material block appropriate for inclusion in a VRML Shape block is generated,
+otherwise a material block appropriate for inclusion in the main VRML body
+is generated.  Return values are 0 for success and -1 for failure.
+
+\subsection{kc3d.Quat()}
+The \textbf{Quat} class is the representation of a basic quaternion. It supports
+multiplication and division by a scalar and addition and subtraction of quaternions
+and scalars. The quaternion can be normalized by invoking the method \textbf{normalize()}
+or the vector component alone can be normalized via a call to \textbf{vnormalize()}.
+The individual components w, x, y, and z are publicly exposed.
+
+\subsection{kc3d.Translation()}
+The \textbf{Translation} class is the representation of data and methods to
+produce a 3D geometric translation. The translation parameters can be set at any
+time by invoking the methods \textbf{set(x, y, z)} or \textbf{set(q)} where \textbf{q}
+is a quaternion representing the translation. A point can be
+translated by invoking one of the following methods:
+
+\textbf{translate(q)} : translate a single point represented by a quaternion
+
+\textbf{translate(X, Y, Z)} : translate a single point
+
+The method \textbf{isUnity()} returns 1 if the translation is an identity operation and
+0 if not.
+
+\subsection{kc3d.Rotation()}
+The \textbf{Rotation} class is the representation of data and methods to produce
+a 3D geometric rotation in a right-handed coordinate system. Internally the
+parameters are stored as a normalized quaternion where \textbf{w} represents the
+rotation in radians, and the vector component (\textbf{x}, \textbf{y}, \textbf{z})
+represents the axis of rotation which passes through the coordinate origin (0, 0, 0).
+The rotation parameters can be changed at any time via the methods \textbf{set(q)}
+and \textbf{set(w, x, y, z)}. A point can be rotated by invoking one
+of the following methods:
+
+\textbf{rotate(q)} : rotate a single point represented by a quaternion
+
+\textbf{rotate(X, Y, Z)} : rotate a single point
+
+The method \textbf{isUnity()} returns 1 if the rotation is an identity operation and
+0 if not.
+
+\subsection{kc3d.Scale()}
+The \textbf{Scale} class is the representation of data and methods of a
+a 3D geometric scaling operation.  The scale parameters can be changed at
+any time via the method \textbf{set(x, y, z)}. A point can be scaled by invoking
+one of the following methods:
+
+\textbf{scale(q)} : scale a single point represented by a quaternion
+
+\textbf{scale(X, Y, Z)} : scale a single point
+
+The method \textbf{isUnity()} returns 1 if the scale is an identity operation and
+0 if not.
+
+\subsection{kc3d.Transform()}
+The \textbf{Transform} class represents a generic 3D transformation in a right-handed
+coordinate system. A transform is represented internally as a rotation, translation,
+and scale operation in that order.  The parameters for all three transformation
+operations can be set at any time by invoking \textbf{set(translation, rotation, scale)}.
+The transformation operations can also be set individually by invoking the following
+methods:
+
+\begin{itemize}
+\item \textbf{setTranslation(q)}\\
+\item \textbf{setTranslation(Translation)}\\
+\item \textbf{setTranslation(x, y, z)}\\
+\item \textbf{setTranslation(q)}\\
+\item \textbf{setRotation(q)}\\
+\item \textbf{setRotation(Rotation)}\\
+\item \textbf{setRotation(w, x, y, z)}\\
+\item \textbf{setScale(q)}\\
+\item \textbf{setScale(scalefactor)}\\
+\item \textbf{setScale(Scale)}\\
+\item \textbf{setScale(x, y, z)}\\
+\end{itemize}
+
+Individual points or sets of points can be transformed via the following methods:
+
+\begin{itemize}
+\item \textbf{xform(q)} transform a point\\
+\item \textbf{xform(x, y, z)} transform a point\\
+\item \textbf{xform(*q, np)} transform a set of \textbf{np} points\\
+\item \textbf{xform(*x, *y, *z, np)} transform a set of \textbf{np} points\\
+\end{itemize}
+
+\subsection{kc3d.Polygon()}
+The \textbf{Polygon} is an abstract class implementing the methods \textbf{paint}
+and \textbf{stitch} to render the faces of a convex polygon or to create facets
+between the points of two polygons.
+
+\textbf{paint(xform, color, reuse, file, tabs)} : Render the faces of a convex polygon.
+\textbf{xform} is a transform to apply to the output vertices, \textbf{color} is a
+\textbf{VRMLMat} object, \textbf{reuse} is a boolean controlling the reuse of the color.
+Return values are 0 for success and -1 for failure.
+
+\textbf{stitch(polygon2, xform, color, reuse, file, tabs)} : Render facets between two
+polygons. Return values are 0 for success and -1 for failure.
+
+\textbf{xform(transform)} : transform the internal vertices of the polygon.
+
+\textbf{getVertices(**x, **y, **z)} : retrieve pointers to the vertex coordinates.
+The return value is an integer specifying the number of vertices; -1 may be returned
+if there is a fault.
+
+\textbf{isValid()} : returns 1 if the polygon contains valid vertices and 0 if not.
+
+\textbf{clone()} : [Abstract] This method must be implemented by derived classes;
+it is used to create copies of a class derived from \textbf{Polygon}.
+
+\textbf{calc(x, y, xform)} : [Abstract] This method must be implemented by derived
+classes. The method calculates the vertices of the polygon; \textbf{x} is the
+maximum extent of the polygon along the X axis, \textbf{y} is the maximum extent
+along the Y axis, and \textbf{xform} is a transform to be applied to the results.
+For example, in the derived class \textbf{Circle}, x and y specify the diameter
+of the ellipse along the X and Y axes.
+
+\subsubsection{kc3d.Circle()}
+The \textbf{Circle} class derives from Polygon and implements a polygon of
+3 to 360 vertices inscribed in an ellipse.  The more vertices, the better the approximation
+to an ellipse; however, this comes at the cost of memory and file size consumed by the
+model.  For an excellent representation of a circle, 48 vertices usually suffices. For
+modeling small wires, 12 to 16 vertices may suffice and in some cases even 8 vertices
+will produce pleasant results. The number of vertices defaults to 16 on creation
+but it can be set at any time by invoking \textbf{setNVertices(n)} prior to invoking
+the \textbf{calc} method to calculate the vertices.
+
+\subsubsection{kc3d.Rectangle()}
+The \textbf{Rectangle} class derives from Polygon and implements a rectangle which
+may have beveled corners. The bevel can be controlled by invoking \textbf{setBevel(bevel)}
+before invoking the \textbf{calc} method. A bevel $\le0$ indicates the default of no bevel.
+
+\end{document}
