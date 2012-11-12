@@ -26,13 +26,16 @@
 using namespace std;
 using namespace kc3d;
 
-int VRMLMat::WriteMaterial(std::ofstream &file, int tabs)
+int VRMLMat::WriteMaterial(std::ofstream &file, int tabs, bool mainblock)
 {
     if (tabs < 0) tabs = 0;
     if (tabs > 5) tabs = 5;
     string fmt(4*tabs, ' ');
 
-    file << fmt << "material DEF " << material << " Material {\n";
+    if (mainblock)
+        file << fmt << "DEF " << material << " Material {\n";
+    else
+        file << fmt << "material DEF " << material << " Material {\n";
     file << fmt << "    diffuseColor " << setprecision(5) << diffuse[0] <<
             " " << diffuse[1] << " " << diffuse[2] << "\n";
     file << fmt << "    emissiveColor " << setprecision(5) << emissive[0] <<

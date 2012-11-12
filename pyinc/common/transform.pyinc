@@ -25,7 +25,7 @@
 //
 //  class kc3d::Quat
 //
-class_<kc3d::Quat>("Quat", init<>())
+class_<kc3d::Quat>("Quat", "Basic quaternion", init<>())
     .def(init<const kc3d::Quat &>())
     .def(init<double, double, double, double>())
     
@@ -37,14 +37,14 @@ class_<kc3d::Quat>("Quat", init<>())
     .def(self * double())
     .def(double() * self)
     .def(self / double())
-    .def("normalize", &kc3d::Quat::normalize)
-    .def("vnormalize", &kc3d::Quat::vnormalize)
+    .def("normalize", &kc3d::Quat::normalize, "normalize the quaternion")
+    .def("vnormalize", &kc3d::Quat::vnormalize, "normalize the vector component")
     
     // member variables
-    .def_readwrite("w", &kc3d::Quat::w)
-    .def_readwrite("x", &kc3d::Quat::x)
-    .def_readwrite("y", &kc3d::Quat::y)
-    .def_readwrite("z", &kc3d::Quat::z)
+    .def_readwrite("w", &kc3d::Quat::w, "scalar component")
+    .def_readwrite("x", &kc3d::Quat::x, "vector component 1")
+    .def_readwrite("y", &kc3d::Quat::y, "vector component 2")
+    .def_readwrite("z", &kc3d::Quat::z, "vector component 3")
     ;
 
 
@@ -52,7 +52,7 @@ class_<kc3d::Quat>("Quat", init<>())
 //
 //  class kc3d::Translation
 //
-class_<kc3d::Translation>("Translation", init<>())
+class_<kc3d::Translation>("Translation", "3D Translation", init<>())
     .def(init<kc3d::Quat>())
     .def(init<const kc3d::Translation &>())
     .def(init<double, double, double>())
@@ -68,11 +68,11 @@ class_<kc3d::Translation>("Translation", init<>())
     .def(self / double())
     
     // member functions
-    .def("set", k3d_tra_set1)
-    .def("set", k3d_tra_set2)
-    .def("translate", k3d_tra_tran1)
-    .def("translate", k3d_tra_tran2)
-    .def("isUnity", &kc3d::Translation::isUnity)
+    .def("set", k3d_tra_set1, "set the translation parameters")
+    .def("set", k3d_tra_set2, "set the translation parameters")
+    .def("translate", k3d_tra_tran1, "translate a point")
+    .def("translate", k3d_tra_tran2, "translate a point")
+    .def("isUnity", &kc3d::Translation::isUnity, "return 1 if this is a unity translation")
     ;    
 
 
@@ -80,17 +80,17 @@ class_<kc3d::Translation>("Translation", init<>())
 //
 //  class kc3d::Rotation
 //
-class_<kc3d::Rotation>("Rotation", init<>())
+class_<kc3d::Rotation>("Rotation", "3D rotation on an axis passing through (0, 0, 0)", init<>())
     .def(init<kc3d::Quat>())
     .def(init<double, double, double, double>())
 
     // member functions
-    .def("rotate", k3d_rot_rot1)
-    .def("rotate", k3d_rot_rot2)
-    .def("set", k3d_rot_set1)
-    .def("set", k3d_rot_set2)
-    .def("get", &kc3d::Rotation::get)
-    .def("isUnity", &kc3d::Rotation::isUnity)
+    .def("rotate", k3d_rot_rot1, "rotate a point")
+    .def("rotate", k3d_rot_rot2, "rotate a point")
+    .def("set", k3d_rot_set1, "set the rotation parameters")
+    .def("set", k3d_rot_set2, "set the rotation parameters")
+    .def("get", &kc3d::Rotation::get, "retrieve the rotation parameters")
+    .def("isUnity", &kc3d::Rotation::isUnity, "return 1 if this is a unity rotation")
     ;
 
 
@@ -98,14 +98,14 @@ class_<kc3d::Rotation>("Rotation", init<>())
 //
 //  class kc3d::Scale
 //
-class_<kc3d::Scale>("Scale", init<>())
+class_<kc3d::Scale>("Scale", "3D scaling", init<>())
     .def(init<kc3d::Quat>())
     .def(init<double, double, double>())
     
     // member functions
-    .def("scale", k3d_scale_scale1)
-    .def("scale", k3d_scale_scale2)
-    .def("set", &kc3d::Scale::set)
+    .def("scale", k3d_scale_scale1, "scale a point")
+    .def("scale", k3d_scale_scale2, "scale a point")
+    .def("set", &kc3d::Scale::set, "set the scaling parameters")
     .def("isUnity", &kc3d::Scale::isUnity)
     ;
 
@@ -114,23 +114,26 @@ class_<kc3d::Scale>("Scale", init<>())
 //
 //  class kc3d::Transform
 //
-class_<kc3d::Transform>("Transform", init<>())
+class_<kc3d::Transform>("Transform", "Geometric transformation (Rotate, Translate, Scale)", init<>())
     .def(init<kc3d::Translation, kc3d::Rotation, kc3d::Scale>())
 
     // member functions
-    .def("set", &kc3d::Transform::set)
-    .def("setTranslation", k3d_xf_setTra1)
-    .def("setTranslation", k3d_xf_setTra2)
-    .def("setTranslation", k3d_xf_setTra3)
-    .def("setRotation", k3d_xf_setRot1)
-    .def("setRotation", k3d_xf_setRot2)
-    .def("setRotation", k3d_xf_setRot3)
-    .def("setScale", k3d_xf_setSca1)
-    .def("setScale", k3d_xf_setSca2)
-    .def("setScale", k3d_xf_setSca3)
-    .def("setScale", k3d_xf_setSca4)
-    .def("xform", k3d_xf_xform1)
-    .def("xform", k3d_xf_xform2)
-    .def("xform", k3d_xf_xform3)
-    .def("xform", k3d_xf_xform4)
+    .def("set", &kc3d::Transform::set, "set all transform parameters")
+    .def("setTranslation", k3d_xf_setTra1, "set translation parameters")
+    .def("setTranslation", k3d_xf_setTra2, "set translation parameters")
+    .def("setTranslation", k3d_xf_setTra3, "set translation parameters")
+    .def("setRotation", k3d_xf_setRot1, "set rotation parameters")
+    .def("setRotation", k3d_xf_setRot2, "set rotation parameters")
+    .def("setRotation", k3d_xf_setRot3, "set rotation parameters")
+    .def("setScale", k3d_xf_setSca1, "set scaling parameters")
+    .def("setScale", k3d_xf_setSca2, "set scaling parameters")
+    .def("setScale", k3d_xf_setSca3, "set scaling parameters")
+    .def("setScale", k3d_xf_setSca4, "set scaling parameters")
+    .def("xform", k3d_xf_xform1, "transform a point")
+    .def("xform", k3d_xf_xform2, "transform a point")
+    .def("xform", k3d_xf_xform3, "transform an array of points")
+    .def("xform", k3d_xf_xform4, "transform an array of points")
+    .def("getTranslation", &kc3d::Transform::GetTranslation, "retrieve translation parameters")
+    .def("getRotation", &kc3d::Transform::GetRotation, "retrieve Rotation parameters")
+    .def("getScale", &kc3d::Transform::GetScale, "retrieve scaling parameters")
     ;

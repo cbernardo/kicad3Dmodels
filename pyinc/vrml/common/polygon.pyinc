@@ -24,12 +24,24 @@
 //
 //  class kc3d::Polygon
 //
-class_<kc3d::PolyWrap, boost::noncopyable>("Polygon")
-    .def("clone", pure_virtual(&kc3d::Polygon::clone), return_value_policy<manage_new_object>())
-    .def("calc", pure_virtual(&kc3d::Polygon::Calc))
-    .def("isValid", &kc3d::PolyWrap::IsValid)
-    .def("paint", &kc3d::PolyWrap::Paint)
-    .def("stitch", &kc3d::PolyWrap::Stitch)
-    .def("xform", &kc3d::Polygon::Xform)
-    .def("getVertices", &kc3d::Polygon::GetVertices)
+class_<kc3d::PolyWrap, boost::noncopyable>("Polygon", "Generic Polygon")
+    .def("clone", pure_virtual(&kc3d::Polygon::clone), "Create a copy of this class of polygon",
+        return_value_policy<manage_new_object>())
+
+    .def("calc", pure_virtual(&kc3d::Polygon::Calc), "Calculate the polygon vertices",
+        args("xl: X dimension", "yl: Y dimension", "t: transform to apply to results"))
+
+    .def("isValid", &kc3d::PolyWrap::IsValid, "Returns 1 if the polygon holds valid vertices")
+
+    .def("paint", &kc3d::PolyWrap::Paint, "Paint the faces of the polygon",
+        args("t: transform to apply to output", "color: appearance specification",
+        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
+
+    .def("stitch", &kc3d::PolyWrap::Stitch, "Paint facets joining two polygons",
+        args("p2: second polygon", "t: transform to apply to output", "color: appearance specification",
+        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
+
+    .def("xform", &kc3d::Polygon::Xform, "Transform the internal vertices of the polygon")
+
+    .def("getVertices", &kc3d::Polygon::GetVertices, "Retrieve the coordinate lists and number of vertices")
     ;

@@ -44,7 +44,7 @@ using namespace kc3d;
 // minimum clearance between hole and edge
 #define MIN_CLR (0.1)
 
-namespace kc3d {
+namespace kc3dconn {
 
 // dummy class to aid in implementing Stitch
 class FakePoly : public Polygon
@@ -614,7 +614,6 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
         Polygon::z = vp[2];
         Polygon::nv = 4;
         pol.setParams(&vp[0][4], &vp[1][4], &vp[2][4], 4, true);
-        bool ccw = false;
         int iter = 0;
         int io = 0;     // index offset
         while (iter < 2)
@@ -631,11 +630,10 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
                     vp[1][7 -k] = y[nv - j -k + io -1];
                     vp[2][7 -k] = z[nv - j -k + io -1];
                 }
-                val += Polygon::Paint(ccw, t, color, reuse_color, fp, tabs);
-                val += pol.Paint(ccw, t, color, true, fp, tabs);
+                val += Polygon::Paint(t, color, reuse_color, fp, tabs);
+                val += pol.Paint(t, color, true, fp, tabs);
             }
             ++iter;
-            ccw = true;
             io = nv;
         }
 
@@ -677,8 +675,8 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(false, t, color, reuse_color, fp, tabs);
-            val += th.Build(true, t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse_color, fp, tabs);
+            val += th.Build(t, color, reuse_color, fp, tabs);
         }
     }
     if (val)
@@ -703,7 +701,7 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
     Polygon::z = z;
     Polygon::nv = nv;
     int val = 0;
-    val += Polygon::Stitch(pol, true, t, color, reuse_color, fp, tabs);
+    val += Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
     Polygon::x = NULL;
     Polygon::y = NULL;
     Polygon::z = NULL;
@@ -743,10 +741,10 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
                     tsv[2][j] = sv[2][j];
                 }
                 t0.transform(tsv[0], tsv[1], tsv[2], 8);
-                val +=Polygon::Stitch(pol, true, t, color, reuse_color, fp, tabs);
+                val +=Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
                 // we may as well paint the ends as well
-                val += Polygon::Paint(false, t, color, reuse_color, fp, tabs);
-                val += pol.Paint(true, t, color, reuse_color, fp, tabs);
+                val += Polygon::Paint(t, color, reuse_color, fp, tabs);
+                val += pol.Paint(t, color, reuse_color, fp, tabs);
             }
             ++k;
             yo = -yo;
@@ -761,14 +759,14 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
             tsv[1][i] = sv[1][i];
             tsv[2][i] = sv[2][i];
         }
-        val += Polygon::Stitch(pol, true, t, color, reuse_color, fp, tabs);
-        Polygon::Paint(false, t, color, reuse_color, fp, tabs);
-        pol.Paint(true, t, color, reuse_color, fp, tabs);
+        val += Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
+        Polygon::Paint(t, color, reuse_color, fp, tabs);
+        pol.Paint(t, color, reuse_color, fp, tabs);
         t0.setRotation(M_PI, 0, 0, 1);
         t0.transform(tsv[0], tsv[1], tsv[2], 8);
-        val += Polygon::Stitch(pol, true, t, color, reuse_color, fp, tabs);
-        val += Polygon::Paint(false, t, color, reuse_color, fp, tabs);
-        val += pol.Paint(true, t, color, reuse_color, fp, tabs);
+        val += Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
+        val += Polygon::Paint(t, color, reuse_color, fp, tabs);
+        val += pol.Paint(t, color, reuse_color, fp, tabs);
     }
     Polygon::x = NULL;
     Polygon::y = NULL;
@@ -787,7 +785,7 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
 
 
 /* Inherited (overridden) Paint */
-int Hdrbase::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+int Hdrbase::Paint(Transform &t, VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs)
 {
     ERRBLURB;
@@ -797,7 +795,7 @@ int Hdrbase::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
 
 
 /* Inherited (overridden) Stitch */
-int Hdrbase::Stitch(Polygon &p2, bool ccw, Transform &t,
+int Hdrbase::Stitch(Polygon &p2, Transform &t,
         VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
 {
     ERRBLURB;
@@ -825,8 +823,8 @@ int Hdrbase::makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
         t1.setTranslation(ox, 0, height);
         bh.Calc(xpitch, ypitch - 2.0*bev, hd0, hd0, t0, square, 0, 0, ns);
         th.Calc(xpitch, ypitch - 2.0*bev, hd1, hd1, t1, square, 0, 0, ns);
-        val += bh.Build(false, t, color, reuse_color, fp, tabs);
-        val += th.Build(true, t, color, reuse_color, fp, tabs);
+        val += bh.Build(t, color, reuse_color, fp, tabs);
+        val += th.Build(t, color, reuse_color, fp, tabs);
     }
     if (val)
     {
@@ -863,8 +861,8 @@ int Hdrbase::makeHoles2(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, ho, ns);
             th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, ho, ns);
-            val += bh.Build(false, t, color, reuse_color, fp, tabs);
-            val += th.Build(true, t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse_color, fp, tabs);
+            val += th.Build(t, color, reuse_color, fp, tabs);
         }
         ho = -ho;
         oy = -oy;
@@ -906,8 +904,8 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(false, t, color, reuse_color, fp, tabs);
-            val += th.Build(true, t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse_color, fp, tabs);
+            val += th.Build(t, color, reuse_color, fp, tabs);
         }
         ho = -ho;
         oy = -oy;
@@ -924,8 +922,8 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(false, t, color, reuse_color, fp, tabs);
-            val += th.Build(true, t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse_color, fp, tabs);
+            val += th.Build(t, color, reuse_color, fp, tabs);
         }
     }
 

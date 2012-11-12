@@ -152,7 +152,7 @@ int Hole::Calc(double w1, double d1, double w2, double d2, Transform &tx,
 }
 
 
-int Hole::Build(bool top, Transform &t, VRMLMat &color, bool reuse,
+int Hole::Build(Transform &t, VRMLMat &color, bool reuse,
         std::ofstream &fp, int tabs)
 {
     if (!valid)
@@ -226,14 +226,14 @@ int Hole::Build(bool top, Transform &t, VRMLMat &color, bool reuse,
     acc += SetupCoordIndex(fp, tabs +1);
     if (square)
     {
-        acc += writeRFacets(top, fp, tabs +2);
+        acc += writeRFacets(fp, tabs +2);
     }
     else
     {
-        acc += writeFacets(0, 1, 4+np*3/4, 3+np, 4, top, fp, tabs +2);
-        acc += writeFacets(1, 2, 4, 3+np/4, 4+np/4, top, fp, tabs +2);
-        acc += writeFacets(2, 3, 4+np/4, 3+np/2, 4+np/2, top, fp, tabs +2);
-        acc += writeFacets(3, 0, 4+np/2, 3+np*3/4, 4+np*3/4, top, fp, tabs +2);
+        acc += writeFacets(0, 1, 4+np*3/4, 3+np, 4, fp, tabs +2);
+        acc += writeFacets(1, 2, 4, 3+np/4, 4+np/4, fp, tabs +2);
+        acc += writeFacets(2, 3, 4+np/4, 3+np/2, 4+np/2, fp, tabs +2);
+        acc += writeFacets(3, 0, 4+np/2, 3+np*3/4, 4+np*3/4, fp, tabs +2);
     }
     acc += CloseCoordIndex(fp, tabs +1);
     acc += CloseShape(fp, tabs);
@@ -248,60 +248,47 @@ int Hole::Build(bool top, Transform &t, VRMLMat &color, bool reuse,
 }
 
 
-int Hole::writeFacets(int v0, int v1, int h0, int h1, int lp, bool top,
+int Hole::writeFacets(int v0, int v1, int h0, int h1, int lp,
         std::ofstream &fp, int tabs)
 {
     int i;
 
     string fmt(tabs*4, ' ');
+    // render the top
     fp << fmt;
     for (i = h0; i < h1; ++i)
     {
-        if (top)
-        {
-            fp << i << "," << v0 << "," << i+1 << ",-1,";
-        }
-        else
-        {
-            fp << v0 << "," << i << "," << i+1 << ",-1,";
-        }
+        fp << i << "," << v0 << "," << i+1 << ",-1,";
         if (!((i + 1) % 18))
             fp << "\n" << fmt;
     }
-    if (top)
-    {
-        fp << h1 << "," << v0 << "," << lp << ",-1,\n";
-    }
-    else
-    {
-        fp << v0 << "," << h1 << "," << lp << ",-1,\n";
-    }
+    fp << h1 << "," << v0 << "," << lp << ",-1,\n";
     // large triangular facet
-    if (top)
+    fp << fmt << v0 << "," << v1 << "," << lp << ",-1,\n";
+
+    // render the bottom
+    fp << fmt;
+    for (i = h0; i < h1; ++i)
     {
-        fp << fmt << v0 << "," << v1 << "," << lp << ",-1\n";
+        fp << i << "," << v0 << "," << i+1 << ",-1,";
+        if (!((i + 1) % 18))
+            fp << "\n" << fmt;
     }
-    else
-    {
-        fp << fmt << v0 << "," << v1 << "," << lp << ",-1\n";
-    }
+    fp << v0 << "," << h1 << "," << lp << ",-1,\n";
+    // large triangular facet
+    fp << fmt << v1 << "," << v0 << "," << lp << ",-1\n";
 
     if (!fp.good()) return -1;
     return 0;
 }
 
-int Hole::writeRFacets(bool top, std::ofstream &fp, int tabs)
+int Hole::writeRFacets(std::ofstream &fp, int tabs)
 {
     string fmt(tabs*4, ' ');
     fp << fmt;
-    if (top)
-    {
-        fp << "0,1,5,4,-1,1,2,6,5,-1,2,3,7,6,-1,3,0,4,7,-1\n";
-    }
-    else
-    {
-        fp << "1,0,4,5,-1,2,1,5,6,-1,3,2,6,7,-1,0,3,7,4,-1\n";
-    }
+    fp << "0,1,5,4,-1,1,2,6,5,-1,2,3,7,6,-1,3,0,4,7,-1,\n";
+    fp << fmt;
+    fp << "1,0,4,5,-1,2,1,5,6,-1,3,2,6,7,-1,0,3,7,4,-1\n";
 
     if (!fp.good()) return -1;
     return 0;

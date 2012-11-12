@@ -30,5 +30,14 @@ include_directories(
     )
     
 add_library(vconn
-    hdr/genhdr.cpp hdr/hdrbase.cpp
+    hdr/genhdr.cpp 
     )
+
+#    include_directories(
+#    "${K3D_SOURCE_DIR}/include/common"
+#    "${K3D_SOURCE_DIR}/include/vrml/common"
+#    ) 
+
+
+target_link_libraries(vconn vcom)
+    

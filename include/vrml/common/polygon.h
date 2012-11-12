@@ -22,15 +22,18 @@
  *
  */
 
+/// TODO: Deprecate CW/CCW argument to Paint and Stitch - for
+/// convenience both sides of a facet will always be rendered.
+
 #ifndef POLYGON_H_
 #define POLYGON_H_
 
 #include <iosfwd>
 
-#include "vrmlmat.h"
-#include "transform.h"
-
 namespace kc3d {
+
+class VRMLMat;
+class Transform;
 
 /**
  * \ingroup vrml_tools
@@ -98,7 +101,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    virtual int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+    virtual int Paint(Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     /**
@@ -119,8 +122,8 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return
      */
-    virtual int Stitch(Polygon &p2, bool ccw, Transform &t,
-            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
+    virtual int Stitch(Polygon &p2, Transform &t, VRMLMat &color, bool reuse_color,
+            std::ofstream &fp, int tabs = 0);
 
     /**
      * \brief Transform vertices

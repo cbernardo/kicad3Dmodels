@@ -27,10 +27,7 @@
 
 #include "polygon.h"
 
-namespace kc3d {
-
-class Transform;
-class VRMLMat;
+namespace kc3dconn {
 
 /**
  * \ingroup vrml_tools
@@ -38,7 +35,7 @@ class VRMLMat;
  * may be plain or beveled and have either circular or
  * rectangular holes at each end.
  */
-class Hdrbase: public Polygon
+class Hdrbase: public kc3d::Polygon
 {
 private:    
     // Calculate the vertices representing the base; parameters
@@ -58,7 +55,7 @@ private:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int paint(Transform &t, VRMLMat &color, bool reuse_color,
+    int paint(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     /**
@@ -74,7 +71,7 @@ private:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int stitch(Transform &t, VRMLMat &color, bool reuse_color,
+    int stitch(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
 protected:
@@ -96,11 +93,11 @@ protected:
     double sv[3][8];    // vertices for shoulders (always 4*2)
   
     void setDefaults(void);
-    int makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
+    int makeHoles1(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
-    int makeHoles2(Transform &t, VRMLMat &color, bool reuse_color,
+    int makeHoles2(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
-    int makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
+    int makeHoles3(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
 public:
@@ -149,16 +146,16 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int Build(Transform &t, VRMLMat &color, bool reuse_color,
+    int Build(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     // the overridden Paint prints an error message and returns
-    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+    int Paint(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     // the overridden Stitch prints an error message and returns
-    int Stitch(Polygon &p2, bool ccw, Transform &t,
-            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
+    int Stitch(Polygon &p2, kc3d::Transform &t,
+            kc3d::VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
     
     // the overridden Calc prints an error message and returns
     int Calc(double, double, kc3d::Transform&);

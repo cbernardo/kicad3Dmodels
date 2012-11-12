@@ -21,7 +21,12 @@
 */
 
 
-class_<kc3d::Shoulder>("Shoulder")
-    .def("calc", &kc3d::Shoulder::Calc)
-    .def("build", &kc3d::Shoulder::Build)
+class_<kc3d::Shoulder>("Shoulder", "Model shoulder which acts as a standoff on headers")
+    .def("calc", &kc3d::Shoulder::Calc, "Calculate the vertices",
+        args("l: length of top", "h: height", "d: depth", "taper (rad) of ends", "r: radius of inner edge",
+        "tx: transform to apply to results"))
+    .def("build", &kc3d::Shoulder::Build, "Render the shoulder",
+        args("t: transform to apply to output", "color: material appearance",
+        "reuse: 1 to reuse a color definition",
+        "fp: open output file", "tabs: formatting indent level"))
     ;

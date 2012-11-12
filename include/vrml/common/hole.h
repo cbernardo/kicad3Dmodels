@@ -24,6 +24,9 @@
 #ifndef HOLE_H_
 #define HOLE_H_
 
+// XXX -
+// TODO: support a beveled inner hole
+
 #include <iosfwd>
 
 namespace kc3d {
@@ -60,7 +63,7 @@ private:
      * @param tabs  [in] indent level for formatting
      * @return
      */
-    int writeRFacets(bool top, std::ofstream &fp, int tabs = 0);
+    int writeRFacets(std::ofstream &fp, int tabs = 0);
 
     /**
      * Write the facet coordinate list
@@ -75,7 +78,7 @@ private:
      * @param tabs [in] indent level for formatting
      * @return
      */
-    int writeFacets(int v0, int v1, int h0, int h1, int lp, bool top,
+    int writeFacets(int v0, int v1, int h0, int h1, int lp,
             std::ofstream &fp, int tabs = 0);
 
     // Hide the default copy and assignment operators
@@ -114,7 +117,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int Build(bool top, Transform &t, VRMLMat &color, bool reuse,
+    int Build(Transform &t, VRMLMat &color, bool reuse,
             std::ofstream &fp, int tabs = 0);
 
 };

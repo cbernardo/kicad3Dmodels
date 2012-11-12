@@ -21,7 +21,15 @@
 */
 
 
-class_<kc3d::Hole, boost::noncopyable>("Hole", init<>())
-    .def("calc", &kc3d::Hole::Calc)
-    .def("build", &kc3d::Hole::Build)
+class_<kc3d::Hole, boost::noncopyable>("Hole", "Square frame with an elliptical or rectangular hole", init<>())
+    .def("calc", &kc3d::Hole::Calc, "Calculate the vertices",
+        args("w1: frame width [X]", "d1: frame depth [Y]",
+        "w2: hole width", "d2: hole depth", "tx: transform to apply to result",
+        "square: 1 for square hole", "ow: hole offset [X]", "od: hole offset [Y]",
+        "np: vertices for elliptical holes [4..360 in multiples of 4]"))
+        
+    .def("build", &kc3d::Hole::Build, "Render the frame to file",
+        args("t: transform to apply to output", "color: appearance specification",
+        "reuse: 1 to reuse color", "fp: open output file", "tabs: formatting indent level"))
     ;
+    

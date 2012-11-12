@@ -20,11 +20,11 @@
 
 */
 
-class_<kc3d::Material>("Material")
-    .def("Load", &kc3d::Material::Load)
+class_<kc3d::Material>("Material","VRML2.0 material appearance specification")
+    .def("Load", &kc3d::Material::Load, "read material appearance specification from the named file")
     .add_property("name",
         make_function(&kc3d::Material::GetName, return_value_policy<copy_const_reference>()),
-        &kc3d::Material::SetName)
+        &kc3d::Material::SetName, "internal name for the material appearance")
     // Note: should the rest be exposed to Python?
     /*
     int  SetDiffuse(const float rgb[3]);

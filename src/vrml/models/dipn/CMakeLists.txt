@@ -1,10 +1,13 @@
-# file: ${K3D_SOURCE_DIR}/src/vrml/dipn/CMakeLists.txt
+# file: ${K3D_SOURCE_DIR}/src/vrml/models/dipn/CMakeLists.txt
 #
 # Parametric model for DIPn packages
 #
 
-include_directories(${K3D_SOURCE_DIR}/include/common ${K3D_SOURCE_DIR}/include/vrml/common
-  ${K3D_SOURCE_DIR}/include/vrml/models) 
+include_directories(
+    "${K3D_SOURCE_DIR}/include/common"
+    "${K3D_SOURCE_DIR}/include/vrml/common"
+    "${K3D_SOURCE_DIR}/include/vrml/models/dil"
+    ) 
 
 link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/vrml/vcom)
 

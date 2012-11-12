@@ -14,7 +14,6 @@
 #include "funnel.h"
 #include "pin.h"
 
-
 using namespace boost::python;
 using namespace kc3d;
 

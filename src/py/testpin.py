@@ -1,3 +1,5 @@
+# Create a bent elliptical pin with tapered ends
+
 import kc3d
 
 out = kc3d.ofstream()

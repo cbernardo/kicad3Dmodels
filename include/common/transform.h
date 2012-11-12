@@ -433,6 +433,27 @@ public:
      * @param np  [in] number of points to transform
      */
     void transform(double *x, double *y, double *z, int np);
+
+    /**
+     * Retrieve the translation parameters
+     *
+     * @param extt [out]
+     */
+    void GetTranslation(Translation &extt);
+
+    /**
+     * Retrieve the rotation parameters
+     *
+     * @param extr [out]
+     */
+    void GetRotation(Rotation &extr);
+
+    /**
+     * Retrieve the scaling parameters
+     *
+     * @param exts [out]
+     */
+    void GetScale(Scale &exts);
 };
 
 

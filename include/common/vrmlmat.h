@@ -51,7 +51,7 @@ public:
      * @param tabs  [in]    indentation depth of the text block
      * @return 0 for success, -1 for failure
      */
-    int WriteMaterial(std::ofstream &file, int tabs = 0);
+    int WriteMaterial(std::ofstream &file, int tabs = 0, bool mainblock = false);
 };
 
 }   // namespace kc3d

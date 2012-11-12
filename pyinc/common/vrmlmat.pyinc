@@ -21,6 +21,8 @@
 */
 
 
-class_<kc3d::VRMLMat, bases<kc3d::Material> >("VRMLMat")
-    .def("Write", &kc3d::VRMLMat::WriteMaterial)
+class_<kc3d::VRMLMat, bases<kc3d::Material> >("VRMLMat","VRML2.0 specific extensions to Material")
+    .def("Write", &kc3d::VRMLMat::WriteMaterial, "Write the material specification to the output file",
+    args("file: output file\n", "tabs: formatting indentation level\n",
+    "mainblock: 1 if writing to the main VRML2.0 body otherwise 0\n"))
 ;

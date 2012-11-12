@@ -471,8 +471,8 @@ int Genhdr::makeShrouds(kc3d::Transform &t, std::ofstream &fp, int tabs)
             circ[0].Calc(pd1, pd1, t0);
             circ[1].Calc(pd1, pd1, t1);
             circ[2].Calc(td, td, t1);
-            if (fd > 1e-9) val += circ[1].Stitch(circ[0], false, t, bcolor, true, fp, tabs);
-            val += circ[1].Stitch(circ[2], true, t, pcolor, true, fp, tabs);
+            if (fd > 1e-9) val += circ[1].Stitch(circ[0], t, bcolor, true, fp, tabs);
+            val += circ[1].Stitch(circ[2], t, pcolor, true, fp, tabs);
         }
     }
     if (val)

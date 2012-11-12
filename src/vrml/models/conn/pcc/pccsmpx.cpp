@@ -215,8 +215,8 @@ int main()
     fn[2].Build(true, t0, bcolor, false, bcolor, false, out, 2);
     fn[3].Build(true, t0, bcolor, false, bcolor, false, out, 2);
     // front surface
-    hole[0].Build(true, t0, bcolor, false, out, 2);
-    hole[1].Build(true, t0, bcolor, false, out, 2);
+    hole[0].Build(t0, bcolor, false, out, 2);
+    hole[1].Build(t0, bcolor, false, out, 2);
     // Thru pins
     t0.setTranslation(-13.7*0.5, 0, 0);
     thru[0].Build(true, true, t0, pcolor, false, out, 2);

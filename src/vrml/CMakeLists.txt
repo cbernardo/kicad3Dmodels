@@ -3,21 +3,8 @@
 # Top level directory for VRML specific sources
 #
 
-# common VRML tools
+# common VRML objects
 add_subdirectory (vcom)
 
-# DIPn models
-add_subdirectory (dipn)
-
-# Thru-hole resistors
-add_subdirectory (mfr_thru)
-
-# 4UCon connectors
-add_subdirectory (4UCon)
-
-# PCC-SMP/OST Thermocouple connectors
-add_subdirectory (pcc)
-
-# VRML stitching and assembly tools
-add_subdirectory (stitch)
-
+# Part models
+add_subdirectory (models)

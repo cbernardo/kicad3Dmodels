@@ -1,8 +1,11 @@
-# file: ${K3D_SOURCE_DIR}/src/vrml/mfr_thru/CMakeLists.txt
+# file: ${K3D_SOURCE_DIR}/src/vrml/models/mfr_thru/CMakeLists.txt
 #
 
-include_directories(${K3D_SOURCE_DIR}/include/common ${K3D_SOURCE_DIR}/include/vrml/common
-  ${K3D_SOURCE_DIR}/include/vrml/models) 
+include_directories(
+    "${K3D_SOURCE_DIR}/include/common"
+    "${K3D_SOURCE_DIR}/include/vrml/common"
+    "${K3D_SOURCE_DIR}/include/vrml/models/resistor"
+    )
 
 link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/vrml/vcom)
 

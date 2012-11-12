@@ -1,6 +1,40 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper, dvipdfm]{article}
 \usepackage{graphicx}
 \usepackage{longtable}
+
+\setlength\oddsidemargin{-.25 in}
+\setlength\textwidth{6.75 in}
+\setlength\topmargin{-.5 in}
+\setlength\textheight{9.75 in}
+
+\makeatletter
+\def\maketitle{%
+  \null
+  \thispagestyle{empty}%
+  \vfill
+  \begin{center}\leavevmode
+    \normalfont
+{\LARGE \@title\par}%
+    \vskip 1cm
+{\Large \@author\par}%
+    \vskip 1cm
+{\Large \@date\par}%
+  \end{center}%
+  \vfill
+  \null
+  \cleardoublepage
+}
+\makeatother
+
+\pagestyle{myheadings}
+\markboth{KiCAD 3D VRML Models, Python bindings}{}
+
+
+\title{TUTORIAL\\
+VRML2.0 and KiCAD}
+\date{Version 0.2\\
+15 Jan 2012}
+\author{Dr. Cirilo Bernardo}
 
 % Check the following in dip_pin.cpp:
 %  p33z
@@ -18,6 +52,27 @@
 %\setlength{\parskip}{0.25in}
 
 \begin{document}
+
+\maketitle
+
+% Revision history, if desired
+%\pagenumbering{roman}
+%\textbf{\Large{Revision History}}
+%\vspace{1 ex}
+%
+%\begin{tabular}{|l|l|p{4.5in}|}
+%\hline
+%\textbf{Revision} & \textbf{Date} & \textbf{Comments}\\
+%\hline
+%RevA.1 & 2012-11-12 & Initial draft\\
+%\hline
+%\end{tabular}
+%
+%\clearpage
+
+% start main numbering sequence
+\setcounter{page}{1}
+\pagenumbering{arabic}
 
 \section{Introduction}
 KiCad uses VRML97\footnote{\raisebox{-2ex}{\parbox{\textwidth}{http://www.web3d.org/x3d/specifications/vrml\\http://gun.teipir.gr/VRML-amgem/spec/vrmlspec.pdf}}}
@@ -732,10 +787,10 @@ DEF capleadm Transform {
 \section{A Parametric Description of the DIL Package}
 In this section I will describe the process of creating a parametric model to generate
 VRML files for use in KiCad.  I have chosen the DIL package since it provides a simple
-example; every DIL package from a series is the same except for the length of the package
+example; every DIL package from a series is the same except for the length of the case
 and the number of pins. The pins are identical except for a translation and rotation
 operation, so to describe an entire family of DIL packages we only need to describe a
-single pin and the package.
+single pin and the case.
 
  In this example I imagine the pin as consisting of a horizontal, vertical, and a 45 degree
  portion. The pin is beveled along all edges except for where it attaches to the case.

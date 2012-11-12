@@ -21,14 +21,25 @@ INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}" "${PYTHON_INCLUDE}")
 include_directories(
     "${K3D_SOURCE_DIR}/include/common"
     "${K3D_SOURCE_DIR}/include/vrml/common"
-    "${K3D_SOURCE_DIR}/include/vrml/models"
+    "${K3D_SOURCE_DIR}/include/vrml/models/conn"
     "${K3D_SOURCE_DIR}/pyinc/common"
     "${K3D_SOURCE_DIR}/pyinc/vrml/common"
-    "${K3D_SOURCE_DIR}/pyinc/vrml/models"
+    "${K3D_SOURCE_DIR}/pyinc/vrml/models/conn"
     )
     
-link_directories("${K3D_BINARY_DIR}/src/vrml/vcom")
+link_directories(
+	"${K3D_BINARY_DIR}/src/vrml/vcom"
+	"${K3D_BINARY_DIR}/src/vrml/models/conn"
+	)
 
 add_library(kc3d SHARED kc3d.cpp)
 
 target_link_libraries(kc3d vcom ${Boost_LIBRARIES} ${PYTHON_VERSION})
+
+add_library(kc3dconn SHARED kc3dconn.cpp)
+
+target_link_libraries(kc3dconn vconn ${Boost_LIBRARIES} ${PYTHON_VERSION})
+
+# INSTALLATION
+install(TARGETS kc3d LIBRARY DESTINATION lib)
+install(TARGETS kc3dconn LIBRARY DESTINATION lib)

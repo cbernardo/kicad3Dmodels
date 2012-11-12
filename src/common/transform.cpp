@@ -649,3 +649,25 @@ void Transform::transform(double *x, double *y, double *z, int np)
     }
 }
 
+
+// TODO: Document and push into python bindings
+void Transform::GetTranslation(Translation &extt)
+{
+    extt = t;
+    return;
+}
+
+// TODO: Document and push into python bindings
+void Transform::GetRotation(Rotation &extr)
+{
+    extr = r;
+    return;
+}
+
+// TODO: Document and push into python bindings
+void Transform::GetScale(Scale &exts)
+{
+    exts = s;
+    return;
+}
+
