@@ -15,8 +15,8 @@ link_directories(
     "${K3D_BINARY_DIR}/src/vrml/models/conn"
     )
 
-add_executable(test hdrtest.cpp)
+#add_executable(testhdr hdrtest.cpp)
 
-target_link_libraries(test vconn vcom)
+#target_link_libraries(test vconn vcom)
 
-#install(TARGETS make19950 RUNTIME DESTINATION bin)
+#install(TARGETS testhdr RUNTIME DESTINATION bin)
