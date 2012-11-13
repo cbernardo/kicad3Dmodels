@@ -30,6 +30,7 @@
 namespace kc3d {
 
 class Transform;
+class Circle;
 
 /**
  * \ingroup vrml_tools
@@ -82,6 +83,13 @@ public:
      * @param bevel [in] length of the bevel
      */
     void SetBevel(double bevel);
+
+    // overloaded functions to keep Python happy
+    int StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
+                std::ofstream &fp, int tabs = 0);
+
+    int StitchC(Circle& rect, Transform &t, VRMLMat &color, bool reuse_color,
+                std::ofstream &fp, int tabs = 0);
 };
 
 }   // namespace kc3d

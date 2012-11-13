@@ -20,12 +20,34 @@
 
 */
 
+/*
+	NOTE: This had all been commented out because of inheritance issues. For example:
 
+	rect.paint(t0, color, 0, out, 2)
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	Boost.Python.ArgumentError: Python argument types in
+	    Polygon.paint(Rectangle, Transform, VRMLMat, int, ofstream, int)
+	did not match C++ signature:
+	    paint(kc3d::PolyWrap {lvalue}, kc3d::Transform {lvalue} t: transform to apply to output, kc3d::VRMLMat {lvalue} color: appearance specification, bool reuse: 1 to reuse the color, std::basic_ofstream<char, std::char_traits<char> > {lvalue} fp: open output file, int tabs: formatting indent level)
+
+	That is, since a Rectangle (or a circle) is not derived from PolyWrap(), everything falls over.
+
+        It is likely possible to implement the abstract PolyWrapper correctly but I don't know how.
+
+	At the moment the derived classes do not declare their inheritance from Polygon within the
+	Boost::Python files since doing so requires the declaration of this wrapper and things just
+	don't work. This means that at the moment Python cannot be used to implement derived
+	classes of Polygon.
+*/
+
+/*
 //
 //  class kc3d::Polygon
 //
-class_<kc3d::PolyWrap, boost::noncopyable>("Polygon", "Generic Polygon")
-    .def("clone", pure_virtual(&kc3d::Polygon::clone), "Create a copy of this class of polygon",
+
+class_<kc3d::PolyWrap, boost::noncopyable >("Polygon", "Generic Polygon")
+    .def("clone", (&kc3d::Polygon::clone), "Create a copy of this class of polygon",
         return_value_policy<manage_new_object>())
 
     .def("calc", pure_virtual(&kc3d::Polygon::Calc), "Calculate the polygon vertices",
@@ -33,15 +55,16 @@ class_<kc3d::PolyWrap, boost::noncopyable>("Polygon", "Generic Polygon")
 
     .def("isValid", &kc3d::PolyWrap::IsValid, "Returns 1 if the polygon holds valid vertices")
 
-    .def("paint", &kc3d::PolyWrap::Paint, "Paint the faces of the polygon",
-        args("t: transform to apply to output", "color: appearance specification",
-        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
+    .def("paint", &kc3d::PolyWrap::Paint, "Paint the faces of the polygon")//,
+//        args("t: transform to apply to output", "color: appearance specification",
+//        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
 
-    .def("stitch", &kc3d::PolyWrap::Stitch, "Paint facets joining two polygons",
-        args("p2: second polygon", "t: transform to apply to output", "color: appearance specification",
-        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
+    .def("stitch", &kc3d::PolyWrap::Stitch, "Paint facets joining two polygons")//,
+//        args("p2: second polygon", "t: transform to apply to output", "color: appearance specification",
+//        "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
 
-    .def("xform", &kc3d::Polygon::Xform, "Transform the internal vertices of the polygon")
+    .def("xform", &kc3d::PolyWrap::Xform, "Transform the internal vertices of the polygon")
 
-    .def("getVertices", &kc3d::Polygon::GetVertices, "Retrieve the coordinate lists and number of vertices")
+    .def("getVertices", &kc3d::PolyWrap::GetVertices, "Retrieve the coordinate lists and number of vertices")
     ;
+*/

@@ -448,7 +448,41 @@ along the Y axis, and \textbf{xform} is a transform to be applied to the results
 For example, in the derived class \textbf{Circle}, x and y specify the diameter
 of the ellipse along the X and Y axes.
 
+The stitched polygons must have the same number of vertices but no other restrictions
+apply.  For example, the following pyscript produces a bizarre object by stitching a
+rectangle with beveled edges to an octagon inscribed within an ellipse:
+
+\begin{verbatim}
+import kc3d
+
+rect = kc3d.Rectangle()
+circ = kc3d.Circle()
+
+color = kc3d.VRMLMat()
+color.Load("../../mcad/colors/rcc_grn_g.mat")
+
+t0 = kc3d.Transform()
+t1 = kc3d.Transform()
+t1.setTranslation(0, 0, 5)
+
+rect.setBevel(0.5)
+rect.calc(8, 4, t0)
+
+circ.setNVertices(8)
+circ.calc(4, 8, t1)
+
+out = kc3d.ofstream()
+kc3d.SetupVRML("weird.wrl", out)
+kc3d.SetupXForm("WEIRD_OBJECT", out, 0)
+rect.paint(t0, color, 0, out, 2)
+rect.stitch(circ, t0, color, 1, out, 2)
+circ.paint(t0, color, 1, out, 2)
+kc3d.CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
 \subsubsection{kc3d.Circle()}
+\label{sec:kc3dCircle}
 The \textbf{Circle} class derives from Polygon and implements a polygon of
 3 to 360 vertices inscribed in an ellipse.  The more vertices, the better the approximation
 to an ellipse; however, this comes at the cost of memory and file size consumed by the
@@ -462,5 +496,12 @@ the \textbf{calc} method to calculate the vertices.
 The \textbf{Rectangle} class derives from Polygon and implements a rectangle which
 may have beveled corners. The bevel can be controlled by invoking \textbf{setBevel(bevel)}
 before invoking the \textbf{calc} method. A bevel $\le0$ indicates the default of no bevel.
+
+\subsection{kc3d.Pin()}
+The \textbf{Pin} class is a representation of a vertical wire with an optional bend. The wire
+may be rectangular (with or without bevels) or elliptical (see Sec.~\ref{sec:kc3dCircle} for
+details about the ellipse). The starting end or both ends of the wire may be tapered, the taper
+may apply to only one axis or both axes of the cross-section, and the bend may be any angle
+from 0 to $\pi$ radians. 
 
 \end{document}

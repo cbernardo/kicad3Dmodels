@@ -20,7 +20,8 @@
 
 */
 
-    class_<kc3d::Rectangle, bases<kc3d::Polygon> >("Rectangle", "Generic rectangle, plain or beveled", init<>())
+//    class_<kc3d::Rectangle, bases<kc3d::PolyWrap> >("Rectangle", "Generic rectangle, plain or beveled", init<>())
+    class_<kc3d::Rectangle>("Rectangle", "Generic rectangle, plain or beveled", init<>())
         .def(init<double>())
         .def(init<const kc3d::Rectangle &>())
         
@@ -28,4 +29,8 @@
         .def("calc", &kc3d::Rectangle::Calc, "Calculate the vertices",
             args("xl: X dimension", "yl: Y dimension", "t: transform to apply to result"))
         .def("setBevel", &kc3d::Rectangle::SetBevel, "Set the bevel; must be <1/2 of X or Y dimension")
+        .def("paint", &kc3d::Rectangle::Paint)
+        .def("stitch", &kc3d::Rectangle::Stitch)
+        .def("stitch", &kc3d::Rectangle::StitchR)
+        .def("stitch", &kc3d::Rectangle::StitchC)
     ;

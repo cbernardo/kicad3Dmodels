@@ -20,7 +20,8 @@
 
 */
 
-    class_<kc3d::Circle, bases<kc3d::Polygon> >("Circle", "Polygon of 3 .. 360 sides inscribed in an ellipse", init<>())
+//    class_<kc3d::Circle, bases<kc3d::Polygon> >("Circle", "Polygon of 3 .. 360 sides inscribed in an ellipse", init<>())
+    class_<kc3d::Circle>("Circle", "Polygon of 3 .. 360 sides inscribed in an ellipse", init<>())
         .def(init<int>())
         .def(init<const kc3d::Circle &>())
         
@@ -29,4 +30,9 @@
             args("xl: X dimension", "yl: Y dimension", "t: transform to apply to results"))
             
         .def("setNVertices", &kc3d::Circle::SetNVertices, "Set the number of vertices in the ellipse")
+
+        .def("paint", &kc3d::Circle::Paint)
+        .def("stitch", &kc3d::Circle::Stitch)
+        .def("stitch", &kc3d::Circle::StitchR)
+        .def("stitch", &kc3d::Circle::StitchC)
     ;

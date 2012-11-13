@@ -33,6 +33,7 @@ namespace kc3d {
 
 class Transform;
 class VRMLMat;
+class Rectangle;
 
 /**
  * \ingroup vrml_tools
@@ -88,6 +89,14 @@ public:
      * @return 0 for success, -1 for failure
      */
     int SetNVertices(int nvert);
+
+    // overloaded functions to keep Python happy
+    int StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
+                std::ofstream &fp, int tabs = 0);
+
+    int StitchC(Circle& rect, Transform &t, VRMLMat &color, bool reuse_color,
+                std::ofstream &fp, int tabs = 0);
+
 };
 
 }   // namespace kc3d
