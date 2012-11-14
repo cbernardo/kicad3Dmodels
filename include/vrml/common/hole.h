@@ -24,7 +24,6 @@
 #ifndef HOLE_H_
 #define HOLE_H_
 
-// XXX -
 // TODO: support a beveled inner hole
 
 #include <iosfwd>

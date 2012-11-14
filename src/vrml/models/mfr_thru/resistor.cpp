@@ -50,6 +50,7 @@ RParams::RParams()
     D   = 2.0;      // diameter of body
     d   = 0.45;     // diameter of wire
     p   = 10.16;    // lead pitch (0.4 inch)
+    wl  = 4.0;      // length below top of PCB caters for 1.6 .. 3.0mm boards
     horiz = true;   // orientation; true if horizontal
     endshape = 'B'; // 'B'ulge end finish
     bcap = false;   // no metallic cap on Bulge end style
@@ -65,7 +66,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
     // XXX - TODO: refactor using class Pin
 
     // Notes:
-    //  bottom point: (0, 0, -4)
+    //  bottom point: (0, 0, -params.wl)
     //  top point:    (0, 0, (D/2 - d))
     //  end of bend:  (1.5d, 0, (D/2 + 0.2))
     //  end of hz:    (((p - L)/2 - 0.5d), 0, (D/2 + d/2))
@@ -96,7 +97,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
 
     // vertical lead
     Transform tv;
-    tv.setTranslation(0, 0, -4);
+    tv.setTranslation(0, 0, -params.wl);
     double rw = params.d;   // wire diameter (formerly radius) // XXX - deprecate
     lvert[0].Calc(rw, rw, tv);
     tv.setTranslation(0, 0, params.D/2 - params.d);
@@ -208,15 +209,15 @@ int Resistor::makeVtLead(std::ofstream &fp)
     double th1 = 2.0*params.d + params.L;                   // height of cap1
     double th2 = 2.0*params.d + params.L + params.d/3.0;    // height of lead1
 
-    t0.setTranslation(0, 0, -4.0);
+    t0.setTranslation(0, 0, -params.wl);
     if ((params.endshape == 'B') && (params.bcap))
     {
-        lp.h = 4.0 + 2.0*params.d - params.d/3.0;
+        lp.h = params.wl + 2.0*params.d - params.d/3.0;
         has_mcap = true;
     }
     else
     {
-        lp.h = 4.0 + 2*params.d;
+        lp.h = params.wl + 2*params.d;
     }
     lp.w    = params.d; // wire thickness (X axis)
     lp.d    = params.d; // wire thickness (Y axis)
@@ -245,7 +246,7 @@ int Resistor::makeVtLead(std::ofstream &fp)
     if (has_mcap)
     {
         t0.setTranslation(0, 0, th2);
-        lp.l = th2 + 4.0 + lp.h;
+        lp.l = th2 + params.wl + lp.h;
     }
     else
     {
@@ -296,12 +297,12 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
 
     int nend;   // number of polygons at one end only
     int ntot;   // total number of polygons
-    int nb = bands.size();
+    int nb = bands.size() +1;
 
     if (nb < 1)
     {
         ERRBLURB;
-        cerr << "invalid number of bands (" << nb << "); must be 4..6 characters\n";
+        cerr << "invalid number of bands (" << nb << "); must be >4 characters\n";
         return -1;
     }
 
@@ -542,6 +543,13 @@ int Resistor::Create(RParams &rp, const std::string &bands, const std::string &f
             cerr << "color #" << i << " does not have a valid name\n";
             fail = true;
         }
+    }
+    // wire depth must be >0 (since we dont know the units we can't do any more checking)
+    if (rp.wl < 1e-9)
+    {
+        ERRBLURB;
+        cerr << "wire depth below top of PCB must be > 0\n";
+        fail = true;
     }
     // lead spacing must be:
     //      horiz: >= L + 4*d

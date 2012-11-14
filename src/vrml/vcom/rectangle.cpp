@@ -33,7 +33,8 @@
 #include "vrmlmat.h"
 #include "polygon.h"
 #include "rectangle.h"
-#include "circle.h"
+// ZZZ
+// #include "circle.h"
 
 using namespace std;
 using namespace kc3d;
@@ -318,6 +319,7 @@ void Rectangle::SetBevel(double bevel)
     return;
 }
 
+/* ZZZ
 int Rectangle::StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs)
 {
@@ -329,3 +331,4 @@ int Rectangle::StitchC(Circle& circ, Transform &t, VRMLMat &color, bool reuse_co
 {
     return Polygon::Stitch(circ, t, color, reuse_color, fp, tabs);
 }
+*/

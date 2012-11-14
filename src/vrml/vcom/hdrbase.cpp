@@ -18,10 +18,6 @@
  *
  */
 
-/// TODO: Clean up use of reuse_color
-/// TODO: Calc, Paint and Stitch should return an error;
-/// all those routines shoulb be replaced by a 'build'
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -44,13 +40,11 @@ using namespace kc3d;
 // minimum clearance between hole and edge
 #define MIN_CLR (0.1)
 
-namespace kc3dconn {
-
 // dummy class to aid in implementing Stitch
 class FakePoly : public Polygon
 {
 private:
-    Hdrbase *clone(void) { return NULL; }
+    Polygon *clone(void) { return NULL; }
 
 public:
     virtual ~FakePoly()
@@ -86,6 +80,16 @@ Hdrbase::Hdrbase()
     return;
 }
 
+Hdrbase::Hdrbase(double bevel)
+{
+    x = y = z = NULL;
+    nv = 0;
+    valid = false;
+
+    setDefaults();
+    bev = bevel;
+    return;
+}
 
 
 Hdrbase::Hdrbase(const Hdrbase &p)
@@ -420,7 +424,7 @@ int Hdrbase::calc(void)
         cerr << "bevel is too large (>= ypitch*rows/3)\n";
         return -1;
     }
-    // XXX - move this test to Setparams
+
     // check validity of holes
     double thx = xpitch;
     double thy = ypitch*ypins;
@@ -448,7 +452,6 @@ int Hdrbase::calc(void)
         cerr << "top hole is too large (" << hd1 << "); it may intrude on the bevels or exceed the MIN_CLR specification\n";
         return -1;
     }
-    // XXX - end of test to be moved to SetParams
 
     if (bev > 0.0)
         nv = 6*xpins + 2;
@@ -616,6 +619,7 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
         pol.setParams(&vp[0][4], &vp[1][4], &vp[2][4], 4, true);
         int iter = 0;
         int io = 0;     // index offset
+        bool reuse = reuse_color;
         while (iter < 2)
         {
             for (i = 0; i < xpins; ++i)
@@ -630,7 +634,8 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
                     vp[1][7 -k] = y[nv - j -k + io -1];
                     vp[2][7 -k] = z[nv - j -k + io -1];
                 }
-                val += Polygon::Paint(t, color, reuse_color, fp, tabs);
+                val += Polygon::Paint(t, color, reuse, fp, tabs);
+                reuse = true;
                 val += pol.Paint(t, color, true, fp, tabs);
             }
             ++iter;
@@ -640,13 +645,13 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
         switch (ypins)
         {
         case 1:
-            val += makeHoles1(t, color, reuse_color, fp, tabs);
+            val += makeHoles1(t, color, true, fp, tabs);
             break;
         case 2:
-            val += makeHoles2(t, color, reuse_color, fp, tabs);
+            val += makeHoles2(t, color, true, fp, tabs);
             break;
         default:
-            val += makeHoles3(t, color, reuse_color, fp, tabs);
+            val += makeHoles3(t, color, true, fp, tabs);
             break;
         }
         if (val)
@@ -675,8 +680,8 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(t, color, reuse_color, fp, tabs);
-            val += th.Build(t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, true, fp, tabs);
+            val += th.Build(t, color, true, fp, tabs);
         }
     }
     if (val)
@@ -726,6 +731,7 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
     xo = -(xpins -1)/2.0*xpitch;
     yo = -ypitch*ypins/2.0;
     int i, j, k;
+    bool reuse = reuse_color;
     if (bev > 0.0)
     {
         k = 0;
@@ -741,10 +747,11 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
                     tsv[2][j] = sv[2][j];
                 }
                 t0.transform(tsv[0], tsv[1], tsv[2], 8);
-                val +=Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
-                // we may as well paint the ends as well
-                val += Polygon::Paint(t, color, reuse_color, fp, tabs);
-                val += pol.Paint(t, color, reuse_color, fp, tabs);
+                val +=Polygon::Stitch(pol, t, color, reuse, fp, tabs);
+                // paint the ends as well
+                val += Polygon::Paint(t, color, true, fp, tabs);
+                val += pol.Paint(t, color, true, fp, tabs);
+                reuse = true;
             }
             ++k;
             yo = -yo;
@@ -759,14 +766,15 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
             tsv[1][i] = sv[1][i];
             tsv[2][i] = sv[2][i];
         }
-        val += Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
-        Polygon::Paint(t, color, reuse_color, fp, tabs);
-        pol.Paint(t, color, reuse_color, fp, tabs);
+        val += Polygon::Stitch(pol, t, color, reuse, fp, tabs);
+        reuse = true;
+        Polygon::Paint(t, color, true, fp, tabs);
+        pol.Paint(t, color, true, fp, tabs);
         t0.setRotation(M_PI, 0, 0, 1);
         t0.transform(tsv[0], tsv[1], tsv[2], 8);
-        val += Polygon::Stitch(pol, t, color, reuse_color, fp, tabs);
-        val += Polygon::Paint(t, color, reuse_color, fp, tabs);
-        val += pol.Paint(t, color, reuse_color, fp, tabs);
+        val += Polygon::Stitch(pol, t, color, true, fp, tabs);
+        val += Polygon::Paint(t, color, true, fp, tabs);
+        val += pol.Paint(t, color, true, fp, tabs);
     }
     Polygon::x = NULL;
     Polygon::y = NULL;
@@ -784,25 +792,6 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
 
 
 
-/* Inherited (overridden) Paint */
-int Hdrbase::Paint(Transform &t, VRMLMat &color, bool reuse_color,
-        std::ofstream &fp, int tabs)
-{
-    ERRBLURB;
-    cerr << "*WARN* Polygon::Paint() invoked on non-conformant Polygon \"Hdrbase\"; this is probably a bug\n";
-    return -1;
-}
-
-
-/* Inherited (overridden) Stitch */
-int Hdrbase::Stitch(Polygon &p2, Transform &t,
-        VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
-{
-    ERRBLURB;
-    cerr << "*WARN* Polygon::Stitch() invoked on non-conformant Polygon \"Hdrbase\"; this is probably a bug\n";
-    return -1;
-}
-
 int Hdrbase::makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs)
 {
@@ -816,6 +805,7 @@ int Hdrbase::makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
     if (sh > 1e-9) z0 = sh;
 
     double ox;  // offset for locating the hole
+    bool reuse = reuse_color;
     for (i = 0; i < xpins; ++i)
     {
         ox = ((1 - xpins)/2.0 + i)*xpitch;
@@ -823,8 +813,9 @@ int Hdrbase::makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
         t1.setTranslation(ox, 0, height);
         bh.Calc(xpitch, ypitch - 2.0*bev, hd0, hd0, t0, square, 0, 0, ns);
         th.Calc(xpitch, ypitch - 2.0*bev, hd1, hd1, t1, square, 0, 0, ns);
-        val += bh.Build(t, color, reuse_color, fp, tabs);
-        val += th.Build(t, color, reuse_color, fp, tabs);
+        val += bh.Build(t, color, reuse, fp, tabs);
+        reuse = true;
+        val += th.Build(t, color, true, fp, tabs);
     }
     if (val)
     {
@@ -852,6 +843,7 @@ int Hdrbase::makeHoles2(Transform &t, VRMLMat &color, bool reuse_color,
     oy = -ypitch/2.0 + bev/2.0;
     ho = -bev/2.0;
     j = 0;
+    bool reuse = reuse_color;
     while (j < 2)
     {
         for (i = 0; i < xpins; ++i)
@@ -861,8 +853,9 @@ int Hdrbase::makeHoles2(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, ho, ns);
             th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, ho, ns);
-            val += bh.Build(t, color, reuse_color, fp, tabs);
-            val += th.Build(t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse, fp, tabs);
+            reuse = true;
+            val += th.Build(t, color, true, fp, tabs);
         }
         ho = -ho;
         oy = -oy;
@@ -895,6 +888,7 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
     oy = (1 - ypins)*ypitch/2.0 + bev/2.0;
     ho = -bev/2.0;
     j = 0;
+    bool reuse = reuse_color;
     while (j < 2)
     {
         for (i = 0; i < xpins; ++i)
@@ -904,8 +898,9 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(t, color, reuse_color, fp, tabs);
-            val += th.Build(t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, reuse, fp, tabs);
+            reuse = true;
+            val += th.Build(t, color, true, fp, tabs);
         }
         ho = -ho;
         oy = -oy;
@@ -922,8 +917,8 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             t1.setTranslation(ox, oy, height);
             bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
             th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
-            val += bh.Build(t, color, reuse_color, fp, tabs);
-            val += th.Build(t, color, reuse_color, fp, tabs);
+            val += bh.Build(t, color, true, fp, tabs);
+            val += th.Build(t, color, true, fp, tabs);
         }
     }
 
@@ -935,8 +930,6 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
     }
     return 0;
 }
-
-
 
 // Write the header shape to an output file
 int Hdrbase::Build(Transform &t, VRMLMat &color, bool reuse_color,
@@ -961,12 +954,29 @@ int Hdrbase::Build(Transform &t, VRMLMat &color, bool reuse_color,
     return 0;
 }
 
-int Hdrbase::Calc(double, double, kc3d::Transform&)
+
+/* Inherited (overridden) Paint */
+int Hdrbase::Paint(Transform &t, VRMLMat &color, bool reuse_color,
+        std::ofstream &fp, int tabs)
 {
     ERRBLURB;
-    cerr << "*WARN* Polygon::Calc() invoked on non-conformant Polygon \"Hdrbase\"; this is probably a bug\n";
+    cerr << "BUG: unexpected code execution branch\n";
     return -1;
 }
 
+/* Inherited (overridden) Calc */
+int Hdrbase::Calc(double, double, kc3d::Transform&)
+{
+    ERRBLURB;
+    cerr << "BUG: unexpected code execution branch\n";
+    return -1;
+}
 
-}   // namespace kc3d
+/* Inherited (overridden) Stitch */
+int Hdrbase::Stitch(Polygon &p2, Transform &t,
+        VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
+{
+    ERRBLURB;
+    cerr << "BUG: unexpected code execution branch\n";
+    return -1;
+}

@@ -105,6 +105,7 @@ struct RParams
     double D;       // diameter of body
     double d;       // diameter of wire
     double p;       // lead pitch
+    double wl;      // wire length below PCB
     bool horiz;     // orientation; true if horizontal
     char endshape;  // end finish; 'C'ap, 'R'ound, 'B'ulge (default)
     bool bcap;      // true to place a metallic cap on a Bulge style end (default false)

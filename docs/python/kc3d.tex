@@ -164,6 +164,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 \end{verbatim}
 
 \section{Quick Example}
+\label{sec:quick-example}
 In this brief example we will invoke a single parametric model to
 build a variety of 6x2 DIL headers as a demonstration of the
 flexibility of parametric models.
@@ -174,6 +175,8 @@ For the convenience of this exerice and all future exercises in this
 tutorial, we will create models from the directory \verb#mcad/test#;
 create the test directory and change to it. Ensure that the PYTHONPATH
 had been set as discussed in the section on installing the software.
+All future examples in this tutorial will assume that the working
+directory is \verb#mcad/test#.
 Run Python and execute the following Python commands (ignore lines
 beginning with `\#' - these are merely code comments):
 
@@ -459,7 +462,7 @@ rect = kc3d.Rectangle()
 circ = kc3d.Circle()
 
 color = kc3d.VRMLMat()
-color.Load("../../mcad/colors/rcc_grn_g.mat")
+color.Load("../colors/rcc_grn_g.mat")
 
 t0 = kc3d.Transform()
 t1 = kc3d.Transform()
@@ -503,5 +506,354 @@ may be rectangular (with or without bevels) or elliptical (see Sec.~\ref{sec:kc3
 details about the ellipse). The starting end or both ends of the wire may be tapered, the taper
 may apply to only one axis or both axes of the cross-section, and the bend may be any angle
 from 0 to $\pi$ radians. 
+
+The pin has a \textbf{calc()} method which takes a \textbf{PParams} and a Transform
+argument. The members of PParams are as follows:
+
+\begin{itemize}
+\item[\textbf{w}] Pin width, X dimension\\
+\item[\textbf{d}] Pin depth, Y dimension\\
+\item[\textbf{h}] length of straight vertical section ($<0$ for none)\\
+\item[\textbf{l}] length of straight second section ($<0$ for none)\\
+\item[\textbf{bend}] bend angle, radians, $0$ to $\pi$\\
+\item[\textbf{r}] bend radius, $<0$ for none\\
+\item[\textbf{nb}] number of segments in a bend\\
+\item[\textbf{tap}] length of tapered portion, $<0$ for none\\
+\item[\textbf{dbltap}] True if both ends are to be tapered, False if only the vertical segment is tapered\\
+\item[\textbf{stw}] Taper coefficient in X dimension\\
+\item[\textbf{std}] Taper coefficient in Y dimension\\
+\item[\textbf{bev}] bevel, applicable only to rectangular pins, $<0$ for none\\
+\item[\textbf{ns}] number of vertices, applicable only to elliptical pins\\
+\end{itemize}
+
+The pin shape can be set before invoking calc via \textbf{setShape(square)} where square
+is True for a rectangular pin and False for an elliptical pin; the default setting is for a
+rectangular pin. The pin shape can be written to an output file via
+\textbf{build(cap0, cap1, xform, color, reuse, file, tabs)} where cap0 and cap1
+are booleans controlling whether or not the start and terminal ends of the pin are rendered
+xform is a transformation to apply to the output data, and so on.
+
+The example below uses two Pin objects to define the type of pin which may be found on
+square pitch SMD headers:
+
+\begin{verbatim}
+import math
+import kc3d
+from kc3d import *
+
+pin1 = Pin()
+pin2 = Pin()
+
+tx0 = Transform()
+tx1 = Transform()
+tx2 = Transform()
+
+# set up tx0 to output to KiCAD's world scale
+tx0.setScale(1.0/2.54)
+
+# set up tx1 to lay down Pin1 and place the bottom  at Z=0
+tx1.setRotation(math.pi, 1, 0, 1)
+tx1.setTranslation(0, 0, 0.32)
+
+# set up tx2 to shift the pin into position
+tx2.setTranslation(4, 0, 1.32)
+
+color = kc3d.VRMLMat()
+color.Load("../colors/gold.mat")
+
+pp0 = kc3d.PParams()
+pp0.w = 0.64
+pp0.d = 0.64
+pp0.tap = 0.5
+pp0.stw = 1
+pp0.std = 0.5
+pp0.dbltap = False
+pp0.h = 3
+pp0.r = 1
+pp0.nb = 5
+pp0.l = 0
+pp0.bend = math.pi/2.0
+
+pin1.calc(pp0, tx1)
+
+pp1 = kc3d.PParams()
+pp1.w = 0.64
+pp1.d = 0.64
+pp1.tap = -1.0
+pp1.stw = 1
+pp1.std = 1
+pp1.dbltap = False
+pp1.h = 2.44
+pp1.r = 1
+pp1.nb = 5
+pp1.l = 5
+pp1.bend = math.pi/2.0
+
+pin2.calc(pp1, tx2)
+
+out = kc3d.ofstream()
+kc3d.SetupVRML("pindemo.wrl", out)
+kc3d.SetupXForm("SMD_PIN", out, 0)
+pin1.build(True, False, tx0, color, False, out, 2)
+pin2.build(False, True, tx0, color, True, out, 2)
+kc3d.CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
+\subsection{kc3d.Funnel()}
+The \textbf{Funnel} class is a representation of a rectangular or elliptical funnel typical
+of the pin recesses in a connector. The default shape of the funnel is rectangular but the
+shape can be set by invoking \textbf{setShape(square, bevel)} where \textbf{square} is True for
+a rectangular funnel and \textbf{bevel} is the bevel to use on the rectangular section; use
+a bevel value $<0$ for a plain rectangle.
+
+The vertices are calculated by invoking \textbf{calc(w1, d1, w2, d2, h1, h2, h3, xform, ns)}
+where w1 and d1 are the X and Y dimensions of the top of the flute, w2 and d2 and the
+dimensions of the stem, h1 is the height of the flute, h2 is the height of the segment of
+the stem which is the same color as the flute (this may be set to 0), and h3 is the
+height of the stem segment which will be colored with stemcolor.
+
+The shape is written to an output file by invoking \textbf{build(cap, xform, flutecolor,
+reuse\_flute, stemcolor, reuse\_stem, file, tabs)} where cap is a boolean controlling
+whether or not the bottom end of the stem is rendered, flutecolor is a VRMLMat object
+specifying the color of the flute and the stem segment h2, reuse\_flute is a boolean
+controlling the reuse of flutecolor, stemcolor is a VRMLMat object specifying the color
+of the h3 section of the stem, and reuse\_stem controls the reuse of the stem color.
+
+The example below creates a funnel with a blue beveled flute and golden stem:
+
+\begin{verbatim}
+import kc3d
+from kc3d import *
+
+tx = Transform()
+
+fun = Funnel()
+fun.setShape(True, 0.2)
+fun.calc(1.6, 1.6, 0.96, 0.96, 0.5, 0.2, 3, tx, 24)
+
+fcolor = kc3d.VRMLMat()
+fcolor.Load("../colors/rcc_blu_g.mat")
+
+scolor = kc3d.VRMLMat()
+scolor.Load("../colors/gold.mat")
+
+out = kc3d.ofstream()
+kc3d.SetupVRML("funneldemo.wrl", out)
+fcolor.Write(out, 0, True)
+scolor.Write(out, 0, True)
+kc3d.SetupXForm("FUNNEL_DEMO", out, 0)
+fun.build(True, tx, fcolor, True, scolor, True, out, 2)
+kc3d.CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
+\subsection{kc3d.Hole()}
+The \textbf{Hole} class represents a plain rectangular panel with a rectangular or elliptical
+hole in it. [NOTE: Subject to minor code adjustments, the rectangular hole may be beveled.]
+A hole may be used to surround the flute of a funnel or to provide thru-holes for pins.
+
+The vertices are calculated by invoking \textbf{calc(w1, d1, w2, d2, tx, square, off\_x, off\_y, np)}
+where w1 and d2 are the X and Y dimensions of the frame, w2 and d2 are the dimensions of the
+hole, square specifies a rectangular hole when set to True, off\_x and off\_y are offsets of
+the hole.
+
+The shape information is written to a file by invoking \textbf{build(xform, color, reuse, file, tabs)}.
+
+\subsection{kc3d.Shoulder()}
+The \textbf{Shoulder} class represents a rectangular extrusion which may have one rounded edge
+and which may have ends which taper. A shoulder may be found, for example, as a spacer on the
+bottom of header cases.
+
+Vertices are calculated by invoking \textbf{calc(l, h, w, t, r, xform)} where l and h are the length
+and height of the shoulder, w is the depth, and r is the radius of the lower inner edge ($<0$ for no radius).
+
+The shape information may be written by invoking \textbf{build(xform, color, reuse, file, tabs)}.
+
+\subsection{kc3d.Hdrbase()}
+The \textbf{Hdrbase} class is a generic case for a square-pitch header. The case is rectangular but
+may be beveled between each column of pins, the holes for the pins may be square or circular, the
+holes may be a different size on the top and bottom, and the part may have a rectangular shoulder.
+
+Case parameters are specified by invoking \textbf{setParams(xpitch, ypitch, bevel, height, sh, hd0,
+hd1, square, columns, rows, ns)} where xpitch and ypitch are the pin pitches along the columns and
+rows, bevel is the bevel between columns ($<0$ for none), height is the overal height of the case,
+sh is the height of the shoulder ($<0 for none$), hd0 and hd1 are the dimensions of the bottom and
+top holes, columns ($\ge2$) and rows ($\ge1$) are the number of columns and rows, and ns is the number
+of vertices to use for circular pins.
+
+The shape information is written to a file by invoking \textbf{build(xform, color, reuse, file, tabs)}.
+The example below creates a beveled 6x2 header case suitable for a vertical female header with square pins.
+Notice that the case does not include any features such as a funnel on the top holes since such features
+are specific to individual header models; for example the Genhdr model may place one of at least three
+different features into the top holes.
+
+\begin{verbatim}
+import kc3d
+from kc3d import *
+
+hdr = Hdrbase()
+tx0 = Transform()
+
+# set up tx0 to output to KiCAD's world scale
+tx0.setScale(1.0/2.54)
+
+color = kc3d.VRMLMat()
+color.Load("../colors/rcc_blu_g.mat")
+
+hdr.setParams(2.54, 2.54, 0.4, 8, 0.72, 0.64, 1.6, True, 6, 2, 24)
+
+out = kc3d.ofstream()
+kc3d.SetupVRML("hdrcasedemo.wrl", out)
+kc3d.SetupXForm("HEADER_CASE_DEMO", out, 0)
+hdr.build(tx0, color, False, out, 2)
+kc3d.CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
+
+\section{KC3DCONN: The Connector Toolbox}
+The module \textbf{kc3dconn} contains parametric models
+of connectors.  We have already seen an example of such
+a model in Section~\ref{sec:quick-example}.
+
+\subsection{kc3dconn:Genhdr}
+The class \textbf{Genhdr} represents a generic square-pitch vertical header.
+The header may have square or circular pins, may be male or female, may
+have a plain or beveled casing, and may have a shoulder on the casing.
+Section~\ref{sec:quick-example} presented this class and demonstrated its
+use although no details were discussed. Internally the class makes use of
+the classes \textbf{VRMLMat}, \textbf{Hole}, \textbf{Hdrbase}, \textbf{Pin},
+\textbf{Funnel}, and \textbf{Circle} to generate all the features of the
+header.
+
+The parameters controlling the final appearance of the header have been
+divided into a number of groups: Color parameters, Case parameters, and
+Pin parameters.
+
+The colors can be selected by invoking \textbf{setColors(case, pin\_out, pin\_in)}
+where each argument is of type VRMLMat, case is the color of the case, pin\_out is the outer
+appearance of the pin, and pin\_in is the inner appearance of the pin (applicable only
+to female headers).
+
+The case parameters are set via \textbf{setCase(columns, rows, col\_pitch, row\_pitch, height, shoulder, bevel)}
+where height is the total case height, shoulder is the height of the case shoulder, and bevel is the
+case bevel between columns.
+
+The pin parameters are set via \textbf{setPins(square, male, depth, length, pd0, pd1, pd2, taper, ts, sides, funneldepth)}
+where square is True for square pins, make is True for a male header, depth is the pin's depth below the PCB top,
+length is the length of the pin above the PCB top, pd0 is the dimension of the thru part of the pin, pd1 is the
+dimension of the top part of the pin, and pd2 is the dimension of the inner part of the pin. pd1 only applies to
+female headers and must be greater than pd0 and pd2. pd2 only applies to female headers and must be less than pd1;
+it specifies the cross-section of the cavity which receives the mating pins. The taper specifies the length of the
+taper on the lower part of each pin, ts is the scaling factor for the taper, sides is the number of vertices to
+use for circular pins, and funneldepth is the depth of the funnel's flute on female connectors with square pins.
+
+\section{KC3DRES: The Resistor Toolbox}
+The module \textbf{kc3dres} represents parametric models of resistors. 
+
+\subsection{kc3dres:Resistor}
+The class \textbf{Resistor} represents a thru-hole cylindrical resistor such as
+the typical color-coded Carbon Composite Resistor or Metal Film Resistor. The
+resistor model itself is generated by a simple command, in the example below it is
+\verb#R.create(P, "11X55X66X22XXGG", "resistordemo")#, however the model takes
+about 28 parameters which need to be set up beforehand.  The parameters are all
+stored in the structure \textbf{kc3dres.RParams} and are as follows:
+
+\begin{itemize}
+\item\textbf{scale}: scale factor to apply to final result
+\item\textbf{shift}: shift along X-axis to center reference point (usually 1/2 pitch)
+\item\textbf{L}: length of resistor body
+\item\textbf{D}: diameter of resistor body
+\item\textbf{d}: diameter of wire
+\item\textbf{p}: lead pitch
+\item\textbf{wl}: wire length below top of PCB
+\item\textbf{horiz}: True for horizontal orientation
+\item\textbf{endshape}: resistor end style, `C'ap, `R'ound, or `B'ulge (default)
+\item\textbf{bcap}: True if a Bulge style body also has metallic end caps
+\item\textbf{wsides}: number of vertices in a wire cross-section
+\item\textbf{bsides}: number of segments in a right angle bend
+\item\textbf{rsides}: number of vertices in the resistor body cross-section
+\item\textbf{pwrsuf}: optional suffix to indicate power rating, ex: ``0W25''
+\item\textbf{spcsuf}: optional suffix to indicate lead spacing and orientation, ex: ``0I40H''
+\item\textbf{colors}: colors mapped to the color code, body color, wire color
+\end{itemize}
+
+The \textbf{colors} parameters cannot be accessed directly; use the helper function
+\textbf{setRColors(index, params, colorfile)} to set the colors. The indices are
+0 to 9 to represent the code for the digits 0 to 9, 10 for gold, 11 for silver,
+12 for the body color, and 13 for the wire color.
+
+To create the 3D model, set up the parameters and then invoke
+\textbf{create(params, code\_string, base\_name)} where params is the
+set of parameters previously set up, code\_string is a string representing
+the colored bands and gaps, and base\_name is the base filename; the
+routine will add the endstyle code, power suffix, lead space suffix, and the
+suffix ``.wrl'' to produce the full file name. The recommended format for the
+base name is \textbf{[Part Series]\_[Value]\_[Tolerance][T coeff]}, for example
+``CCR\_11R\_J-'' is a generic carbon composite (part series) with $11\Omega$
+resistance, tolerance class J, with no specified temperature coefficient.
+The code string is a series of characters from the set 0..9, G, S, X and
+each character represent a band on the resistor. Repeat characters as
+necessary to obtain the required band widths and spacings; you may even
+add a temperature coefficient band. In the example below, the string
+``11X55X66X22XXGGG'' represents an imaginary 15.6K resistor with $5\%$
+tolerance; the tolerance band is 1.5 times the width of a value band.
+As an example of the flexibility of this coding system, you can specify
+a $0\Omega$ link with the code ``XXX0XXX''.
+
+A wide variety of resistors (Series E96 + E24 for 0.5W 1\% MFR, Series E48
+for 0.5W 2\% MFR, Series E24 for 0.25W 5\% CCR) have been rendered in
+horizontal orientation with 0.4 inch lead spacing and in vertical
+orientation with 0.2 inch lead spacing, so this module is most useful
+for generating models which are not already available. The necessary
+scripts and modules also take up much less storage space than the
+pre-generated models so in the future the pre-generated models may
+be discontinued and models may be generated via script as needed.
+
+\begin{verbatim}
+import kc3d
+import kc3dres
+from kc3d import *
+from kc3dres import *
+
+R = Resistor()
+P = RParams()
+
+# load the colors for the resistor codes, body, and wires
+setRColors(0, P, "../colors/rcc_blk_g.mat")
+setRColors(1, P, "../colors/rcc_brn_g.mat")
+setRColors(2, P, "../colors/rcc_red_g.mat")
+setRColors(3, P, "../colors/rcc_org_g.mat")
+setRColors(4, P, "../colors/rcc_yel_g.mat")
+setRColors(5, P, "../colors/rcc_grn_g.mat")
+setRColors(6, P, "../colors/rcc_blu_g.mat")
+setRColors(7, P, "../colors/rcc_pur_g.mat")
+setRColors(8, P, "../colors/rcc_gry_g.mat")
+setRColors(9, P, "../colors/rcc_wht_g.mat")
+setRColors(10, P, "../colors/rcc_gld_g.mat")
+setRColors(11, P, "../colors/rcc_slv_g.mat")
+setRColors(12, P, "../colors/rbc_blu_g.mat")
+setRColors(13, P, "../colors/tin.mat")
+
+# set the resistor parameters
+P.scale = 0.3937
+P.shift = -2.54
+P.L = 6.3
+P.D = 2.3
+P.d = 0.6
+P.wl = 2.0
+P.p = 5.08
+P.horiz = False
+P.endshape = 'B'
+P.bcap = True
+P.wsides = 16
+P.bsides = 5
+P.rsides = 48
+P.pwrsuf = "0W50"
+P.spcsuf = "0I20"
+
+R.create(P, "11X55X66X22XXGGG", "resistordemo")
+\end{verbatim}
 
 \end{document}

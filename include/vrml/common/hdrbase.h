@@ -27,7 +27,7 @@
 
 #include "polygon.h"
 
-namespace kc3dconn {
+namespace kc3d {
 
 /**
  * \ingroup vrml_tools
@@ -35,7 +35,7 @@ namespace kc3dconn {
  * may be plain or beveled and have either circular or
  * rectangular holes at each end.
  */
-class Hdrbase: public kc3d::Polygon
+class Hdrbase: private kc3d::Polygon
 {
 private:    
     // Calculate the vertices representing the base; parameters
@@ -73,6 +73,18 @@ private:
      */
     int stitch(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
+
+    // overridden and hidden class methods
+    // the overridden Paint prints an error message and returns
+    int Paint(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
+            std::ofstream &fp, int tabs = 0);
+
+    // the overridden Stitch prints an error message and returns
+    int Stitch(Polygon &p2, kc3d::Transform &t,
+            kc3d::VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
+
+    // the overridden Calc prints an error message and returns
+    int Calc(double, double, kc3d::Transform&);
 
 protected:
     double bev;     ///< the length of the bevel
@@ -118,18 +130,20 @@ public:
 
 
 
-    // XXX - fix doc
     /**
      * \brief Set the object's parameters
      *
-     * @param bevel [in] length of the bevel (<=0.0 for no bevel)
-     * @param height [in] overall height of the header
-     * @param sh [in] height of the shoulder (standoff)
-     * @param hd0 [in] dimension of the bottom holes
-     * @param hd1 [in] dimension of the top holes
+     * @param xpitch [in] pin pitch for columns
+     * @param ypitch [in] pin pitch for rows
+     * @param bevel [in] bevel between columns
+     * @param height [in] overall height of case
+     * @param sh [in] shoulder height (<=0 for none)
+     * @param hd0 [in] dimension for bottom holes
+     * @param hd1 [in] dimension for top holes
      * @param square [in] TRUE if holes are square (false = circular)
-     * @param columns [in] number of columns (must be >= 2)
-     * @params rows [in] number of rows (must be >= 1)
+     * @param columns [in] number of columns (>= 2)
+     * @param rows [in] number of rows (>= 1)
+     * @param ns [in] number of vertices (applies to round holes only)
      * @return 0 for success, -1 for failure
      */
     int SetParams(double xpitch, double ypitch, double bevel, double height,
@@ -148,18 +162,6 @@ public:
      */
     int Build(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
-
-    // the overridden Paint prints an error message and returns
-    int Paint(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs = 0);
-
-    // the overridden Stitch prints an error message and returns
-    int Stitch(Polygon &p2, kc3d::Transform &t,
-            kc3d::VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
-    
-    // the overridden Calc prints an error message and returns
-    int Calc(double, double, kc3d::Transform&);
-
 };
 
 }   // namespace kc3d

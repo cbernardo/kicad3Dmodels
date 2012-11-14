@@ -27,7 +27,8 @@
 #include "vcom.h"
 #include "polygon.h"
 #include "circle.h"
-#include "rectangle.h"
+// ZZZ
+// #include "rectangle.h"
 #include "transform.h"
 #include "vrmlmat.h"
 
@@ -279,6 +280,7 @@ int Circle::SetNVertices(int nvert)
     return 0;
 }
 
+/* ZZZ
 int Circle::StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs)
 {
@@ -290,3 +292,4 @@ int Circle::StitchC(Circle& circ, Transform &t, VRMLMat &color, bool reuse_color
 {
     return Polygon::Stitch(circ, t, color, reuse_color, fp, tabs);
 }
+*/

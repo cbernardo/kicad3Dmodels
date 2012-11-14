@@ -22,9 +22,11 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/common"
     "${K3D_SOURCE_DIR}/include/vrml/common"
     "${K3D_SOURCE_DIR}/include/vrml/models/conn"
+    "${K3D_SOURCE_DIR}/include/vrml/models/resistor"
     "${K3D_SOURCE_DIR}/pyinc/common"
     "${K3D_SOURCE_DIR}/pyinc/vrml/common"
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/conn"
+    "${K3D_SOURCE_DIR}/pyinc/vrml/models/resistor"
     )
     
 link_directories(
@@ -32,14 +34,19 @@ link_directories(
 	"${K3D_BINARY_DIR}/src/vrml/models/conn"
 	)
 
+# KC3D: General Tools
 add_library(kc3d SHARED kc3d.cpp)
-
 target_link_libraries(kc3d vcom ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
+# KC3DCONN: Connectors
 add_library(kc3dconn SHARED kc3dconn.cpp)
-
 target_link_libraries(kc3dconn vconn ${Boost_LIBRARIES} ${PYTHON_VERSION})
+
+# KC3DRES: Resistors
+add_library(kc3dres SHARED kc3dres.cpp)
+target_link_libraries(kc3dres vconn vresist ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # INSTALLATION
 install(TARGETS kc3d LIBRARY DESTINATION lib)
 install(TARGETS kc3dconn LIBRARY DESTINATION lib)
+install(TARGETS kc3dres LIBRARY DESTINATION lib)

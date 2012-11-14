@@ -19,7 +19,7 @@ add_subdirectory (hdr)
 # so that they are Python friendly.
 
 # Sections below are new Python friendly code
-# organized into a since k3dconn library for
+# organized into a k3dconn library for
 # generating connector 3D models from
 # existing parametric models.
 

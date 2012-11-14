@@ -1,0 +1,49 @@
+/*
+    file: resistor.pyinc
+    
+    Python bindings for kc3dresistor::Resistor
+    
+    Copyright 2012, Cirilo Bernardo
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+
+    class_<kc3dresistor::RParams>("RParams","Resistor parameters")
+        .def_readwrite("scale", &kc3dresistor::RParams::scale, "VRML world scale")
+        .def_readwrite("shift", &kc3dresistor::RParams::shift, "x-axis shift to determine center point")
+        .def_readwrite("L", &kc3dresistor::RParams::L, "length of resistor body")
+        .def_readwrite("D", &kc3dresistor::RParams::D, "diameter of resistor body")
+        .def_readwrite("d", &kc3dresistor::RParams::d, "diameter of wire")
+        .def_readwrite("p", &kc3dresistor::RParams::p, "lead pitch")
+        .def_readwrite("wl", &kc3dresistor::RParams::wl, "wire length below top of PCB")
+        .def_readwrite("horiz", &kc3dresistor::RParams::horiz, "True for horizontal orientation")
+        .def_readwrite("endshape", &kc3dresistor::RParams::endshape, "'C'ap, 'R'ound or 'B'ulge")
+        .def_readwrite("bcap", &kc3dresistor::RParams::bcap, "True if Bulge ends should have a metallic cap")
+        .def_readwrite("wsides", &kc3dresistor::RParams::wsides, "vertices in the wire")
+        .def_readwrite("bsides", &kc3dresistor::RParams::bsides, "segments in a wire bend")
+        .def_readwrite("rsides", &kc3dresistor::RParams::rsides, "vertices in the resistor body")
+        .def_readwrite("pwrsuf", &kc3dresistor::RParams::pwrsuf, "suffix for power, ex: \"0W25\"")
+        .def_readwrite("spcsuf", &kc3dresistor::RParams::spcsuf, "suffix for lead spacing, ex: \"0I40\"")
+        // The COLOR properties are best accessed via a helper routine
+    ;
+
+    def("setRColors", kc3dresistor::SetColor, "code color values");
+    
+    
+    class_<kc3dresistor::Resistor>("Resistor", "Model of a thru-hole resistor")
+        
+        .def("create", &kc3dresistor::Resistor::Create, "Write a resistor model to a file")
+            
+    ;

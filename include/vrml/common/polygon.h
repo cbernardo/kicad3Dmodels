@@ -22,9 +22,6 @@
  *
  */
 
-/// TODO: Deprecate CW/CCW argument to Paint and Stitch - for
-/// convenience both sides of a facet will always be rendered.
-
 #ifndef POLYGON_H_
 #define POLYGON_H_
 

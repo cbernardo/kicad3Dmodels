@@ -20,27 +20,6 @@
 
 */
 
-// NOTE: Commented out until I figure out how to use references to
-// derived objects when calling from Python. For example:
-// class A {
-//   int func(A&);
-//   virtual int vfunc() = 0;
-// }
-//
-// class B : public A {
-//   int vfunc() { return -1; }
-// };
-//
-// [Wrap class A]
-// [Expose class B with base <B> or <BWrapper>]
-//
-// in Python:
-// x = module.B()
-// x.func(B)
-// >>> spits out a type mismatch message
-
-
-/*
 namespace kc3d {
  
 class PolyWrap : public Polygon, public wrapper<Polygon>
@@ -65,10 +44,6 @@ public:
         return Polygon::IsValid();
     }
     
-    bool default_IsValid(void) { return this->Polygon::IsValid(); }
-
-    
-    
     int Paint(Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs)
     {
@@ -76,15 +51,7 @@ public:
             return Paint(t, color, reuse_color, fp, tabs);
         return this->Polygon::Paint(t, color, reuse_color, fp, tabs);
     }
-
-    int default_Paint(Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs )
-    {
-        return this->Polygon::Paint(t, color, reuse_color, fp, tabs);
-    }
-
-    
-    
+  
     int Stitch(Polygon &p2, Transform &t,
             VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
     {
@@ -92,14 +59,6 @@ public:
             return Stitch(p2, t, color, reuse_color, fp, tabs);
         return Polygon::Stitch(p2, t, color, reuse_color, fp, tabs);
     }
-
-    int default_Stitch(Polygon &p2, Transform &t,
-            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
-    {
-        return this->Polygon::Stitch(p2, t, color, reuse_color, fp, tabs);
-    }
-
 };
 
 }   // namespace kc3d
-*/
