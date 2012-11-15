@@ -98,7 +98,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    virtual int Paint(Transform &t, VRMLMat &color, bool reuse_color,
+    virtual int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     /**
@@ -110,8 +110,8 @@ public:
      * two circles can be used to create a tubular or cylindrical
      * section as well as a disc with a hole in it.
      *
-     * @param p2    [in] the second polygon describing the edge of the surface
      * @param ccw   [in] order of vertex enumeration; this determines the side from which a facet is visible
+     * @param p2    [in] the second polygon describing the edge of the surface
      * @param t     [in] geometric transform to apply to output vertices
      * @param color [in] VRMLMat material appearance
      * @param reuse_color [in] TRUE to reuse a previously written material name
@@ -119,7 +119,7 @@ public:
      * @param tabs  [in] indent level for formatting
      * @return
      */
-    virtual int Stitch(Polygon &p2, Transform &t, VRMLMat &color, bool reuse_color,
+    virtual int Stitch(bool ccw, Polygon &p2, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     /**

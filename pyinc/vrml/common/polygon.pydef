@@ -44,20 +44,20 @@ public:
         return Polygon::IsValid();
     }
     
-    int Paint(Transform &t, VRMLMat &color, bool reuse_color,
+    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs)
     {
         if (override Paint = this->get_override("Paint"))
-            return Paint(t, color, reuse_color, fp, tabs);
-        return this->Polygon::Paint(t, color, reuse_color, fp, tabs);
+            return Paint(ccw, t, color, reuse_color, fp, tabs);
+        return this->Polygon::Paint(ccw, t, color, reuse_color, fp, tabs);
     }
   
-    int Stitch(Polygon &p2, Transform &t,
+    int Stitch(bool ccw, Polygon &p2, Transform &t,
             VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
     {
         if (override Stitch = this->get_override("Stitch"))
-            return Stitch(p2, t, color, reuse_color, fp, tabs);
-        return Polygon::Stitch(p2, t, color, reuse_color, fp, tabs);
+            return Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
+        return Polygon::Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
     }
 };
 

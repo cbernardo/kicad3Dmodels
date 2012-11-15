@@ -465,20 +465,20 @@ int Pin::Build(bool cap0, bool cap1, Transform &t, VRMLMat &color, bool reuse_co
 
     if (cap0)
     {
-        vl += poly[0]->Paint(t, color, reuse, fp, tabs);
+        vl += poly[0]->Paint(false, t, color, reuse, fp, tabs);
         reuse = true;
     }
     if (cap1)
     {
-        vl += poly[nr -1]->Paint(t, color, reuse, fp, tabs);
+        vl += poly[nr -1]->Paint(true, t, color, reuse, fp, tabs);
         reuse = true;
     }
-    vl += poly[0]->Stitch(*poly[1], t, color, reuse, fp, tabs);
+    vl += poly[0]->Stitch(true, *poly[1], t, color, reuse, fp, tabs);
 
     int i;
     for (i = 1; i < nr-1; ++i)
     {
-        vl += poly[i]->Stitch(*poly[i+1], t, color, true, fp, tabs);
+        vl += poly[i]->Stitch(true, *poly[i+1], t, color, true, fp, tabs);
     }
 
     if (vl)

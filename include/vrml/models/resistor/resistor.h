@@ -131,7 +131,7 @@ class Resistor
 public:
     int Create(RParams &rp, const std::string &bands, const std::string &filename);
     // filename = base filename =
-    // [Part Series]_[Value]_[Tolerance][Tcoeff][End Style][Orientation]_[Power]_[Lead Space]
+    // [Part Series]_[Value]_[Tolerance][Tcoeff][End Style]_[Power]_[Lead Space]
 
 };
 

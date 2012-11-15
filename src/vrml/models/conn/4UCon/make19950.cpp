@@ -190,8 +190,8 @@ int makeHdr(int np)
     // Add the casing and shroud
     t0.setRotation(0, 0, 0, 0);
     t0.setTranslation(0, 0, 0);
-    acc += blk[0].Stitch(blk[1], t0, bcol, true, output, 2);
-    acc += shd[0].Stitch(shd[1], t0, bcol, true, output, 2);
+    acc += blk[0].Stitch(true, blk[1], t0, bcol, true, output, 2);
+    acc += shd[0].Stitch(true, shd[1], t0, bcol, true, output, 2);
 
     // Add the top and bottom holes
     int i;
@@ -200,28 +200,28 @@ int makeHdr(int np)
     switch (np)
     {
     case 1:
-        acc += bh[0].Build(t0, bcol, true, output, 2);
+        acc += bh[0].Build(false, t0, bcol, true, output, 2);
         break;
     case 2:
         t0.setTranslation((dx - 0.0625), 0, 0);
-        acc += bh[0].Build(t0, bcol, true, output, 2);
-        acc += th[0].Build(t0, bcol, true, output, 2);
+        acc += bh[0].Build(false, t0, bcol, true, output, 2);
+        acc += th[0].Build(true, t0, bcol, true, output, 2);
         t0.setTranslation((-dx + 0.0625), 0, 0);
-        acc += bh[2].Build(t0, bcol, true, output, 2);
-        acc += th[2].Build(t0, bcol, true, output, 2);
+        acc += bh[2].Build(false, t0, bcol, true, output, 2);
+        acc += th[2].Build(true, t0, bcol, true, output, 2);
         break;
     default:
         t0.setTranslation((dx - 0.0625), 0, 0);
-        acc += bh[0].Build(t0, bcol, true, output, 2);
-        acc += th[0].Build(t0, bcol, true, output, 2);
+        acc += bh[0].Build(false, t0, bcol, true, output, 2);
+        acc += th[0].Build(true, t0, bcol, true, output, 2);
         t0.setTranslation((-dx + 0.0625), 0, 0);
-        acc += bh[2].Build(t0, bcol, true, output, 2);
-        acc += th[2].Build(t0, bcol, true, output, 2);
+        acc += bh[2].Build(false, t0, bcol, true, output, 2);
+        acc += th[2].Build(true, t0, bcol, true, output, 2);
         for (i = 1; i < np -1; ++i)
         {
             t0.setTranslation((dx + 2.54*i), 0, 0);
-            acc += bh[1].Build(t0, bcol, true, output, 2);
-            acc += th[1].Build(t0, bcol, true, output, 2);
+            acc += bh[1].Build(false, t0, bcol, true, output, 2);
+            acc += th[1].Build(true, t0, bcol, true, output, 2);
         }
         break;
     }

@@ -34,7 +34,7 @@
 
 namespace kc3ddip {
 
-class dipcase
+class DipCase
 {
 private:
     kc3d::Quat p[CASE_NP];
@@ -43,21 +43,34 @@ private:
     double BEV;     ///< [CaseBevel]
     double MID;     ///< [CaseMidHeight] depth of middle portion where pins attach
     double NL;      ///< [NotchLength] must be > NW/2
-    double scale;   ///< [WorldScale] conversion scale from real units to virtual world units
     double D;       ///< [CaseLength]
     double E1;      ///< [CaseWidth]
     double S;       ///< [CaseTaper] deviation of unbeveled top and bottom edges
     double A1;      ///< [BaseHeight] distance from board to bottom of case
     double A2;      ///< [CaseDepth]
     bool valid;     ///< true when the current set of vertices are valid
-    bool ismetric;  ///< true when the user wishes to perform metric calculations
 
 public:
-    dipcase();
-    /// select metric units or inches
-    void setMetric(bool metric);
+    DipCase();
 
-    /* case parameters; defaults are for PDIP-24, inches */
+    /**
+     * Set the case parameters
+     *
+     * @param d [in] case length
+     * @param e1 [in] case width
+     * @param a1 [in] distance from top of PCB to bottom of case
+     * @param a2 [in] depth of the case
+     * @param nw [in] notch width
+     * @param nd [in] notch depth (must be < (a1-mid)/2)
+     * @param nl [in] notch length
+     * @param mid [in] depth of middle untapered section
+     * @param bev [in] bevel
+     * @param s [in] inward offset of case top and bottom
+     * @return 0 for success, -1 for failure
+     */
+    int setParams(double d, double e1, double a1, double a2,
+            double nw, double nd, double nl, double mid, double bev, double s);
+
     /// set the case length
     int setCaseLength(double d);
     /// retrieve the case length
@@ -130,23 +143,12 @@ public:
     {
         return NL;
     }
-    /// set the virtual world's scaling parameter
-    void setWorldScale(double sc);
-    /// retrieve the virtual world's scaling parameter
-    double getWorldScale(void)
-    {
-        return scale;
-    }
 
     /// calculate the vertices
-    kc3d::Quat *calc(void);
-    /// retrieve the total number of points
-    int getNP(void)
-    {
-        return CASE_NP;
-    }
+    int calc(void);
+
     /// write the point list as a VRML Coordinate{}
-    int writeCoord(std::ofstream &fp, int tabs = 0, kc3d::Transform *t = NULL);
+    int writeCoord(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
     /// write the facet list as a VRML coordIndex[]
     int writeFacets(std::ofstream &fp, int tabs = 0);
 };

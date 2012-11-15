@@ -62,7 +62,7 @@ void Polygon::init(void)
 }
 
 
-int Polygon::Paint(Transform &t, VRMLMat &color, bool reuse_color,
+int Polygon::Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
         std::ofstream &fp, int tabs)
 {
     int i;
@@ -130,8 +130,6 @@ int Polygon::Paint(Transform &t, VRMLMat &color, bool reuse_color,
     SetupCoordIndex(fp, tabs +1);
     string fmt((tabs + 1)*4, ' ');
     fp << fmt << "    ";
-    /*
-     * Original code: supplanted to render from both sides
     if (ccw)
     {
         for (i = 0; i < nv-1; ++i)
@@ -152,24 +150,6 @@ int Polygon::Paint(Transform &t, VRMLMat &color, bool reuse_color,
         }
         fp << "0," << nv-1 << ",-1\n";
     }
-    */
-    // CCW
-    for (i = 0; i < nv-1; ++i)
-    {
-        fp << i << ",";
-        if (!((i + 1) % 18))
-            fp << "\n" << fmt << "    ";
-    }
-    fp << i << ",0,-1,\n";
-    // CW
-    fp << fmt << "    ";
-    for (i = nv-1; i > 0; --i)
-    {
-        fp << i << ",";
-        if (!((i + 1) % 18))
-            fp << "\n" << fmt << "    ";
-    }
-    fp << "0," << nv-1 << ",-1\n";
     CloseCoordIndex(fp, tabs +1);
 
     delete [] lx;
@@ -179,7 +159,7 @@ int Polygon::Paint(Transform &t, VRMLMat &color, bool reuse_color,
 }
 
 
-int Polygon::Stitch(Polygon &p2, Transform &t,
+int Polygon::Stitch(bool ccw, Polygon &p2, Transform &t,
             VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
 {
     int i, j, k;
@@ -262,8 +242,6 @@ int Polygon::Stitch(Polygon &p2, Transform &t,
     SetupCoordIndex(fp, tabs +1);
     string fmt((tabs + 1)*4, ' ');
     fp << fmt << "   ";
-    /*
-     * Original code: supplanted to render from both sides
     if (ccw)
         k = 1;
     else
@@ -281,38 +259,6 @@ int Polygon::Stitch(Polygon &p2, Transform &t,
     if (j >= nv) j -= nv;
     if (j < 0) j += nv;
     fp << " " << i << "," << j << "," <<  j+nv << "," << i+nv << ",-1\n";
-     */
-    // CCW
-    k = 1;
-    for (i = 0; i < nv-1; ++i)
-    {
-        j = i + k;
-        if (j >= nv) j -= nv;
-        if (j < 0) j += nv;
-        fp << " " << i << "," << j << "," <<  j+nv << "," << i+nv << ",-1,";
-        if (!((i + 1) % 4))
-            fp << "\n" << fmt << "   ";
-    }
-    j = i + k;
-    if (j >= nv) j -= nv;
-    if (j < 0) j += nv;
-    fp << " " << i << "," << j << "," <<  j+nv << "," << i+nv << ",-1,\n";
-    // CW
-    k = -1;
-    fp << fmt << "   ";
-    for (i = 0; i < nv-1; ++i)
-    {
-        j = i + k;
-        if (j >= nv) j -= nv;
-        if (j < 0) j += nv;
-        fp << " " << i << "," << j << "," <<  j+nv << "," << i+nv << ",-1,";
-        if (!((i + 1) % 4))
-            fp << "\n" << fmt << "   ";
-    }
-    j = i + k;
-    if (j >= nv) j -= nv;
-    if (j < 0) j += nv;
-    fp << " " << i << "," << j << "," <<  j+nv << "," << i+nv << ",-1,\n";
 
     CloseCoordIndex(fp, tabs +1);
 

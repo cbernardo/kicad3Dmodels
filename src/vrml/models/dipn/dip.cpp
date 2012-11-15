@@ -37,6 +37,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 #include "vdefs.h"
 #include "vcom.h"
@@ -53,65 +54,119 @@ using namespace kc3ddip;
     fprintf(stderr, "%s:%d: %s(): ", __FILE__, __LINE__, __FUNCTION__);\
     fprintf(stderr, ##__VA_ARGS__); } while (0)
 
-dipparams::dipparams()
+DipParams::DipParams()
 {
     // defaults are for DIP-24 with 0.3" row spacing and 0.1" pin-pin spacing
-    metric = false;
-    scale = 10.0;   // World Scale; set to '10' for KiCAD representation (0.1inch = 1VRML unit)
-    npins = 24;
-
-    pinbev = 0.002; // Pin edge bevel
-    B = 0.022;      // [ThruWidth] width of narrow part of pin
-    B1 = 0.06;      // [PinBreadth] widest part of the pin
-    B2 = 0.015;     // [TaperHeight] height of the pin's tapered portion
-    C1 = 0.01;      // [DogEar] length of top bent (sloped) portion)
-    C2 = 0.0025;    // [DogEarOffset] offset of lower bent (sloped) portion)
-    C = 0.014;      // [Thickness] pin material thickness
-    E = 0.3;        // [RowSpacing] pin row spacing (for example, 0.3 inches on typical DIP)
+    A1 = 0.015;     // [BaseHeight] distance from board to bottom of case
+    A2 = 0.115;     // [CaseDepth]
     L = 0.15;       // [ThruLength] pin length (narrow part)
-    P = 0.1;        // [PinPitch]
+    e = 0.1;        // [Pin Pitch]
+    E = 0.3;        // [RowSpacing] pin row spacing (for example, 0.3 inches on typical DIP)
+    E1 = 0.25;      // [CaseWidth]
+    B1 = 0.06;      // [PinBreadth] widest part of the pin
+    b = 0.022;      // [ThruWidth] width of narrow part of pin
+    c = 0.014;      // [Thickness] pin material thickness
 
-    casebev = 0.005;    // [CaseBevel]
-    A1 = 0.015;         // [BaseHeight] distance from board to bottom of case
-    A2 = 0.115;         // [CaseDepth]
-    E1 = 0.25;          // [CaseWidth]
     NW = 0.06;          // [NotchWidth]
     ND = 0.012;         // [NotchDepth]
     NL = 0.07;          // [NotchLength] must be > NW/2
     MID = 0.022;        // [CaseMidHeight] depth of middle portion where pins attach
-    D = 1.25;           // [CaseLength]
-    S = 0.005;          // [CaseTaper] deviation of unbeveled top and bottom edges
     DW = 0.005;         // [CaseAlw]
+    S = 0.005;          // [CaseTaper] deviation of unbeveled top and bottom edges
+    casebev = 0.005;    // [CaseBevel]
+    pinbev = 0.002;     // Pin edge bevel
+
+    scale = 10;
 
     return;
 }
 
-
-
-
-dip::dip()
+int Dip::SetPinColor(std::string filename)
 {
+    return pinmaterial.Load(filename);
+}
+
+int Dip::SetCaseColor(std::string filename)
+{
+    return casematerial.Load(filename);
+}
+
+
+
+Dip::Dip()
+{
+    pins = 0;
+    haspin = NULL;
     return;
 }
 
-int dip::Calc(int pins, std::string filename)
+Dip::~Dip()
 {
-    /**
-        TODO: at the moment this is tailored to
-        only one class of DIP; it should be modified
-        to take more information from the user about
-        case and pin dimensions and material appearance
+    if ((pins) && (haspin)) delete [] haspin;
+    return;
+}
 
-        TODO: enforce constraints (example: pins >= 4, pins%2 = 0)
+int Dip::SetPins(int npins)
+{
+    if ((pins) && (haspin)) delete [] haspin;
+    haspin = NULL;
+    pins = 0;
 
-        TODO: put in error checking on I/O (modify to throw/catch)
-    */
+    if ((npins < 4) || (npins % 2))
+    {
+        ERRBLURB;
+        cerr << "npins (" << npins << ") must be >= 4 and a multiple of 2\n";
+        return -1;
+    }
 
+    haspin = new (nothrow) bool [npins];
+    if (haspin == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for pin inclusion map\n";
+        return -1;
+    }
+    int i;
+    for (i = 0; i < npins; ++i) haspin[i] = true;
+
+    pins = npins;
+    return 0;
+}
+
+int Dip::SetPin(int pin, bool on)
+{
+    if (!pins)
+    {
+        ERRBLURB;
+        cerr << "invoked without setting number of pins\n";
+        return -1;
+    }
+
+    if ((pin < 1) || (pin > pins))
+    {
+        ERRBLURB;
+        cerr << "out of range (pin = " << pin << "); must be 1 .. pins (" << pins << ")\n";
+        return -1;
+    }
+
+    haspin[pin -1] = on;
+    return 0;
+}
+
+
+int Dip::Build(std::string filename)
+{
     double xoff, yoff, zoff;
     int pin, hpin;
     ofstream fp;
+    int acc = 0;
 
-    if (pins == 0) pins = params.npins;
+    if (pins == 0)
+    {
+        ERRBLURB;
+        cerr << "invoked without setting pins\n";
+        return -1;
+    }
     if ((pins < 4) || (pins % 2))
     {
         ERRBLURB;
@@ -119,13 +174,27 @@ int dip::Calc(int pins, std::string filename)
         return -1;
     }
 
-    dipcase iccase;
-    dippin icpin;
+    DipCase iccase;
+    DipPin icpin;
 
-    params.D = pins/2*params.P + params.DW;
+    const double tan5 = 0.0874886635259;
+    if (params.DW < 0.0)
+    {
+        params.DW = 2.0*(params.c/3.0 + 0.5*params.B1);
+    }
+    if (params.MID < 0.0)
+    {
+        params.MID = 1.5*params.c;
+    }
+    if (params.S < 0.0)
+    {
+        params.S = (params.A2 - params.MID)*0.5*tan5;
+    }
 
-    iccase.setMetric(params.metric);
-    iccase.setCaseLength(params.D);
+    // length of case, nominal Pins/2 + DW
+    double D = pins*0.5*params.e + 0.5* params.DW;
+
+    iccase.setCaseLength(D);
     iccase.setCaseWidth(params.E1);
     iccase.setBaseHeight(params.A1);
     iccase.setCaseDepth(params.A2);
@@ -134,32 +203,36 @@ int dip::Calc(int pins, std::string filename)
     iccase.setNotchLength(params.NL);
     iccase.setNotchDepth(params.ND);
 
-    icpin.setMetric(params.metric);
-    icpin.setBaseHeight(params.A1);
-    icpin.setCaseDepth(params.A2);
-    icpin.setThruWidth(params.B);
-    icpin.setPinBreadth(params.B1);
-    icpin.setDogEar(params.C1);
-    icpin.setDogEarOffset(params.C2);
-    icpin.setThickness(params.C);
-    icpin.setCaseWidth(params.E1);
-    icpin.setThruLength(params.L);
-    icpin.setRowSpacing(params.E);
+    // derived pin parameters
+    double h = params.A1 + 0.5*params.A2;
+    double w = 0.5*(params.E - params.E1);
+    acc += icpin.Calc(h, params.L, w, params.c, params.B1, params.b, params.pinbev);
+    if (acc)
+    {
+        ERRBLURB;
+        cerr << "problems calculating pin appearance\n";
+        return -1;
+    }
 
-    /* note: offsets depend on the world scale */
-    xoff = -(pins/4.0 -0.5)*params.P*params.scale;
-    yoff = -params.E1*0.5*params.scale;
+    xoff = -(pins/4.0 -0.5)*params.e;
+    yoff = -params.E1*0.5;
     zoff = 0.0;
 
-    Transform T;
+    Transform T, TC;
     Quat offset(0, xoff, yoff, zoff);
     Translation tr(offset);
     Rotation rot(0,0,0,1);
     T.setTranslation(tr);
     T.setRotation(rot);
+    TC.setScale(params.scale);
 
-    iccase.calc();
-    icpin.calc();
+    acc += iccase.calc();
+    if (acc)
+    {
+        ERRBLURB;
+        cerr << "problems calculating case appearance\n";
+        return -1;
+    }
 
     if (SetupVRML(filename, fp))
     {
@@ -168,40 +241,38 @@ int dip::Calc(int pins, std::string filename)
         return -1;
     }
 
+    casematerial.WriteMaterial(fp, 0, true);
+    pinmaterial.WriteMaterial(fp, 0, true);
+
     // Case
     ostringstream partname;
-    if (params.metric)
+    partname << "DIL" << pins << "_P" << setfill('0') << setw(5) << (int)(params.E*1000.0) << setfill(' ') << setw(0);
+
+    acc += SetupXForm(partname.str(), fp, 0);
+
+    acc += SetupShape(casematerial, true, fp, 2);
+    acc += iccase.writeCoord(TC, fp, 4);
+    acc += iccase.writeFacets(fp, 4);
+    acc += CloseShape(fp, 2);
+    if (acc)
     {
-        partname << "DIL" << pins << "_m" << icpin.getRowSpacing()*100;
-    }
-    else
-    {
-        partname << "DIL" << pins << "_i" << icpin.getRowSpacing()*1000;
+        ERRBLURB;
+        cerr << "problems writing case data to file\n";
+        return -1;
     }
 
-    SetupXForm(partname.str(), fp, 0);
-
-    SetupShape(params.casematerial, false, fp, 2);
-    iccase.writeCoord(fp, 4);
-    iccase.writeFacets(fp, 4);
-    CloseShape(fp, 2);
-
-    // Pin1 (defines the pin material)
-    SetupShape(params.pinmaterial, false, fp, 2);
-    icpin.writeCoord(fp, 4, &T);
-    icpin.writeFacets(fp, 4);
-    CloseShape(fp, 2);
+    T.setScale(params.scale);
+    // Pin1
+    if (haspin[0]) acc += icpin.Build(T, pinmaterial, true, fp, 2);
 
     // Pin 2 .. (pins/2)
     hpin = pins/2;
     for (pin = 2; pin <= hpin; ++pin) {
-        offset.x = offset.x + 1.0;
+        offset.x = offset.x + params.e;
+        if (!(haspin[pin -1])) continue;
         tr.set(offset);
         T.setTranslation(tr);
-        SetupShape(params.pinmaterial, true, fp, 2);
-        icpin.writeCoord(fp, 4, &T);
-        icpin.writeFacets(fp, 4);
-        CloseShape(fp, 2);
+        acc += icpin.Build(T, pinmaterial, true, fp, 2);
     }
 
     // Pin (pins/2 +1)..
@@ -211,11 +282,8 @@ int dip::Calc(int pins, std::string filename)
     tr.set(offset);
     T.setTranslation(tr);
     for (pin = hpin+1; pin <= pins; ++pin) {
-        SetupShape(params.pinmaterial, true, fp, 2);
-        icpin.writeCoord(fp, 4, &T);
-        icpin.writeFacets(fp, 4);
-        CloseShape(fp, 2);
-        offset.x = offset.x - 1.0;
+        if (haspin[pin -1]) acc += icpin.Build(T, pinmaterial, true, fp, 2);
+        offset.x = offset.x - params.e;
         tr.set(offset);
         T.setTranslation(tr);
     }
@@ -226,62 +294,28 @@ int dip::Calc(int pins, std::string filename)
 
 
 
-int dip::SetParams(const dipparams &p)
+int Dip::SetParams(const DipParams &p)
 {
+    if (p.pinbev > p.c/3)
+    {
+        ERROUT("pin bevel (%f) is wider than 1/3 the pin material thickness (%f)\n", p.pinbev, p.c);
+        return -1;
+    }
+
+    if (p.b < p.c)
+    {
+        ERROUT("pin thru width (%f) is less than the pin material thickness (%f)\n", p.b, p.c);
+        return -1;
+    }
+
+    if (p.b >= p.B1)
+    {
+        ERROUT("pin thru width (%f) is less than or equal to the pin breadth (%f)\n", p.b, p.B1);
+        return -1;
+    }
+
+    // XXX - validate parameters
+
     params = p;
-    // XXX - to implement - validate settings
-    return -1;
-
-    if (p.scale == 0)
-    {
-        ERROUT("scale factor is zero\n");
-        return -1;
-    }
-
-    if (p.pinbev > p.C/3)
-    {
-        ERROUT("pin bevel (%f) is wider than 1/3 the pin material thickness (%f)\n", p.pinbev, p.C);
-        return -1;
-    }
-
-    if (p.B < p.C)
-    {
-        ERROUT("pin thru width (%f) is less than the pin material thickness (%f)\n", p.B, p.C);
-        return -1;
-    }
-
-    if (p.B >= p.B1)
-    {
-        ERROUT("pin thru width (%f) is less than or equal to the pin breadth (%f)\n", p.B, p.B1);
-        return -1;
-    }
-
-    // XXX - RowSpacing must be greater than CaseWidth + 2*DogEar - PinThickness
-
-    // XXX - DogEarOffset must be < (DogEar - PinThickness/2)
-
-
-/*
-
-    pinbev = 0.002; // Pin edge bevel
-    B = 0.018;      // [ThruWidth] width of narrow part of pin
-    B1 = 0.06;      // [PinBreadth] widest part of the pin
-    B2 = 0.015;     // [TaperHeight] height of the pin's tapered portion
-    C1 = 0.01;      // [DogEar] length of top bent (sloped) portion)
-    C2 = 0.0025;    // [DogEarOffset] offset of lower bent (sloped) portion)
-    C = 0.01;       // [Thickness] pin material thickness
-    E = 0.3;        // [RowSpacing] pin row spacing (for example, 0.3 inches on typical DIP)
-    L = 0.13;       // [ThruLength] pin length (narrow part)
-
-    casebev = 0.005;    // [CaseBevel]
-    A1 = 0.015;         // [BaseHeight] distance from board to bottom of case
-    A2 = 0.13;          // [CaseDepth]
-    E1 = 0.26;          // [CaseWidth]
-    NW = 0.06;          // [NotchWidth]
-    ND = 0.02;          // [NotchDepth]
-    NL = 0.08;          // [NotchLength] must be > NW/2
-    MID = 0.02;         // [CaseMidHeight] depth of middle portion where pins attach
-    D = 1.25;           // [CaseLength]
-    S = 0.01;           // [CaseTaper] deviation of unbeveled top and bottom edges
-*/
+    return 0;
 }

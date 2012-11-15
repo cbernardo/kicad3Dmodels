@@ -140,10 +140,10 @@ int Resistor::makeHzLead(std::ofstream &fp)
     // metallic cap (only when endshape option is 'B'
     if ((params.endshape == 'B')&&(params.bcap))
     {
-        cap[0].Calc(params.d, params.d, tv);
+        cap[0].Calc(2.0*params.d, 2.0*params.d, tv);
         px = (params.p - params.L)/2.0;
         tv.setTranslation(px, 0, pz);
-        cap[1].Calc(params.d, params.d, tv);
+        cap[1].Calc(2.0*params.d, 2.0*params.d, tv);
     }
 
     // paint the wire end and stitch the vertical part
@@ -151,40 +151,40 @@ int Resistor::makeHzLead(std::ofstream &fp)
     t0.setScale(params.scale);
     // keep in mind that the translation is the last transform and is unaffected by scale
     t0.setTranslation(params.shift, 0, 0);
-    lvert[0].Paint(t0, params.colors[13], false, fp, 2);
-    lvert[0].Stitch(lvert[1], t0, params.colors[13], true, fp, 2);
+    lvert[0].Paint(false, t0, params.colors[13], false, fp, 2);
+    lvert[0].Stitch(true, lvert[1], t0, params.colors[13], true, fp, 2);
     // stitch the bend
     for(i = 0; i < nb-1; ++i)
     {
-        bend[i].Stitch(bend[i+1], t0, params.colors[13], true, fp, 2);
+        bend[i].Stitch(true, bend[i+1], t0, params.colors[13], true, fp, 2);
     }
     // stitch the horizontal part
-    lhz[0].Stitch(lhz[1], t0, params.colors[13], true, fp, 2);
+    lhz[0].Stitch(true, lhz[1], t0, params.colors[13], true, fp, 2);
     if ((params.endshape == 'B')&&(params.bcap))
     {
         // paint and stitch the cap
-        cap[0].Paint(t0, params.colors[13], true, fp, 2);
-        cap[0].Stitch(cap[1], t0, params.colors[13], true, fp, 2);
+        cap[0].Paint(false, t0, params.colors[13], true, fp, 2);
+        cap[0].Stitch(true, cap[1], t0, params.colors[13], true, fp, 2);
     }
 
     // repeat the paint and stitch operations but transform the positions
     t0.setRotation(M_PI, 0, 0, 1);
     t0.setTranslation(params.p + params.shift, 0, 0);
     // vertical part
-    lvert[0].Paint(t0, params.colors[13], true, fp, 2);
-    lvert[0].Stitch(lvert[1], t0, params.colors[13], true, fp, 2);
+    lvert[0].Paint(false, t0, params.colors[13], true, fp, 2);
+    lvert[0].Stitch(true, lvert[1], t0, params.colors[13], true, fp, 2);
     // stitch the bend
     for(i = 0; i < nb-1; ++i)
     {
-        bend[i].Stitch(bend[i+1], t0, params.colors[13], true, fp, 2);
+        bend[i].Stitch(true, bend[i+1], t0, params.colors[13], true, fp, 2);
     }
     // stitch the horizontal part
-    int val = lhz[0].Stitch(lhz[1], t0, params.colors[13], true, fp, 2);
+    int val = lhz[0].Stitch(true, lhz[1], t0, params.colors[13], true, fp, 2);
     if ((params.endshape == 'B')&&(params.bcap))
     {
         // paint and stitch the cap
-        cap[0].Paint(t0, params.colors[13], true, fp, 2);
-        val = cap[0].Stitch(cap[1], t0, params.colors[13], true, fp, 2);
+        cap[0].Paint(false, t0, params.colors[13], true, fp, 2);
+        val = cap[0].Stitch(true, cap[1], t0, params.colors[13], true, fp, 2);
     }
     return val;
 }
@@ -286,8 +286,6 @@ int Resistor::makeVtLead(std::ofstream &fp)
 
 int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
 {
-    // XXX - TODO: Clean up code; use diameters in invocations of Calc()
-
     // Notes:
     //  Hz start of body:   ((p - L)/2, 0, (D/2 + 0.2))
     //  Vt start of body:   (0, 0, 2*d)
@@ -493,10 +491,10 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     {
         tx.setTranslation( params.shift, 0, 2.0*params.d);
     }
-    body[0].Paint(tx, params.colors[12], false, fp, 2);
+    body[0].Paint(false, tx, params.colors[12], false, fp, 2);
     for (i = 0; i < nend -1; ++i)
     {
-        body[i].Stitch(body[i+1], tx, params.colors[12], true, fp, 2);
+        body[i].Stitch(true, body[i+1], tx, params.colors[12], true, fp, 2);
     }
     int j = nend -1;
     int idx;
@@ -506,14 +504,14 @@ int Resistor::makeBody(std::ofstream &fp, const std::string &bands)
     for (i = 0; i < nb -1; ++i)
     {
         idx = getColorIdx(i, bands);
-        body[i+j].Stitch(body[i+j+1], tx, params.colors[idx], used[idx], fp, 2);
+        body[i+j].Stitch(true, body[i+j+1], tx, params.colors[idx], used[idx], fp, 2);
         if (!used[idx]) used[idx] = true;
     }
     for (i = ntot - nend; i < ntot -1; ++i)
     {
-        body[i].Stitch(body[i+1], tx, params.colors[12], true, fp, 2);
+        body[i].Stitch(true, body[i+1], tx, params.colors[12], true, fp, 2);
     }
-    int val = body[ntot -1].Paint(tx, params.colors[12], false, fp, 2);
+    int val = body[ntot -1].Paint(true, tx, params.colors[12], false, fp, 2);
     delete [] body;
     return val;
 }

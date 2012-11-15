@@ -15,4 +15,9 @@ add_executable(makeDip makeDip.cpp dip_pin.cpp dip_case.cpp dip.cpp)
 
 target_link_libraries(makeDip vcom)
 
+add_library(vdip
+    dip.cpp dip_pin.cpp dip_case.cpp
+    )
+target_link_libraries(vdip vcom)
+
 install(TARGETS makeDip RUNTIME DESTINATION bin)

@@ -26,15 +26,16 @@
 #include <cmath>
 #include <iomanip>
 #include <fstream>
+#include <iostream>
 
+#include "vdefs.h"
 #include "dip_case.h"
-#include "dip_limits.h"
 
 using namespace std;
 using namespace kc3d;
 using namespace kc3ddip;
 
-dipcase::dipcase()
+DipCase::DipCase()
 {
     /* defaults are in inches for PDIP-24 */
     NW = 0.06;
@@ -47,180 +48,143 @@ dipcase::dipcase()
     S = 0.01;
     A1 = 0.015;
     A2 = 0.13;
-    scale = 10.0;
-    ismetric = false;
     valid = false;
     return;
 }
 
-void dipcase::setMetric(bool metric)
-{
-    if (metric && ismetric)
-        return;
-    if ((!metric) && (!ismetric))
-        return;
 
-    if (metric)
-    {
-        NW *= 25.4;
-        NL *= 25.4;
-        ND *= 25.4;
-        BEV *= 25.4;
-        MID *= 25.4;
-        D *= 25.4;
-        E1 *= 25.4;
-        S *= 25.4;
-        A1 *= 25.4;
-        A2 *= 25.4;
-        scale *= 25.4;
-        ismetric = true;
-        valid = false;
-    }
-    else
-    {
-        NW /= 25.4;
-        NL /= 25.4;
-        ND /= 25.4;
-        BEV /= 25.4;
-        MID /= 25.4;
-        D /= 25.4;
-        E1 /= 25.4;
-        S /= 25.4;
-        A1 /= 25.4;
-        A2 /= 25.4;
-        scale /= 25.4;
-        ismetric = false;
-        valid = false;
-    }
-}
-
-int dipcase::setCaseLength(double d)
+int DipCase::setCaseLength(double d)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((d * ls) < MIN_CASELEN) || ((d * ls) > MAX_CASELEN))
+    if (d <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     D = d;
     return 0;
 }
 
-int dipcase::setCaseWidth(double e1)
+int DipCase::setCaseWidth(double e1)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((e1 * ls) < MIN_CASEWIDTH) || ((e1 * ls) > MAX_CASEWIDTH))
+    if (e1 <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     E1 = e1;
     return 0;
 }
 
-int dipcase::setCaseTaper(double s)
+int DipCase::setCaseTaper(double s)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((s * ls) < MIN_CASETAPER) || ((s * ls) > MAX_CASETAPER))
+    if (s < 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be >= 0\n";
         return -1;
+    }
     S = s;
     return 0;
 }
 
-int dipcase::setBaseHeight(double a1)
+int DipCase::setBaseHeight(double a1)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((a1 * ls) < MIN_BASE_HEIGHT) || ((a1 * ls) > MAX_BASE_HEIGHT))
+    if (a1 < 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be >= 0\n";
         return -1;
+    }
     A1 = a1;
     return 0;
 }
 
-int dipcase::setCaseDepth(double a2)
+int DipCase::setCaseDepth(double a2)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((a2 * ls) < MIN_CASE_DEPTH) || ((a2 * ls) > MAX_CASE_DEPTH))
+    if (a2 <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     A2 = a2;
     return 0;
 }
 
-int dipcase::setNotchWidth(double nw)
+int DipCase::setNotchWidth(double nw)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((nw * ls) < MIN_NOTCHWIDTH) || ((nw * ls) > MAX_NOTCHWIDTH))
+    if (nw <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     NW = nw;
     return 0;
 }
 
-int dipcase::setNotchDepth(double nd)
+int DipCase::setNotchDepth(double nd)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((nd * ls) < MIN_NOTCHDEPTH) || ((nd * ls) > MAX_NOTCHDEPTH))
+    if (nd <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     ND = nd;
     return 0;
 }
 
-int dipcase::setCaseBevel(double bev)
+int DipCase::setCaseBevel(double bev)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((bev * ls) < MIN_CASEBEV) || ((bev * ls) > MAX_CASEBEV))
+    if (bev <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     BEV = bev;
     return 0;
 }
 
-int dipcase::setCaseMidHeight(double mid)
+int DipCase::setCaseMidHeight(double mid)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((mid * ls) < MIN_CASEMID) || ((mid * ls) > MAX_CASEMID))
+    if (mid <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     MID = mid;
     return 0;
 }
 
-int dipcase::setNotchLength(double nl)
+int DipCase::setNotchLength(double nl)
 {
     valid = false;
-    double ls = 1.0;  // local scale factor to test limits
-    if (ismetric)
-        ls = 1.0 / 24.0;
-    if (((nl * ls) < MIN_NOTCHLEN) || ((nl * ls) > MAX_NOTCHLEN))
+    if (nl <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid value; must be > 0\n";
         return -1;
+    }
     NL = nl;
     return 0;
 }
 
-void dipcase::setWorldScale(double sc)
-{
-    scale = sc;
-    valid = false;
-}
 
-Quat *dipcase::calc(void)
+int DipCase::calc(void)
 {
     int i;
     double height;
@@ -351,19 +315,21 @@ Quat *dipcase::calc(void)
     p[70].y = p[71].y = p[72].y = -E1 / 2 + S + BEV;
     p[73].y = p[74].y = p[75].y = -p[70].y;
 
-    for (i = 0; i < CASE_NP; ++i)
-        p[i] = p[i] * scale;
     valid = true;
-    return p;
+    return 0;
 }
 
-int dipcase::writeCoord(std::ofstream &fp, int tabs, Transform *t)
+int DipCase::writeCoord(Transform &t, std::ofstream &fp, int tabs)
 {
     int i;
     Quat loc;
 
     if (!valid)
+    {
+        ERRBLURB;
+        cerr << "invoked without prior successful call to calc()\n";
         return -1;
+    }
 
     if (tabs < 0) tabs = 0;
     if (tabs > 4) tabs = 4;
@@ -373,36 +339,21 @@ int dipcase::writeCoord(std::ofstream &fp, int tabs, Transform *t)
     fp << fmt << "   ";
     for (i = 0; i < CASE_NP - 1; ++i)
     {
-        if (t)
-        {
-            loc = p[i];
-            t->transform(loc);
-            fp << setprecision(3) << " " << loc.x << " " << loc.y << " " << loc.z << ",";
-        }
-        else
-        {
-            fp << setprecision(3) << " " << p[i].x << " " << p[i].y << " " << p[i].z << ",";
-        }
+        loc = p[i];
+        t.transform(loc);
+        fp << setprecision(8) << " " << loc.x << " " << loc.y << " " << loc.z << ",";
         if (!((i + 1) % 6))
             fp << "\n" << fmt << "   ";
     }
-    if (t)
-    {
-        loc = p[i];
-        t->transform(loc);
-        fp << setprecision(3) << " " << loc.x << " " << loc.y << " " << loc.z << " ]\n";
-        fp << fmt << "}\n";
-    }
-    else
-    {
-        fp << setprecision(3) << " " << p[i].x << " " << p[i].y << " " << p[i].z << " ]\n";
-        fp << fmt << "}\n";
-    }
+    loc = p[i];
+    t.transform(loc);
+    fp << setprecision(3) << " " << loc.x << " " << loc.y << " " << loc.z << " ]\n";
+    fp << fmt << "}\n";
 
     return fp.good() ? 0 : -1;
 }
 
-int dipcase::writeFacets(std::ofstream &fp, int tabs)
+int DipCase::writeFacets(std::ofstream &fp, int tabs)
 {
     if (tabs < 0) tabs = 0;
     if (tabs > 4) tabs = 4;
@@ -442,4 +393,97 @@ int dipcase::writeFacets(std::ofstream &fp, int tabs)
     fp << fmt << "    74, 75, 60, 61, -1, 74, 61, 62, -1, 74, 62, 63, -1, 74, 63, 64, -1,\n";
     fp << fmt << "    64, 65, 71, 74, -1, 71, 72, 73, 74, -1\n" << fmt << "]\n";
     return fp.good() ? 0 : -1;
+}
+
+int DipCase::setParams(double d, double e1, double a1, double a2,
+        double nw, double nd, double nl, double mid, double bev, double s)
+{
+    valid = false;
+    if (d <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (d); must be > 0\n";
+        return -1;
+    }
+    D = d;
+
+    if (mid <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (mid); must be > 0\n";
+        return -1;
+    }
+    MID = mid;
+
+    if (e1 <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (e1); must be > 0\n";
+        return -1;
+    }
+    E1 = e1;
+
+    if (a2 <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (a2); must be > 0\n";
+        return -1;
+    }
+    A2 = a2;
+
+    if (a1 < 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (a1); must be >= 0\n";
+        return -1;
+    }
+    A1 = a1;
+
+    if (nw <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (nw); must be > 0\n";
+        return -1;
+    }
+    NW = nw;
+
+    if (nd <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (nd); must be > 0\n";
+        return -1;
+    }
+    if (nd >= (a2 - mid)*0.5)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (nd); must be < (a2 - mid)/2\n";
+        return -1;
+    }
+    ND = nd;
+
+    if (nl <= nw)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (nl); must be > nw\n";
+        return -1;
+    }
+    NL = nl;
+
+    if (bev <= 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (bev); must be > 0\n";
+        return -1;
+    }
+    BEV = bev;
+
+    if (s < 0.0)
+    {
+        ERRBLURB;
+        cerr << "invalid dimension (s); must be >= 0\n";
+        return -1;
+    }
+    S = s;
+
+    return 0;
 }

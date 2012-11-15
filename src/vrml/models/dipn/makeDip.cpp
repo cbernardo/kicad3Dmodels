@@ -45,18 +45,36 @@ using namespace kc3ddip;
 
 int main()
 {
-  dip dil;
+  Dip dil;
   char name[256];
   int i;
-  dipparams dp;
-  dp.casematerial.Load(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
-  dp.pinmaterial.Load(K3D_TOP_DIR "/mcad/colors/tin.mat");
+  DipParams dp;
+  dil.SetCaseColor(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
+  dil.SetPinColor(K3D_TOP_DIR "/mcad/colors/tin.mat");
   dil.SetParams(dp);
 
-  for(i = 4; i <= 28; i+=2) {
+  for(i = 4; i <= 28; i+=2)
+  {
     sprintf(name, "dil%d_i300.wrl", i);
-    dil.Calc(i, name);
+    dil.SetPins(i);
+    dil.Build(name);
   }
+
+  /*
+  // demo of the pin skipping function
+  int j;
+  for(i = 4; i <= 28; i+=2)
+  {
+    sprintf(name, "dil%d_i300.wrl", i);
+    dil.SetPins(i);
+    for (j = 3; j <= (i/2 -2); ++j)
+    {
+        dil.SetPin(j, false);
+        dil.SetPin(i - j +1, false);
+    }
+    dil.Build(name);
+  }
+  */
 
   return 0;
 }

@@ -327,11 +327,11 @@ int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
     int acc = 0;
     int idx = 0;
     bool reuse = reuse_flute;
-    acc += poly[idx]->Stitch(*poly[idx +1], t, flutecolor, reuse, fp, tabs);
+    acc += poly[idx]->Stitch(true, *poly[idx +1], t, flutecolor, reuse, fp, tabs);
     ++idx;
     if (has_h2)
     {
-        acc += poly[idx]->Stitch(*poly[idx +1], t, flutecolor, true, fp, tabs);
+        acc += poly[idx]->Stitch(true, *poly[idx +1], t, flutecolor, true, fp, tabs);
         ++idx;
     }
     // stem
@@ -340,11 +340,11 @@ int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
     {
         reuse = true;
     }
-    acc += poly[idx]->Stitch(*poly[idx +1], t, stemcolor, reuse, fp, tabs);
+    acc += poly[idx]->Stitch(true, *poly[idx +1], t, stemcolor, reuse, fp, tabs);
     ++idx;
     if (cap)
     {
-        acc += poly[idx]->Paint(t, stemcolor, false, fp, tabs);
+        acc += poly[idx]->Paint(true, t, stemcolor, false, fp, tabs);
     }
     if (acc)
     {

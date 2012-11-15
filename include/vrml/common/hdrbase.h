@@ -76,11 +76,11 @@ private:
 
     // overridden and hidden class methods
     // the overridden Paint prints an error message and returns
-    int Paint(kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
+    int Paint(bool ccw, kc3d::Transform &t, kc3d::VRMLMat &color, bool reuse_color,
             std::ofstream &fp, int tabs = 0);
 
     // the overridden Stitch prints an error message and returns
-    int Stitch(Polygon &p2, kc3d::Transform &t,
+    int Stitch(bool ccw, Polygon &p2, kc3d::Transform &t,
             kc3d::VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs = 0);
 
     // the overridden Calc prints an error message and returns
