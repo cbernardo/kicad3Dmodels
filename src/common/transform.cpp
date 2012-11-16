@@ -174,6 +174,24 @@ Quat kc3d::operator*(double d, Quat q)
     return q * d;
 }
 
+Quat Quat::cross(const Quat &b) const
+{
+    Quat q;
+    q.x = y*b.z - z*b.y;
+    q.y = z*b.x - x*b.z;
+    q.z = x*b.y - y*b.x;
+
+    double magX, magA, magB;    // vector magnitudes
+    magX = sqrt(q.x*q.x + q.y*q.y + q.z*q.z);
+    magA = sqrt(x*x + y*y + z*z);
+    magB = sqrt(b.x*b.x + b.y*b.y + b.z*b.z);
+    if ((magA < 1e-9)||(magB < 1e-9))
+        q.w = 0;
+    else
+        q.w = asin(magX/(magA*magB));
+    return q;
+}
+
 /*
  *
  *         TRANSLATION

@@ -292,3 +292,38 @@ int Polygon::GetVertices(double **px, double **py, double **pz)
     return nv;
 }
 
+
+int Polygon::Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transform &txout,
+        VRMLMat &color, bool reuse, std::ofstream &fp, int tabs)
+{
+    Polygon *pp = this->clone();
+    if (!pp)
+    {
+        ERRBLURB;
+        cerr << "could not duplicate polygon\n";
+        return -1;
+    }
+    int acc = pp->Xform(upto);
+
+    if (outer)
+    {
+       acc += this->Stitch(true, *pp, txout, color, reuse, fp, tabs);
+       if (cap0) acc += this->Paint(false, txout, color, true, fp, tabs);
+       if (cap1) acc += pp->Paint(true, txout, color, true, fp, tabs);
+    }
+    else
+    {
+        acc += this->Stitch(false, *pp, txout, color, reuse, fp, tabs);
+        if (cap0) acc += this->Paint(true, txout, color, true, fp, tabs);
+        if (cap1) acc += pp->Paint(false, txout, color, true, fp, tabs);
+    }
+    delete pp;
+
+    if (acc)
+    {
+        ERRBLURB;
+        cerr << "problems creating the extrusion\n";
+        return -1;
+    }
+    return 0;
+}

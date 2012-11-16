@@ -41,6 +41,8 @@ class_<kc3d::PolyWrap, boost::noncopyable >("Polygon", "Generic Polygon", no_ini
         args("p2: second polygon", "t: transform to apply to output", "color: appearance specification",
         "reuse: 1 to reuse the color", "fp: open output file", "tabs: formatting indent level"))
 
+    .def("extrude", &kc3d::PolyWrap::Extrude, "Extrude this polygon")
+
     .def("xform", &kc3d::Polygon::Xform, "Transform the internal vertices of the polygon")
 
     //.def("getVertices", &kc3d::Polygon::GetVertices, "Retrieve the coordinate lists and number of vertices")

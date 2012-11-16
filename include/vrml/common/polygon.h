@@ -123,6 +123,26 @@ public:
             std::ofstream &fp, int tabs = 0);
 
     /**
+     * \ Brief extrude a polygon and write to file
+     *
+     * Extrude this polygon using @param upto to calculate the orientation, position,
+     * and size of the second polygon.
+     *
+     * @param cap0 [in] true to render the first end of the extrusion
+     * @param cap1 [in] true to render the final end of the extrusion
+     * @param outer [in] true to render the outer surface visible
+     * @param upto [in] transform to calculate the second polygon
+     * @param txout [in] transform to apply to output
+     * @param color [in] appearance specification
+     * @param reuse [in] true to reuse @param color
+     * @param fp [in] open output file
+     * @param tabs [in] formatting indent level
+     * @return 0 for success, -1 for failure
+     */
+    virtual int Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transform &txout,
+            VRMLMat &color, bool reuse, std::ofstream &fp, int tabs = 0);
+
+    /**
      * \brief Transform vertices
      *
      * Transform all the vertices in a polygon. Unlike the transform parameters

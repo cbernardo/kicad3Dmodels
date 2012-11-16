@@ -22,9 +22,28 @@ Modifications to make to existing code:
 	+ 4UCon Drawing 19950: expose parameters and
 		routines
 
++ Polygon: Add an extrusion feature; this will save the user
+	a substantial amount of time programming when an
+        extrusion is desired. Parameters include:
+	+ transform to locate the second face
+        + flag to render top, bottom, sides
+        + flag to render inside or outside
+        + the usual transform, file, color, reuse, tabs parameters
 
 Possible new tools to add to the list:
 ======================================
+
+Wire: Create a round or rectangular wire from a list of points.
+	+ add points via "addpoint"
+        + set min. bend radius
+        + transformations are automatically calculated to
+	  maintain minimal distortion of wire
+        + total length of wire is computed for reference
+        + set min. segments to represent a bend
+        + set number of segments per 90 deg bend
+	NOTE: this will be a slightly challenging tool to build
+	(in MCAD systems this is a 'swept path') but it will
+        make the creation of features such as helices much easier.
 
 Helix: Create a helical wire.
 	+ The wire may be rectangular or circular

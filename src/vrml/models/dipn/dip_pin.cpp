@@ -16,14 +16,7 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>
 
- Notes:
- These classes were created to support the
- programmatic creation of VRML models for
- use with KiCad.
-
- TODO:
- * check constraints
- */
+*/
 
 #include <fstream>
 #include <iostream>

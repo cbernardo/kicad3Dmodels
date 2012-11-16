@@ -33,8 +33,6 @@
 #include "vrmlmat.h"
 #include "polygon.h"
 #include "rectangle.h"
-// ZZZ
-// #include "circle.h"
 
 using namespace std;
 using namespace kc3d;
@@ -44,6 +42,7 @@ using namespace kc3d;
 Rectangle::Rectangle()
 {
     bev = -1.0;
+    seg = 1;
     nv = 0;
     Polygon::init();
     return;
@@ -200,16 +199,14 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
 	nv = 0;
     }
 
-    int np;
-    if (bev > 0.0)
-        np = 8;
-    else
-        np = 4;
+    int np = 4;
+    if (bev > 0.0) np += 4*seg;
 
     if ((bev >= xl/2.0) || (bev > yl/2.0))
     {
         ERRBLURB;
         cerr << "invalid bevel (equals or exceeds side/2)\n";
+        return -1;
     }
 
     if (xl < MIN_LEN)
@@ -232,7 +229,7 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
         Polygon::init();
-	nv = 0;
+        nv = 0;
         return -1;
     }
     y = new (nothrow) double[np];
@@ -242,7 +239,7 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
         cerr << "could not allocate points for vertices\n";
         delete [] x;
         Polygon::init();
-	nv = 0;
+        nv = 0;
         return -1;
     }
     z = new (nothrow) double[np];
@@ -253,13 +250,15 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
         delete [] x;
         delete [] y;
         Polygon::init();
-	nv = 0;
+        nv = 0;
         return -1;
     }
 
     // calculate the vertices then apply the transform
     int i;
     for (i = 0; i < np; ++i) z[i] = 0.0;
+    double apx, apy;    // anchor points for calculation of bevel/arc
+    double ang, dang;   // angle, increment in angle
     switch (np)
     {
     case 4:
@@ -272,36 +271,24 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
         y[2] = y[1];
         y[3] = y[0];
         break;
-    case 8:
-        x[0] = xl/2.0 - bev;
-        y[0] = -yl/2.0;
-        x[1] = xl/2.0;
-        y[1] = y[0] + bev;
-
-        x[2] = x[1];
-        y[2] = -y[1];
-        x[3] = x[0];
-        y[3] = -y[0];
-
-        x[4] = -x[3];
-        x[5] = -x[2];
-        y[4] = y[3];
-        y[5] = y[2];
-
-        x[6] = -x[1];
-        x[7] = -x[0];
-        y[6] = y[1];
-        y[7] = y[0];
-        break;
     default:
-        ERRBLURB;
-        cerr << "invalid number of points (" << np << "); valid values are 4 and 8 only\n";
-        delete [] x;
-        delete [] y;
-        delete [] z;
-        Polygon::init();
-	nv = 0;
-        return -1;
+        apx = xl/2.0 - bev;
+        apy = -yl/2.0 + bev;
+        dang = 0.5*M_PI/seg;
+        ang = -0.5*M_PI;
+        for (i = 0; i <= seg; ++i)
+        {
+            x[i] = apx + bev*cos(ang);
+            y[i] = apy + bev*sin(ang);
+            x[2*(seg +1) - i -1] = x[i];
+            y[2*(seg +1) - i -1] = -y[i];
+            x[2*(seg +1) + i] = -x[i];
+            y[2*(seg +1) + i] = -y[i];
+            x[4*(seg +1) - i -1] = -x[i];
+            y[4*(seg +1) - i -1] = y[i];
+            ang += dang;
+        }
+        break;
     }
 
     // transform the vertices
@@ -313,22 +300,16 @@ int Rectangle::Calc(double xl, double yl, Transform &t)
 }   // Calc
 
 
-void Rectangle::SetBevel(double bevel)
+int Rectangle::SetBevel(double bevel, int segments)
 {
     bev = bevel;
-    return;
+    if (segments <= 0) segments = 1;
+    if (segments > 90)
+    {
+        ERRBLURB;
+        cerr << "invalid number of segments; must be <= 90\n";
+        return -1;
+    }
+    seg = segments;
+    return 0;
 }
-
-/* ZZZ
-int Rectangle::StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs)
-{
-    return Polygon::Stitch(rect, t, color, reuse_color, fp, tabs);
-}
-
-int Rectangle::StitchC(Circle& circ, Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs)
-{
-    return Polygon::Stitch(circ, t, color, reuse_color, fp, tabs);
-}
-*/

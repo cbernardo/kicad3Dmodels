@@ -30,6 +30,7 @@
         .def("setBevel", &kc3d::Rectangle::SetBevel, "Set the bevel; must be <1/2 of X or Y dimension")
         .def("paint", &kc3d::Polygon::Paint)
         .def("stitch", &kc3d::Polygon::Stitch)
+        .def("extrude", &kc3d::Polygon::Extrude)
         .def("xform", &kc3d::Polygon::Xform)
         // .def("getVertices", &kc3d::Polygon::GetVertices)
     ;

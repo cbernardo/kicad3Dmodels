@@ -85,6 +85,16 @@ public:
      * @return 0 for success, -1 for failure
      */
     int vnormalize(void);
+
+    /**
+     * Calculate the cross-product and angle of
+     * two vectors (@param a x @param b).
+     * The result is not normalized.
+     *
+     * @param b
+     * @return cross product and angle
+     */
+    Quat cross(const Quat &b) const;
 };
 /// Product of a scalar and a Quaternion
 Quat operator*(double d, Quat q);

@@ -39,6 +39,7 @@ class_<kc3d::Quat>("Quat", "Basic quaternion", init<>())
     .def(self / double())
     .def("normalize", &kc3d::Quat::normalize, "normalize the quaternion")
     .def("vnormalize", &kc3d::Quat::vnormalize, "normalize the vector component")
+    .def("cross", &kc3d::Quat::cross, "calculate the non-normalized cross product and angle")
     
     // member variables
     .def_readwrite("w", &kc3d::Quat::w, "scalar component")

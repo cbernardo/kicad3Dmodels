@@ -30,8 +30,6 @@
 namespace kc3d {
 
 class Transform;
-// ZZZ
-// class Circle;
 
 /**
  * \ingroup vrml_tools
@@ -42,6 +40,7 @@ class Rectangle: public Polygon
 {
 private:
   double bev;   ///< the length of the bevel at each corner
+  int seg;      ///< number of segments to a bevel
   
 public:
     Rectangle();
@@ -72,7 +71,6 @@ public:
      */
     virtual int Calc(double xl, double yl, Transform &t);
 
-    /// @param bev   bevel; < 0 means no bevel
     /**
      * \brief Set the length of the bevel.
      *
@@ -81,18 +79,12 @@ public:
      * must be less than half the length of the shortest side of
      * the rectangle.
      *
-     * @param bevel [in] length of the bevel
+     * @param bevel [in] length of the bevel; <= 0 means no bevel
+     * @param segments [in] number of segments (1 = bevel, >1 approximates a radius)
+     * @return 0 for success, -1 for failure
      */
-    void SetBevel(double bevel);
+    int SetBevel(double bevel, int segments = 1);
 
-    /* ZZZ
-    // overloaded functions to keep Python happy
-    int StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-                std::ofstream &fp, int tabs = 0);
-
-    int StitchC(Circle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-                std::ofstream &fp, int tabs = 0);
-    */
 };
 
 }   // namespace kc3d

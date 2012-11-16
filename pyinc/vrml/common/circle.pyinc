@@ -31,6 +31,7 @@
         .def("setNVertices", &kc3d::Circle::SetNVertices, "Set the number of vertices in the ellipse")
         .def("paint", &kc3d::Polygon::Paint)
         .def("stitch", &kc3d::Polygon::Stitch)
+        .def("extrude", &kc3d::Polygon::Extrude)
         .def("xform", &kc3d::Polygon::Xform)
         //.def("getVertices", &kc3d::Polygon::GetVertices)
     ;

@@ -343,7 +343,30 @@ The \textbf{Quat} class is the representation of a basic quaternion. It supports
 multiplication and division by a scalar and addition and subtraction of quaternions
 and scalars. The quaternion can be normalized by invoking the method \textbf{normalize()}
 or the vector component alone can be normalized via a call to \textbf{vnormalize()}.
-The individual components w, x, y, and z are publicly exposed.
+The individual components w, x, y, and z are publicly exposed. The cross product
+and angle of two vectors can be calculated by \textbf(cross(vector\_b)) as demonstrated
+in the script below. The cross product assumes a right-handed coordinate system; if
+you are using a left-handed coordinate system you must multiply the pseudovector
+coefficients by the appropriate unit vector coefficients.
+
+\begin{verbatim}
+import kc3d
+from kc3d import *
+
+# vector A points along the X axis
+A = Quat(0, 1, 0, 0)
+
+# vector B points along the Y axis
+B = Quat(0, 0, 1, 0)
+
+# the cross product (vector C) must point
+# along the Z axis and have a rotation of pi/2
+C = A.cross(B)
+print C.w
+print C.x
+print C.y
+print C.z
+\end{verbatim}
 
 \subsection{kc3d.Translation()}
 The \textbf{Translation} class is the representation of data and methods to
@@ -420,6 +443,14 @@ Individual points or sets of points can be transformed via the following methods
 \item \textbf{xform(*x, *y, *z, np)} transform a set of \textbf{np} points\\
 \end{itemize}
 
+The individual geometric transforms can be retrieved via the following methods:
+
+\begin{itemize}
+\item \textbf{getTranslation(T)}\\
+\item \textbf{getRotation(R)}\\
+\item \textbf{getScale(S)}\\
+\end{itemize}
+
 \subsection{kc3d.Polygon()}
 The \textbf{Polygon} is an abstract class implementing the methods \textbf{paint}
 and \textbf{stitch} to render the faces of a convex polygon or to create facets
@@ -433,6 +464,15 @@ Return values are 0 for success and -1 for failure.
 
 \textbf{stitch(ccw, polygon2, xform, color, reuse, file, tabs)} : Render facets between two
 polygons. Return values are 0 for success and -1 for failure.
+
+\textbf{extrude(cap0, cap1, outer, upto, xform, color, reuse, file, tabs)} : 
+Render an extrusion; cap0 and cap1 determine whether each end of the extrusion is
+visible, outer determines whether the outside or inside is visible,
+upto is the vector describing the position, orientation, and scale of the extrusion's
+endpoint, xform is a transform to apply to the results, and so on.
+\textbf{CAVEAT: the argument \emph{outside} is not strictly the outside,
+it depends on the sign of the orthogonal component of upto.}
+Return values are 0 for success and -1 for failure.
 
 \textbf{xform(transform)} : transform the internal vertices of the polygon.
 
@@ -458,30 +498,65 @@ rectangle with beveled edges to an octagon inscribed within an ellipse:
 
 \begin{verbatim}
 import kc3d
+from kc3d import *
 
-rect = kc3d.Rectangle()
-circ = kc3d.Circle()
+rect = Rectangle()
+circ = Circle()
 
-color = kc3d.VRMLMat()
+color = VRMLMat()
 color.Load("../colors/rcc_grn_g.mat")
 
-t0 = kc3d.Transform()
-t1 = kc3d.Transform()
+t0 = Transform()
+t1 = Transform()
 t1.setTranslation(0, 0, 5)
 
-rect.setBevel(0.5)
+rect.setBevel(0.5, 1)
 rect.calc(8, 4, t0)
 
 circ.setNVertices(8)
 circ.calc(4, 8, t1)
 
-out = kc3d.ofstream()
-kc3d.SetupVRML("weird.wrl", out)
-kc3d.SetupXForm("WEIRD_OBJECT", out, 0)
+out = ofstream()
+SetupVRML("weird.wrl", out)
+SetupXForm("WEIRD_OBJECT", out, 0)
 rect.paint(False, t0, color, 0, out, 2)
 rect.stitch(True, circ, t0, color, 1, out, 2)
 circ.paint(True, t0, color, 1, out, 2)
-kc3d.CloseXForm(out, 0)
+CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
+The following script demonstrates how the nominal outside of the
+extrusion depends on the vector \emph{upto}.
+
+\begin{verbatim}
+import kc3d
+from kc3d import *
+
+rect = Rectangle()
+
+color = VRMLMat()
+color.Load("../colors/rcc_grn_g.mat")
+
+t0 = Transform()
+t1 = Transform()
+t1.setTranslation(0, 0, 5)
+
+rect.setBevel(0.5, 1)
+rect.calc(8, 8, t0)
+
+out = ofstream()
+SetupVRML("outside_normal.wrl", out)
+SetupXForm("OUTSIDE_DEMO_A", out, 0)
+rect.extrude(True, True, True, t1, t0, color, 0, out, 2)
+CloseXForm(out, 0)
+out.close()
+
+SetupVRML("outside_invert.wrl", out)
+SetupXForm("OUTSIDE_DEMO_B", out, 0)
+t1.setTranslation(0, 0, -5)
+rect.extrude(True, True, True, t1, t0, color, 0, out, 2)
+CloseXForm(out, 0)
 out.close()
 \end{verbatim}
 
@@ -498,8 +573,74 @@ the \textbf{calc} method to calculate the vertices.
 
 \subsubsection{kc3d.Rectangle()}
 The \textbf{Rectangle} class derives from Polygon and implements a rectangle which
-may have beveled corners. The bevel can be controlled by invoking \textbf{setBevel(bevel)}
-before invoking the \textbf{calc} method. A bevel $\le0$ indicates the default of no bevel.
+may have beveled corners. The bevel can be controlled by invoking \textbf{setBevel(bevel, segments)}
+before invoking the \textbf{calc} method. A bevel $\le0$ indicates the default of no bevel; segments
+is a number from 1 to 360 where 1 represents a bevel and a number $>1$ represents an approximation to
+a rounded corner.  The example below shows all three corner styles; it creates a green extruded
+rectangle with rounded corners which has a plain black rectangular extrusion and a blue
+beveled rectangular extrusion.
+
+\begin{verbatim}
+import math
+import kc3d
+from kc3d import *
+
+color = VRMLMat()
+color.Load("../colors/rcc_grn_g.mat")
+
+tx = Transform()
+out = ofstream()
+
+r1 = Rectangle()
+r2 = Rectangle()
+
+r1.setBevel(1.27, 5)
+r2.setBevel(1.27, 5)
+
+r1.calc(20.32, 15, tx)
+
+tx.setTranslation(0, 0, 1.6)
+r2.calc(20.32, 15, tx)
+
+tx.setTranslation(0,0,0)
+tx.setScale(0.3937)
+
+SetupVRML("board.wrl", out)
+SetupXForm("BOARD", out, 0)
+
+r1.paint(False, tx, color, False, out, 2)
+r2.paint(True, tx, color, True, out, 2)
+r1.stitch(True, r2, tx, color, True, out, 2)
+
+r1.setBevel(0.3, 1) 
+r2.setBevel(0.3, 1) 
+color.Load("../colors/rcc_blu_g.mat")
+tx.setScale(1)
+tx.setTranslation(-5,0,1.6)
+r1.calc(5, 5, tx);
+tx.setTranslation(-5,0,3.6)
+r2.calc(5, 5, tx);
+tx.setScale(0.3937)
+tx.setTranslation(0,0,0)
+r2.paint(True, tx, color, False, out, 2)
+r1.stitch(True, r2, tx, color, True, out, 2)
+
+r1.setBevel(-0.3, 1) 
+r2.setBevel(-0.3, 1) 
+color.Load("../colors/rcc_blk_g.mat")
+tx.setScale(1)
+tx.setTranslation(5,0,1.6)
+r1.calc(3, 3, tx);
+tx.setTranslation(5,0,2.4)
+r2.calc(3, 3, tx);
+tx.setScale(0.3937)
+tx.setTranslation(0,0,0)
+r2.paint(True, tx, color, False, out, 2)
+r1.stitch(True, r2, tx, color, True, out, 2)
+
+CloseXForm(out, 0)
+out.close()
+\end{verbatim}
 
 \subsection{kc3d.Pin()}
 The \textbf{Pin} class is a representation of a vertical wire with an optional bend. The wire
