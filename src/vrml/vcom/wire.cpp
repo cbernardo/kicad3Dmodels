@@ -286,7 +286,6 @@ int Wire::render(Quat &p1, Quat &p2, Quat &p3, Quat &norm, SimplePoly &shape, do
     {
         l3 = rbend/tan((M_PI - v0.w)/2.0);
     }
-    cerr << "l3: " << l3 << "\n";
     // l1 and l2 must be equal to or exceed l3
     if ((l1 < l3) || (l2 < l3))
     {
