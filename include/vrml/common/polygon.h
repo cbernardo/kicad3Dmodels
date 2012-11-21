@@ -31,6 +31,7 @@ namespace kc3d {
 
 class VRMLMat;
 class Transform;
+class Quat;
 
 /**
  * \ingroup vrml_tools
@@ -58,7 +59,7 @@ public:
      *
      * @return TRUE if a valid vertex set is present
      */
-    bool IsValid(void);
+    bool IsValid(void) const;
 
     /**
      * \brief Create a duplicate instance of this type of Polygon
@@ -68,7 +69,7 @@ public:
      *
      * @return Duplicate instance of *this
      */
-    virtual Polygon *clone(void) = 0;
+    virtual Polygon *clone(void) const = 0;
 
     /**
      * \brief Calculate the vertices of a polygon
@@ -139,7 +140,7 @@ public:
      * @param tabs [in] formatting indent level
      * @return 0 for success, -1 for failure
      */
-    virtual int Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transform &txout,
+    virtual int Extrude(bool cap0, bool cap1, bool outer, Quat &center, Transform &upto, Transform &txout,
             VRMLMat &color, bool reuse, std::ofstream &fp, int tabs = 0);
 
     /**
@@ -161,7 +162,55 @@ public:
      * @param pz [out] pointer to internal array of Z coordinates
      * @return number of vertices in the list or -1 for failure
      */
-    int GetVertices(double **px, double **py, double **pz);
+    int GetVertices(double **px, double **py, double **pz) const;
+};
+
+
+
+/**
+ * \ingroup vrml_tools
+ * @class FakePoly implements a Polygon which does not own its
+ * vertices. It is useful where transient points are treated as
+ * vertices of a polygon.
+ */
+class FakePoly : public Polygon
+{
+
+public:
+    virtual ~FakePoly();
+
+    // inherited methods
+    Polygon *clone(void) const;
+    int Calc(double xl, double yl, Transform &t);
+
+    // extented methods
+    void setParams(double *x, double *y, double *z, int np, bool valid);
+};
+
+
+
+/**
+ * \ingroup vrml_tools
+ * @class SimplePoly implements a Polygon which owns but does not calculate
+ * its own vertices or support a clone(). The vertices are copied from any
+ * other polygon and may be transformed, painted and stitched. This class
+ * is intended to aid where multiple transformations on a copy of a polygon
+ * are required.
+ */
+class SimplePoly : public Polygon
+{
+public:
+    SimplePoly();
+    SimplePoly(const SimplePoly &p);
+    SimplePoly(const Polygon &p);
+    ~SimplePoly();
+
+    // inherited methods
+    Polygon *clone(void) const;
+    int Calc(double xl, double yl, Transform &t);
+
+    // extended methods
+    int SetValues(const Polygon &p);
 };
 
 }   // namespace kc3d

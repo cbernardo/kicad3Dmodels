@@ -465,12 +465,12 @@ Return values are 0 for success and -1 for failure.
 \textbf{stitch(ccw, polygon2, xform, color, reuse, file, tabs)} : Render facets between two
 polygons. Return values are 0 for success and -1 for failure.
 
-\textbf{extrude(cap0, cap1, outer, upto, xform, color, reuse, file, tabs)} : 
+\textbf{extrude(cap0, cap1, outer, center, upto, xform, color, reuse, file, tabs)} : 
 Render an extrusion; cap0 and cap1 determine whether each end of the extrusion is
-visible, outer determines whether the outside or inside is visible,
-upto is the vector describing the position, orientation, and scale of the extrusion's
-endpoint, xform is a transform to apply to the results, and so on.
-\textbf{CAVEAT: the argument \emph{outside} is not strictly the outside,
+visible, outer determines whether the outside or inside is visible, center is the
+center of the polygon, upto is the vector describing the position, orientation,
+and scale of the extrusion's endpoint, xform is a transform to apply to the results,
+and so on. \textbf{CAVEAT: the argument \emph{outside} is not strictly the outside,
 it depends on the sign of the orthogonal component of upto.}
 Return values are 0 for success and -1 for failure.
 
@@ -544,18 +544,19 @@ t1.setTranslation(0, 0, 5)
 
 rect.setBevel(0.5, 1)
 rect.calc(8, 8, t0)
+center = Quat(0, 0, 0, 0)
 
 out = ofstream()
 SetupVRML("outside_normal.wrl", out)
 SetupXForm("OUTSIDE_DEMO_A", out, 0)
-rect.extrude(True, True, True, t1, t0, color, 0, out, 2)
+rect.extrude(True, True, True, center, t1, t0, color, 0, out, 2)
 CloseXForm(out, 0)
 out.close()
 
 SetupVRML("outside_invert.wrl", out)
 SetupXForm("OUTSIDE_DEMO_B", out, 0)
 t1.setTranslation(0, 0, -5)
-rect.extrude(True, True, True, t1, t0, color, 0, out, 2)
+rect.extrude(True, True, True, center, t1, t0, color, 0, out, 2)
 CloseXForm(out, 0)
 out.close()
 \end{verbatim}
@@ -739,6 +740,113 @@ kc3d.SetupXForm("SMD_PIN", out, 0)
 pin1.build(True, False, tx0, color, False, out, 2)
 pin2.build(False, True, tx0, color, True, out, 2)
 kc3d.CloseXForm(out, 0)
+out.close()
+\end{verbatim}
+
+\subsection{kc3d:Wire}
+The class \textbf{Wire} represents a path swept with a polygon.
+Vertices are added using \textbf{addPoint(q)} or \textbf{addPoint(x, y, z)}
+where q is a quaternion and x, y, z represent the 3D coordinates of a point.
+All points can be cleared by invoking \textbf{clear()}. The path is
+rendered to a file via \textbf{build(poly, cap0, cap1, outside, tx, color, reuse, file, tabs)}
+where poly is the polygon, cap0 and cap1 determine whether the ends are capped or not,
+outside determines whether the wire is visible from the outside, tx is the transform
+to apply to the output, color is the material appearance, reuse determines whether a
+color is reused or not, file is an open output file, and tabs is the formatting
+indent level.
+
+Use wires sparingly; due to the extensive number of polygons, a wire is a costly
+item. Applications of a wire include modeling an inductor and modeling the
+wiring of some PCB connectors. The examples below illustrate the use of the
+wire; the first example has a rectangle formed into a continuous loop with
+vertices on a rectangular grid, the second shows a wire bent into an odd shape
+and clearly shows how the endpoint may change orientation depending on how the
+wire is bent.  The third example is a triangular helical coil; a close look at
+the wire ends will reveal a change in orientation; setting the number of
+vertices of the circle to 3 (triangle) rather than 8 will make the change in
+orientation more obvious. Note how much memory is consumed by the coil model;
+a more realistic coil model would have perhaps 24 vertices in a single twist
+of the helix and would take approximately 8 times as much memory.
+
+\begin{verbatim}
+import math
+import kc3d
+from kc3d import *
+
+color = VRMLMat()
+color.Load("../colors/rcc_grn_g.mat")
+
+w = Wire()
+w.setParams(8,1.0)
+r = Rectangle()
+t0 = Transform()
+
+r.setBevel(0.1, 1)
+r.calc(1, 1, t0)
+
+out = ofstream()
+SetupVRML("wiredemo_A.wrl", out)
+SetupXForm("WIRE_DEMO", out, 0)
+# last leg is rendered from the wrong side
+w.addPoint(0, 0, 1)
+w.addPoint(0, 0, 4)
+w.addPoint(4, 0, 4)
+w.addPoint(4, -4, 4)
+w.addPoint(0, -4, 4)
+w.addPoint(0, -4, 0)
+w.addPoint(4, -4, 0)
+w.addPoint(4, 0, 0)
+w.addPoint(1, 0, 0)
+w.addPoint(0, 0, 0)
+w.addPoint(0, 0, 1)
+w.build(r, False, False, True, t0, color, False, out, 2)
+w.clear()
+CloseXForm(out, 0)
+out.close()
+
+SetupVRML("wiredemo_B.wrl", out)
+SetupXForm("WIRE_DEMO", out, 0)
+w.addPoint(0, 0, 0)
+w.addPoint(0, 0, 4)
+w.addPoint(4, 0, 4)
+w.addPoint(4, -4, 4)
+w.addPoint(0, -4, 4)
+w.addPoint(1, -3, 0)
+w.addPoint(4, -4, 0)
+w.addPoint(4, -4, -3)
+w.build(r, True, True, True, t0, color, False, out, 2)
+w.clear()
+CloseXForm(out, 0)
+out.close()
+
+
+# Triangular spiral
+color.Load("../colors/copper.mat")
+c = Circle()
+c.setNVertices(8)
+c.calc(1.0, 1.0, t0)
+# Lead in
+w.addPoint(0, 0, -5)
+w.addPoint(0, 0, 0)
+# Spiral
+x = 1.0/3.0;
+h = math.sqrt(75.0)
+while x < 10:
+    w.addPoint(x, 5, 0)
+    x += 1.0/3.0;
+    w.addPoint(x, 0, h)
+    x += 1.0/3.0;
+    w.addPoint(x, -5, 0)
+    x += 1.0/3.0;
+
+# Lead out
+w.addPoint(x, 0, 0)
+w.addPoint(x, 0, -5)
+SetupVRML("wiredemo_C.wrl", out)
+SetupXForm("WIRE_DEMO", out, 0)
+w.build(c, True, True, True, t0, color, False, out, 2)
+w.clear()
+CloseXForm(out, 0)
 out.close()
 \end{verbatim}
 
@@ -1081,4 +1189,44 @@ dil.setPin(10, False)
 dil.create("DIL_12_special.wrl")
 \end{verbatim}
 
+
+
+
+
 \end{document}
+
+
+# single bend
+import math
+import kc3d
+from kc3d import *
+
+color = VRMLMat()
+color.Load("../colors/rcc_grn_g.mat")
+
+w = Wire()
+w.setParams(3,1.0)
+r = Rectangle()
+t0 = Transform()
+
+r.setBevel(0.1, 1)
+r.calc(1, 1, t0)
+
+out = ofstream()
+
+# Triangular spiral
+c = Circle()
+c.setNVertices(12)
+c.calc(1.0, 1.0, t0)
+
+w.addPoint(0, 0, -5)
+w.addPoint(0, 0, 0)
+w.addPoint(0, 0, 2)
+w.addPoint(0.1, 0, 4)
+
+SetupVRML("test.wrl", out)
+SetupXForm("WIRE_DEMO", out, 0)
+w.build(c, True, True, True, t0, color, False, out, 0)
+w.clear()
+CloseXForm(out, 0)
+out.close()

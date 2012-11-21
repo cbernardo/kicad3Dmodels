@@ -113,6 +113,15 @@ int Quat::vnormalize(void)
     return 0;
 }
 
+void Quat::set(double w, double x, double y, double z)
+{
+    Quat::w = w;
+    Quat::x = x;
+    Quat::y = y;
+    Quat::z = z;
+    return;
+}
+
 Quat Quat::operator-()
 {
     Quat local(-w, -x, -y, -z);
@@ -181,14 +190,12 @@ Quat Quat::cross(const Quat &b) const
     q.y = z*b.x - x*b.z;
     q.z = x*b.y - y*b.x;
 
-    double magX, magA, magB;    // vector magnitudes
-    magX = sqrt(q.x*q.x + q.y*q.y + q.z*q.z);
-    magA = sqrt(x*x + y*y + z*z);
-    magB = sqrt(b.x*b.x + b.y*b.y + b.z*b.z);
-    if ((magA < 1e-9)||(magB < 1e-9))
-        q.w = 0;
-    else
-        q.w = asin(magX/(magA*magB));
+    Quat p0(*this);
+    Quat p1(b);
+    p0.vnormalize();
+    p1.vnormalize();
+
+    q.w = acos(p0.x*p1.x + p0.y*p1.y + p0.z*p1.z);
     return q;
 }
 

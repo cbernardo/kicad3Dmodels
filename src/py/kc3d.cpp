@@ -14,6 +14,7 @@
 #include "hole.h"
 #include "funnel.h"
 #include "pin.h"
+#include "wire.h"
 
 using namespace boost::python;
 using namespace kc3d;
@@ -30,6 +31,7 @@ bool (std::ofstream::*ofs_isopen)() = &std::ofstream::is_open;
 
 // vrml/common
 #include "polygon.pydef"
+#include "wire.pydef"
 
 
 BOOST_PYTHON_MODULE(kc3d)
@@ -55,5 +57,6 @@ BOOST_PYTHON_MODULE(kc3d)
 #include "hole.pyinc"
 #include "funnel.pyinc"
 #include "pin.pyinc"
+#include "wire.pyinc"
 }
 

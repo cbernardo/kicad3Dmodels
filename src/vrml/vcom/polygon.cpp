@@ -49,7 +49,7 @@ Polygon::~Polygon()
     return;
 }
 
-bool Polygon::IsValid(void)
+bool Polygon::IsValid(void) const
 {
     return valid;
 }
@@ -284,7 +284,7 @@ int Polygon::Xform(Transform &T)
 
 
 // Return value: number of points. Handles will point to arrays of doubles
-int Polygon::GetVertices(double **px, double **py, double **pz)
+int Polygon::GetVertices(double **px, double **py, double **pz) const
 {
     *px = x;
     *py = y;
@@ -293,31 +293,38 @@ int Polygon::GetVertices(double **px, double **py, double **pz)
 }
 
 
-int Polygon::Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transform &txout,
+int Polygon::Extrude(bool cap0, bool cap1, bool outer, Quat &center, Transform &upto, Transform &txout,
         VRMLMat &color, bool reuse, std::ofstream &fp, int tabs)
 {
-    Polygon *pp = this->clone();
-    if (!pp)
+    SimplePoly pp(*this);
+    if (!pp.IsValid())
     {
         ERRBLURB;
         cerr << "could not duplicate polygon\n";
         return -1;
     }
-    int acc = pp->Xform(upto);
+    Transform tx;
+    tx.setTranslation(-center);
+    // move the shape back to the global origin
+    int acc = pp.Xform(tx);
+    // transform the shape
+    acc += pp.Xform(upto);
+    // shift the shape back
+    tx.setTranslation(center);
+    acc += pp.Xform(tx);
 
     if (outer)
     {
-       acc += this->Stitch(true, *pp, txout, color, reuse, fp, tabs);
+       acc += this->Stitch(true, pp, txout, color, reuse, fp, tabs);
        if (cap0) acc += this->Paint(false, txout, color, true, fp, tabs);
-       if (cap1) acc += pp->Paint(true, txout, color, true, fp, tabs);
+       if (cap1) acc += pp.Paint(true, txout, color, true, fp, tabs);
     }
     else
     {
-        acc += this->Stitch(false, *pp, txout, color, reuse, fp, tabs);
+        acc += this->Stitch(false, pp, txout, color, reuse, fp, tabs);
         if (cap0) acc += this->Paint(true, txout, color, true, fp, tabs);
-        if (cap1) acc += pp->Paint(false, txout, color, true, fp, tabs);
+        if (cap1) acc += pp.Paint(false, txout, color, true, fp, tabs);
     }
-    delete pp;
 
     if (acc)
     {
@@ -325,5 +332,142 @@ int Polygon::Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transfor
         cerr << "problems creating the extrusion\n";
         return -1;
     }
+    return 0;
+}
+
+
+
+
+
+Polygon *FakePoly::clone(void) const
+{
+    ERRBLURB;
+    cerr << "BUG: FakePoly cannot be cloned, it must not be treated as a derived Polygon\n";
+    return NULL;
+}
+
+int FakePoly::Calc(double xl, double yl, Transform &t)
+{
+    ERRBLURB;
+    cerr << "BUG: FakePoly does not support Calc(), it must not be treated as a derived Polygon\n";
+    return -1;
+}
+
+FakePoly::~FakePoly()
+{
+    // Do not allow the Polygon destructor to free memory
+    Polygon::x = NULL;
+    Polygon::y = NULL;
+    Polygon::z = NULL;
+    Polygon::nv = 0;
+    Polygon::valid = false;
+}
+
+
+void FakePoly::setParams(double *x, double *y, double *z, int np, bool valid)
+{
+    Polygon::x = x;
+    Polygon::y = y;
+    Polygon::z = z;
+    Polygon::nv = np;
+    Polygon::valid = valid;
+    return;
+}
+
+
+
+
+SimplePoly::SimplePoly()
+{
+    return;
+}
+
+SimplePoly::~SimplePoly()
+{
+    return;
+}
+
+SimplePoly::SimplePoly(const Polygon &p)
+{
+    if (SetValues(p)) Polygon::init();
+    return;
+}
+
+SimplePoly::SimplePoly(const SimplePoly &p)
+{
+    if (SetValues(p)) Polygon::init();
+    return;
+}
+
+// inherited methods
+Polygon *SimplePoly::clone(void) const
+{
+    ERRBLURB;
+    cerr << "BUG: SimplePoly cannot be cloned, it must not be treated as a derived Polygon\n";
+    return NULL;
+}
+
+int SimplePoly::Calc(double xl, double yl, Transform &t)
+{
+    ERRBLURB;
+    cerr << "BUG: SimplePoly does not support Calc(), it must not be treated as a derived Polygon\n";
+    return -1;
+}
+
+// extended methods
+int SimplePoly::SetValues(const Polygon &p)
+{
+    if (x) delete [] x;
+    if (y) delete [] y;
+    if (z) delete [] z;
+    x = y = z = NULL;
+    nv = 0;
+    valid = false;
+
+    int np;
+    double *px, *py, *pz;
+    px = py = pz = NULL;
+    np = p.GetVertices(&px, &py, &pz);
+    if (np < 3) return 0; // polygons must have 3 or more vertices
+    if ((!px) || (!py) || (!pz))
+    {
+        ERRBLURB;
+        cerr << "invalid pointer to coordinate\n";
+        return -1;
+    }
+
+    x = new (nothrow) double [np];
+    if (x == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for vertices\n";
+        return -1;
+    }
+    y = new (nothrow) double [np];
+    if (y == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for vertices\n";
+        delete [] x;
+        return -1;
+    }
+    z = new (nothrow) double [np];
+    if (z == NULL)
+    {
+        ERRBLURB;
+        cerr << "could not allocate memory for vertices\n";
+        delete [] x;
+        delete [] y;
+        return -1;
+    }
+    int i;
+    for (i = 0; i < np; ++i)
+    {
+        x[i] = px[i];
+        y[i] = py[i];
+        z[i] = pz[i];
+    }
+    valid = true;
+    nv = np;
     return 0;
 }

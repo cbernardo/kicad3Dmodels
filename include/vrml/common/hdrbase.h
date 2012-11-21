@@ -125,7 +125,7 @@ public:
      *
      * @return Duplicate of *this
      */
-    Hdrbase *clone(void);
+    Polygon *clone(void) const;
 
 
 

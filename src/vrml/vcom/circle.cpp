@@ -27,8 +27,6 @@
 #include "vcom.h"
 #include "polygon.h"
 #include "circle.h"
-// ZZZ
-// #include "rectangle.h"
 #include "transform.h"
 #include "vrmlmat.h"
 
@@ -163,7 +161,7 @@ Circle & Circle::operator=(const Circle &p)
 }
 
 // Clone the object
-Polygon *Circle::clone(void)
+Polygon *Circle::clone(void) const
 {
     return new (nothrow) Circle(*this);
 }
@@ -279,17 +277,3 @@ int Circle::SetNVertices(int nvert)
     nv = nvert;
     return 0;
 }
-
-/* ZZZ
-int Circle::StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs)
-{
-    return Polygon::Stitch(rect, t, color, reuse_color, fp, tabs);
-}
-
-int Circle::StitchC(Circle& circ, Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs)
-{
-    return Polygon::Stitch(circ, t, color, reuse_color, fp, tabs);
-}
-*/

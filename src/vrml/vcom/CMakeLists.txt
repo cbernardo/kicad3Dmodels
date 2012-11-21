@@ -9,6 +9,7 @@ include_directories(
     ) 
 
 add_library(vcom vcom.cpp polygon.cpp circle.cpp rectangle.cpp
-    pin.cpp shoulder.cpp funnel.cpp hole.cpp hdrbase.cpp)
+    pin.cpp shoulder.cpp funnel.cpp hole.cpp hdrbase.cpp
+    wire.cpp)
 
 target_link_libraries(vcom common)

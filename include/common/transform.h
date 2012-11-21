@@ -37,9 +37,9 @@ namespace kc3d {
 
 /** \file */
 
-/// Value of PI used for internal calculations; this is sufficient for 80-bit floats
+/// Value of PI used for internal calculations; this is sufficient for 128-bit floats
 #ifndef M_PI
-    #define M_PI 3.1415926535897932384626433832795
+    #define M_PI 3.1415926535897932384626433832795028841
 #endif
 
 /**
@@ -85,6 +85,16 @@ public:
      * @return 0 for success, -1 for failure
      */
     int vnormalize(void);
+
+    /**
+     * Set the value of the quaternion with discrete numbers
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     */
+    void set(double w, double x, double y, double z);
 
     /**
      * Calculate the cross-product and angle of

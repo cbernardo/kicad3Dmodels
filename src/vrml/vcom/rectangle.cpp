@@ -16,10 +16,6 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
- *
- *      This class represents a rectangular polygon which can be used to generate
- *      rectangular leads or pins.
- *
  */
 
 #include <iostream>
@@ -57,7 +53,7 @@ Rectangle::Rectangle(double bevel)
 }
 
 // Clone the object
-Polygon *Rectangle::clone(void)
+Polygon *Rectangle::clone(void) const
 {
     return new (nothrow) Rectangle(*this);
 }

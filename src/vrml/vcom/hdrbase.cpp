@@ -34,41 +34,17 @@
 using namespace std;
 using namespace kc3d;
 
+// XXX TODO: Break inheritance from Polygon since we
+// don't conform to a Polygon. To do this, move
+// FakePoly to polygon.{h,cpp} and rely on two
+// FakePolys to carry out all operations.
+
 // 0.3mm is a paper thin header; presumably we will have no such thing
 #define MIN_HDR_HEIGHT (0.3)
 
 // minimum clearance between hole and edge
 #define MIN_CLR (0.1)
 
-// dummy class to aid in implementing Stitch
-class FakePoly : public Polygon
-{
-private:
-    Polygon *clone(void) { return NULL; }
-
-public:
-    virtual ~FakePoly()
-    {
-        // Do not allow the Polygon destructor to free memory
-        Polygon::x = NULL;
-        Polygon::y = NULL;
-        Polygon::z = NULL;
-        Polygon::nv = 0;
-        Polygon::valid = false;
-    }
-
-    int Calc(double xl, double yl, Transform &t) { return -1; }
-
-    void setParams(double *x, double *y, double *z, int np, bool valid)
-    {
-        Polygon::x = x;
-        Polygon::y = y;
-        Polygon::z = z;
-        Polygon::nv = np;
-        Polygon::valid = valid;
-        return;
-    }
-};
 
 Hdrbase::Hdrbase()
 {
@@ -278,7 +254,7 @@ Hdrbase & Hdrbase::operator=(const Hdrbase &p)
 
 
 
-Hdrbase *Hdrbase::clone(void)
+Polygon *Hdrbase::clone(void) const
 {
     return new (nothrow) Hdrbase(*this);
 }

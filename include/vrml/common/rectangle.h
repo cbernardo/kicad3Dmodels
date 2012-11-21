@@ -16,10 +16,6 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
- *
- *      This class represents a rectangular polygon which can be used to generate
- *      rectangular leads or pins.
- *
  */
 
 #ifndef RECTANGLE_H_
@@ -55,7 +51,7 @@ public:
      *
      * @return Duplicate of *this
      */
-    Polygon *clone(void);
+    Polygon *clone(void) const;
 
     /**
      * \brief Calculate the rectangle's vertices

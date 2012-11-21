@@ -60,12 +60,12 @@ public:
         return Polygon::Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
     }
     
-    int Extrude(bool cap0, bool cap1, bool outer, Transform &upto, Transform &txout,
+    int Extrude(bool cap0, bool cap1, bool outer, Quat &center, Transform &upto, Transform &txout,
             VRMLMat &color, bool reuse, std::ofstream &fp, int tabs)
     {
         if (override Extrude = this->get_override("Extrude"))
-            return Extrude(cap0, cap1, outer, upto, txout, color, reuse, fp, tabs);
-        return Polygon::Extrude(cap0, cap1, outer, upto, txout, color, reuse, fp, tabs);
+            return Extrude(cap0, cap1, outer, center, upto, txout, color, reuse, fp, tabs);
+        return Polygon::Extrude(cap0, cap1, outer, center, upto, txout, color, reuse, fp, tabs);
     }
 };
 

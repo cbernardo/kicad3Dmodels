@@ -16,10 +16,6 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
- *
- *      This class represents a regular polygon. Override the default
- *      Paint() routine in any derived class which is not a regular polygon.
- *
  */
 
 #ifndef CIRCLE_H_
@@ -59,7 +55,7 @@ public:
      *
      * @return Duplicate of *this
      */
-    Polygon *clone(void);
+    Polygon *clone(void) const;
 
     /**
      * \brief Calculate the vertices of an ellipse
