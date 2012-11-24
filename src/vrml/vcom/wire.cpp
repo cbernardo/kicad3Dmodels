@@ -30,11 +30,6 @@
 #include "polygon.h"
 #include "wire.h"
 
-// XXX BUG: we are not faithful to torsion; we need to
-// preserve the last shape and always operate from that;
-// this needs to be preserved across calls to render()
-// and extrude().
-
 using namespace std;
 
 

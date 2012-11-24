@@ -6,6 +6,6 @@ name: rcc_org_g
 diffuse: 1 0.44 0
 emissive: 0 0 0
 specular: 1 0.44 0
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

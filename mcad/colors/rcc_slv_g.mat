@@ -6,6 +6,6 @@ name: rcc_slv_g
 diffuse: 0.6 0.6 0.6
 emissive: 0 0 0
 specular: 0.6 0.6 0.6
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

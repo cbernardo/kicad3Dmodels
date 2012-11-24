@@ -6,6 +6,6 @@ name: rbc_blu_g
 diffuse: 0.35 0.80 0.99
 emissive: 0 0 0
 specular: 0.35 0.80 0.99
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.05
+shininess: 1

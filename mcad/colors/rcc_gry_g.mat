@@ -6,6 +6,6 @@ name: rcc_gry_g
 diffuse: 0.35 0.35 0.39
 emissive: 0 0 0
 specular: 0.35 0.35 0.39
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

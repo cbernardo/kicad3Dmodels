@@ -4,8 +4,8 @@
 
 name: rcc_gld_g
 diffuse: 0.86 0.61 0.05
-emissive: 0 0 0
+emissive: 0.3 0.3 0.3
 specular: 0.86 0.61 0.05
-ambient: 0.7
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

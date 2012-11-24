@@ -6,6 +6,6 @@ name: rcc_yel_g
 diffuse: 0.93 0.94 0.16
 emissive: 0 0 0
 specular: 0.93 0.94 0.16
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

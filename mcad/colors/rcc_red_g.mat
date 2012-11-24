@@ -6,6 +6,6 @@ name: rcc_red_g
 diffuse: 0.69 0.14 0.14
 emissive: 0 0 0
 specular: 0.69 0.14 0.14
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

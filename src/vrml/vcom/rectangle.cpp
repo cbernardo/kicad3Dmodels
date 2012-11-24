@@ -47,6 +47,7 @@ Rectangle::Rectangle()
 Rectangle::Rectangle(double bevel)
 {
     nv = 0;
+    seg = 1;
     Polygon::init();
     bev = bevel;
     return;
@@ -72,6 +73,8 @@ Rectangle::Rectangle(const Rectangle &p)
 {
     valid = p.valid;
     nv = p.nv;
+    seg = p.seg;
+    bev = p.bev;
 
     x = NULL;
     y = NULL;
@@ -114,8 +117,6 @@ Rectangle::Rectangle(const Rectangle &p)
         y[i] = p.y[i];
         z[i] = p.z[i];
     }
-    
-    bev = p.bev;
 
     return;
 }
@@ -136,6 +137,8 @@ Rectangle & Rectangle::operator=(const Rectangle &p)
 
     valid = p.valid;
     nv = p.nv;
+    seg = p.seg;
+    bev = p.bev;
 
     x = NULL;
     y = NULL;

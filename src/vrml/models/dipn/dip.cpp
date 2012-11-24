@@ -241,16 +241,13 @@ int Dip::Build(std::string filename)
         return -1;
     }
 
-    casematerial.WriteMaterial(fp, 0, true);
-    pinmaterial.WriteMaterial(fp, 0, true);
-
     // Case
     ostringstream partname;
     partname << "DIL" << pins << "_P" << setfill('0') << setw(5) << (int)(params.E*1000.0) << setfill(' ') << setw(0);
 
     acc += SetupXForm(partname.str(), fp, 0);
 
-    acc += SetupShape(casematerial, true, fp, 2);
+    acc += SetupShape(casematerial, false, fp, 2);
     acc += iccase.writeCoord(TC, fp, 4);
     acc += iccase.writeFacets(fp, 4);
     acc += CloseShape(fp, 2);
@@ -263,7 +260,7 @@ int Dip::Build(std::string filename)
 
     T.setScale(params.scale);
     // Pin1
-    if (haspin[0]) acc += icpin.Build(T, pinmaterial, true, fp, 2);
+    if (haspin[0]) acc += icpin.Build(T, pinmaterial, false, fp, 2);
 
     // Pin 2 .. (pins/2)
     hpin = pins/2;

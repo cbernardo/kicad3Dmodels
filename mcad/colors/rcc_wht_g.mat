@@ -6,6 +6,6 @@ name: rcc_wht_g
 diffuse: 0.9 0.9 0.9
 emissive: 0 0 0
 specular: 0.9 0.9 0.9
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1

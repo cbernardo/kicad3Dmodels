@@ -6,6 +6,6 @@ name: rbc_crm_g
 diffuse: 0.81 0.74 0.61
 emissive: 0 0 0
 specular: 0.81 0.74 0.61
-ambient: 0.6
+ambient: 1
 transparency: 0
-shininess: 0.05
+shininess: 1

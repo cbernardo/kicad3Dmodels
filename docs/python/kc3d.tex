@@ -33,8 +33,8 @@
 KiCAD 3D VRML Models\\
 and\\
 Python Bindings}
-\date{Version 0.1\\
-12 Nov 2012}
+\date{Version 0.6\\
+21 Nov 2012}
 \author{Dr. Cirilo Bernardo}
 
 \begin{document}
@@ -471,7 +471,7 @@ visible, outer determines whether the outside or inside is visible, center is th
 center of the polygon, upto is the vector describing the position, orientation,
 and scale of the extrusion's endpoint, xform is a transform to apply to the results,
 and so on. \textbf{CAVEAT: the argument \emph{outside} is not strictly the outside,
-it depends on the sign of the orthogonal component of upto.}
+it depends on the normal of the surface relative to the transform upto.}
 Return values are 0 for success and -1 for failure.
 
 \textbf{xform(transform)} : transform the internal vertices of the polygon.
@@ -833,11 +833,11 @@ x = 1.0/3.0;
 h = math.sqrt(75.0)
 while x < 10:
     w.addPoint(x, 5, 0)
-    x += 1.0/3.0;
+    x += 1.0/3.0
     w.addPoint(x, 0, h)
-    x += 1.0/3.0;
+    x += 1.0/3.0
     w.addPoint(x, -5, 0)
-    x += 1.0/3.0;
+    x += 1.0/3.0
 
 # Lead out
 w.addPoint(x, 0, 0)
@@ -1123,7 +1123,7 @@ params is a DipParams object with the following members:
 \item\textbf{c} pin thickness\\
 \item\textbf{NW} notch width (nominal 0.06 inch)\\
 \item\textbf{ND} notch depth (nominal 0.012 inch)\\
-\item\textbf{NL} notch length (nominal 0.07 inch, must be $\gt\textrm{ND}$)\\
+\item\textbf{NL} notch length (nominal 0.07 inch, must be $>\textrm{ND}$)\\
 \item\textbf{casebev} bevel on case (nominal 0.005 inch)\\
 \item\textbf{pinbev} bevel on pin (nominally $\textrm(c)/10$)\\
 \item\textbf{MID} height of middle case portion where pin attaches (nominally $1.4*\textrm{c}$);

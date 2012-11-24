@@ -6,6 +6,6 @@ name: rcc_brn_g
 diffuse: 0.33 0.17 0.13
 emissive: 0 0 0
 specular: 0.33 0.17 0.13
-ambient: 0.9
+ambient: 1
 transparency: 0
-shininess: 0.2
+shininess: 1
