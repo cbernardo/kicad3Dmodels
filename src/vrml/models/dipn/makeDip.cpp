@@ -43,38 +43,85 @@
 
 using namespace kc3ddip;
 
+// 0.3" DIP
+int mkI300(void);
+// 0.6" DIP
+int mkI600(void);
+
 int main()
 {
-  Dip dil;
-  char name[256];
-  int i;
-  DipParams dp;
-  dil.SetCaseColor(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
-  dil.SetPinColor(K3D_TOP_DIR "/mcad/colors/tin.mat");
-  dil.SetParams(dp);
-
-  for(i = 4; i <= 28; i+=2)
+  if (mkI300())
   {
-    sprintf(name, "dil%d_i300.wrl", i);
-    dil.SetPins(i);
-    dil.Build(name);
+      fprintf(stderr, "problems creating 0.3-inch DILs\n");
+      return -1;
   }
 
-  /*
-  // demo of the pin skipping function
-  int j;
-  for(i = 4; i <= 28; i+=2)
+  if (mkI600())
   {
-    sprintf(name, "dil%d_i300.wrl", i);
-    dil.SetPins(i);
-    for (j = 3; j <= (i/2 -2); ++j)
-    {
-        dil.SetPin(j, false);
-        dil.SetPin(i - j +1, false);
-    }
-    dil.Build(name);
+      fprintf(stderr, "problems creating 0.3-inch DILs\n");
+      return -1;
   }
-  */
 
   return 0;
+}
+
+int mkI300()
+{
+    Dip dil;
+    char name[256];
+    int i;
+    DipParams dp;
+    dil.SetCaseColor(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
+    dil.SetPinColor(K3D_TOP_DIR "/mcad/colors/tin.mat");
+    dil.SetParams(dp);
+
+    for(i = 4; i <= 28; i+=2)
+    {
+      sprintf(name, "dil%d_i300.wrl", i);
+      dil.SetPins(i);
+      if (dil.Build(name)) return -1;
+    }
+
+    /*
+    // demo of the pin skipping function
+    int j;
+    for(i = 4; i <= 28; i+=2)
+    {
+      sprintf(name, "dil%d_i300.wrl", i);
+      dil.SetPins(i);
+      for (j = 3; j <= (i/2 -2); ++j)
+      {
+          dil.SetPin(j, false);
+          dil.SetPin(i - j +1, false);
+      }
+      if (dil.Build(name)) return -1;
+    }
+    */
+    return 0;
+}
+
+int mkI600()
+{
+    Dip dil;
+    char name[256];
+    int i;
+    DipParams dp;
+    dil.SetCaseColor(K3D_TOP_DIR "/mcad/colors/ceram_gry.mat");
+    dil.SetPinColor(K3D_TOP_DIR "/mcad/colors/tin.mat");
+
+    // parameters suited to 40-pin PDIP for PIC16F7X
+    dp.A1 = 0.025;
+    dp.A2 = 0.15;
+    dp.DW = 0.058;
+    dp.E = 0.6;
+    dp.E1 = 0.545;
+    dil.SetParams(dp);
+
+    for(i = 40; i <= 40; i+=2)
+    {
+      sprintf(name, "dil%d_i600.wrl", i);
+      dil.SetPins(i);
+      if (dil.Build(name)) return -1;
+    }
+    return 0;
 }

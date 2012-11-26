@@ -890,10 +890,8 @@ scolor.Load("../colors/gold.mat")
 
 out = kc3d.ofstream()
 kc3d.SetupVRML("funneldemo.wrl", out)
-fcolor.Write(out, 0, True)
-scolor.Write(out, 0, True)
 kc3d.SetupXForm("FUNNEL_DEMO", out, 0)
-fun.build(True, tx, fcolor, True, scolor, True, out, 2)
+fun.build(True, tx, fcolor, False, scolor, False, out, 2)
 kc3d.CloseXForm(out, 0)
 out.close()
 \end{verbatim}
@@ -1194,39 +1192,3 @@ dil.create("DIL_12_special.wrl")
 
 
 \end{document}
-
-
-# single bend
-import math
-import kc3d
-from kc3d import *
-
-color = VRMLMat()
-color.Load("../colors/rcc_grn_g.mat")
-
-w = Wire()
-w.setParams(3,1.0)
-r = Rectangle()
-t0 = Transform()
-
-r.setBevel(0.1, 1)
-r.calc(1, 1, t0)
-
-out = ofstream()
-
-# Triangular spiral
-c = Circle()
-c.setNVertices(12)
-c.calc(1.0, 1.0, t0)
-
-w.addPoint(0, 0, -5)
-w.addPoint(0, 0, 0)
-w.addPoint(0, 0, 2)
-w.addPoint(0.1, 0, 4)
-
-SetupVRML("test.wrl", out)
-SetupXForm("WIRE_DEMO", out, 0)
-w.build(c, True, True, True, t0, color, False, out, 0)
-w.clear()
-CloseXForm(out, 0)
-out.close()
