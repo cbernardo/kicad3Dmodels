@@ -76,9 +76,6 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
     }
 
     int val = 0;
-    val += bcolor.WriteMaterial(fp, tabs, true);
-    val += pcolor.WriteMaterial(fp, tabs, true);
-    if (!male) val += fcolor.WriteMaterial(fp, tabs, true);
     val += SetupXForm(part, fp, tabs);
 
     val += makeCase(t, fp, tabs+2);
@@ -323,7 +320,7 @@ int Genhdr::makeCase(kc3d::Transform &t, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    val += hbase.Build(t, bcolor, true, fp, tabs);
+    val += hbase.Build(t, bcolor, false, fp, tabs);
 
     if (val) return -1;
     return 0;
@@ -406,6 +403,7 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
     ox = (1 - cols)*xp/2.0;
     oy = (1 - rows)*yp/2.0;
 
+    bool reuse_pc = false;
     for (i = 0; i < rows; ++ i)
     {
         oyb = oy + i*yp;
@@ -415,9 +413,10 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
             t0.setTranslation(oxb, oyb, -pd);
             val += pin[0].Calc(p0, t0);
             if (male)
-                val += pin[0].Build(true, true, t, pcolor, true, fp, tabs);
+                val += pin[0].Build(true, true, t, pcolor, reuse_pc, fp, tabs);
             else
-                val += pin[0].Build(true, false, t, pcolor, true, fp, tabs);
+                val += pin[0].Build(true, false, t, pcolor, reuse_pc, fp, tabs);
+            reuse_pc = true;
             if ((!male) && (!square))
             {
                 t1.setTranslation(oxb, oyb, tpo);
@@ -506,6 +505,8 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
     double tvar = bh;   // room for the funnel
     if (sh > 1e-9) tvar -= sh;
 
+    bool reuse_f0col = false;
+    bool reuse_f1col = false;
     if (square)
     {
         fun.SetShape(true, -1.0);
@@ -518,6 +519,7 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
         if (fh1 > tvar) fh1 = tvar/3.0;
         fh2 = tvar - fh1;
         f0col = &bcolor;
+        reuse_f0col = true;
         f1col = &fcolor;
     }
     else
@@ -533,6 +535,7 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
         fh2 = tvar - fh0;
         f0col = &fcolor;
         f1col = &fcolor;
+        reuse_f1col = true;
     }
 
     Transform t0;
@@ -549,7 +552,9 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
             oxb = ox + j*xp;
             t0.setTranslation(oxb, oyb, fz);
             val += fun.Calc(fdia, fdia, pd2, pd2, fh0, fh1, fh2, t0, ns);
-            val += fun.Build(true, t, *f0col, true, *f1col, true, fp, tabs);
+            val += fun.Build(true, t, *f0col, reuse_f0col, *f1col, reuse_f1col, fp, tabs);
+            reuse_f0col = true;
+            reuse_f1col = true;
         }
     }
 

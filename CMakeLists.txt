@@ -21,7 +21,7 @@ set(CMAKE_INSTALL_PREFIX ${K3D_SOURCE_DIR}/scripts)
 
 # Version information
 set(K3D_VERSION_MAJOR 0)
-set(K3D_VERSION_MINOR 5)
+set(K3D_VERSION_MINOR 7)
 set(K3D_TOP_DIR ${K3D_SOURCE_DIR})
 
 # create a config file
