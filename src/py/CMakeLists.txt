@@ -24,16 +24,19 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/conn"
     "${K3D_SOURCE_DIR}/include/vrml/models/resistor"
     "${K3D_SOURCE_DIR}/include/vrml/models/dil"
+    "${K3D_SOURCE_DIR}/include/vrml/models/diode"
     "${K3D_SOURCE_DIR}/pyinc/common"
     "${K3D_SOURCE_DIR}/pyinc/vrml/common"
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/conn"
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/resistor"
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/dil"
+    "${K3D_SOURCE_DIR}/pyinc/vrml/models/diode"
     )
     
 link_directories(
 	"${K3D_BINARY_DIR}/src/vrml/vcom"
 	"${K3D_BINARY_DIR}/src/vrml/models/conn"
+    "${K3D_BINARY_DIR}/src/vrml/models/diode"
 	)
 
 # KC3D: General Tools
@@ -52,8 +55,13 @@ target_link_libraries(kc3dres vresist ${Boost_LIBRARIES} ${PYTHON_VERSION})
 add_library(kc3ddip SHARED kc3ddip.cpp)
 target_link_libraries(kc3ddip vdip ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
+# KC3DDIP: DIL Packages
+add_library(kc3ddiode SHARED kc3ddiode.cpp)
+target_link_libraries(kc3ddiode vdiode ${Boost_LIBRARIES} ${PYTHON_VERSION})
+
 # INSTALLATION
 install(TARGETS kc3d LIBRARY DESTINATION lib)
 install(TARGETS kc3dconn LIBRARY DESTINATION lib)
 install(TARGETS kc3dres LIBRARY DESTINATION lib)
 install(TARGETS kc3ddip LIBRARY DESTINATION lib)
+install(TARGETS kc3ddiode LIBRARY DESTINATION lib)

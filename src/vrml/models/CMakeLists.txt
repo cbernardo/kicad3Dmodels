@@ -14,3 +14,6 @@ add_subdirectory (conn)
 
 # VRML stitching and assembly tools
 add_subdirectory (stitch)
+
+# Diodes
+add_subdirectory (diode)
