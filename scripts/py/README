@@ -1,0 +1,6 @@
+These are scripts to generate component models,
+especially one-offs such as the DO-35 package
+(glass axial diode package) which are not
+parametric in nature. All scripts are released
+under the GPLv3 but the generated models by
+default have a permissive license. 

@@ -1,0 +1,11 @@
+# Clear glass
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: glass_clr
+diffuse: 0.3 0.3 0.3
+emissive: 0 0 0
+specular: 0.3 0.3 0.3
+ambient: 1
+transparency: 0.6
+shininess: 1

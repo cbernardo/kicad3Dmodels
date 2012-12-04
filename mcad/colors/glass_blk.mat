@@ -1,0 +1,11 @@
+# Black (smoky) glass
+# Copyright 2012 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+
+name: glass_blk
+diffuse: 0.1 0.1 0.1
+emissive: 0 0 0
+specular: 0.1 0.1 0.1
+ambient: 0.5
+transparency: 0.04
+shininess: 1
