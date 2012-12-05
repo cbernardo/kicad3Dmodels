@@ -21,9 +21,14 @@
 */
 
     class_<kc3ddiode::DO35>("do35", "DO35 package diode")
-        
         .def("setNVertices", &kc3ddiode::DO35::SetNVertices, "set the number of wire and body vertices")
         .def("setColors", &kc3ddiode::DO35::SetColors, "set the wire, glass, cathode, and tube colors")
         .def("build", &kc3ddiode::DO35::Build, DO35Build())
-//        .def("build", do35Build2)
+    ;
+
+    class_<kc3ddiode::GenDiode>("GenDiode", "Generic tubular package diode")
+        .def("setNVertices", &kc3ddiode::GenDiode::SetNVertices, "set the number of wire and body vertices")
+        .def("setParams", &kc3ddiode::GenDiode::SetParams)
+        .def("setColors", &kc3ddiode::GenDiode::SetColors, "set the wire, body, and cathode colors")
+        .def("build", &kc3ddiode::GenDiode::Build, GENDIODEBuild())
     ;

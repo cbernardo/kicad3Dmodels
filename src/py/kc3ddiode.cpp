@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "do35.h"
+#include "gendiode.h"
 
 using namespace boost::python;
 

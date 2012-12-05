@@ -10,7 +10,8 @@ include_directories(
     )
     
 add_library(vdiode
-    do35/do35.cpp 
+    do35/do35.cpp
+    generic/gendiode.cpp
     )
 
 target_link_libraries(vdiode vcom)
