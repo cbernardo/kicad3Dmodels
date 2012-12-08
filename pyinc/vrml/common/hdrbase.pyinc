@@ -24,12 +24,12 @@
         .def(init<double>())
         .def(init<const kc3d::Hdrbase &>())
         
-        .def("setParams", &kc3d::Hdrbase::SetParams, "Set up the case parameters",
-             args("xpitch", "ypitch", "bevel", "height", "shldhgt", "dim_bot", "dim_top",
-             "square", "cols", "rows", "nvertex"))
+        .def("setParams", &kc3d::Hdrbase::SetParams, "Set up the case parameters")//,
+//             args("xpitch", "ypitch", "bevel", "height", "shldhgt", "dim_bot", "dim_top",
+//             "square", "cols", "rows", "nvertex"))
 
-        .def("build", &kc3d::Hdrbase::Build, "Write the case shape to an output file",
-            args("xform", "color", "reuse", "file", "tabs"))
+        .def("build", &kc3d::Hdrbase::Build, "Write the case shape to an output file")//,
+//            args("xform", "color", "reuse", "file", "tabs"))
         
         // these base methods are not supported and may never be supported
 //        .def("clone", &kc3d::Hdrbase::clone, "Create a copy of this polygon", return_value_policy<manage_new_object>())

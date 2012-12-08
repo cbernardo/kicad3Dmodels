@@ -1,0 +1,21 @@
+This directory contains demo python scripts for informative
+purposes and for checking model features.
+
+hdrdemo.py:  Demo and test for Genhdr(). Features to verify include:
+ + beveled pin/beveled hole. Male headers must have a single pin
+	piercing the header and must have holes of equal size on the
+	top and bottom. The holes must be beveled if necessary to
+	accommodate the pins.
+ + rectangular pin: Pins may now be rectangular; no restrictions are
+	placed on male headers, so male header pins may be rectangular.
+	For female headers, the top and bottom may be different shapes;
+	the allowed combinations are as follows:
+	- bottom: rect, top: square
+	- bottom: rect, top: circle
+	- bottom: square, top: square
+	- bottom: square, top: circle
+	- bottom: circle, top: square
+	- bottom: circle, top: circle
+ + funnel depth: For female headers, circular funnels may be
+	recessed (depth > 0), stand proud (depth < 0), or
+	be flush (depth = 0).

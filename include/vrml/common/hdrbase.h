@@ -22,6 +22,13 @@
  *
  */
 
+/*
+ * XXX:
+ * To Add:
+ *  'hdy' to control Y dimension of square pin on bottom
+ *  'pbev' to control bevel of hole (male = bottom + top, female = bottom only)
+ *  'fbev' to control bevel of top hole for square female case
+ */
 #ifndef HDRBASE_H_
 #define HDRBASE_H_
 
@@ -91,13 +98,19 @@ protected:
     double height;  ///< total height of the header
     int xpins;      ///< number of columns of pins
     int ypins;      ///< number of rows of pins
-    bool square;    ///< TRUE if we're using square holes
+    bool squarebot; ///< TRUE if we're using square holes on the bottom
+    bool squaretop; ///< TRUE if we're using square holes on the bottom
     double hd0;     ///< hole dimension (edge or diameter), bottom
+    double hdy;     ///< hole y dimension (bottom, or top+bottom for M case)
     double hd1;     ///< hole dimension, top, large aperture
     double sh;      ///< height of the shoulder (<= 0.0 for none)
+    bool hassh;     ///< true if the shoulder is to be rendered, otherwise 'sh' is an empty space
     double xpitch;
     double ypitch;
     int ns;
+    bool male;      ///< TRUE if the case is for a male connector
+    double pbev;    ///< bevel for the bottom hole (and top hole for M case)
+    double fbev;    ///< bevel for the top hole (only for F case)
 
     // vertices
     double *x, *y, *z;  // vertices for body
@@ -147,8 +160,9 @@ public:
      * @return 0 for success, -1 for failure
      */
     int SetParams(double xpitch, double ypitch, double bevel, double height,
-            double sh, double hd0, double hd1, bool square, int columns = 2,
-            int rows = 1, int ns = 16);
+            double sh, bool hassh, double hd0, double hdy, double hd1,
+            bool squarebot, bool squaretop, bool male, double pbev, double fbev,
+            int columns, int rows, int ns);
 
     /**
      * \brief Write the header shape to an output file

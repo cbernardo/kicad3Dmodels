@@ -7,12 +7,6 @@ Modifications to make to existing code:
 	depends on Python. Exposing the library to Python
 	allows other users to create Python scripts to
 	generate models.
-+ DIP-N:
-	+ expose parameters and routines
-	+ allow control of which pins to create - for example a
-		reed relay may be in a DIP-24 package but only
-		have 4 pins.
-	+ rewrite the dip_pin class to exploit the Pin class
 + Resistors:
 	+ expose parameters and routines, include general
 		routines such as color code generators
@@ -22,43 +16,9 @@ Modifications to make to existing code:
 	+ 4UCon Drawing 19950: expose parameters and
 		routines
 
-+ Polygon: Add an extrusion feature; this will save the user
-	a substantial amount of time programming when an
-        extrusion is desired. Parameters include:
-	+ transform to locate the second face
-        + flag to render top, bottom, sides
-        + flag to render inside or outside
-        + the usual transform, file, color, reuse, tabs parameters
 
 Possible new tools to add to the list:
 ======================================
-
-Wire: Create a round or rectangular wire from a list of points.
-	+ add points via "addpoint"
-        + set min. bend radius
-        + transformations are automatically calculated to
-	  maintain minimal distortion of wire
-        + total length of wire is computed for reference
-        + set min. segments to represent a bend
-        + set number of segments per 90 deg bend
-	NOTE: this will be a slightly challenging tool to build
-	(in MCAD systems this is a 'swept path') but it will
-        make the creation of features such as helices much easier.
-
-Helix: Create a helical wire.
-	+ The wire may be rectangular or circular
-	+ The wire is coiled along an elliptical helix
-		with a minimum of 6 vertices in the ellipse
-	+ The wire will always coil in 1 dimension; rotating
-		orthogonal to the helical axis will yield
-		a wire with the opposite rotation
-        + The wire has an X and Y dimension
-        + The pitch of the helix must be >= the wire X dimension
-        + The helix ends will terminate in a plane parallel to
-		the helical axis
-	+ The minimum coiling diameter is 2 x the wire's Y dimension;
-		this would yield an extremely tightly wound coil
-		which is rare in actual devices.
 
 Paired vertices:
 	Paired vertices allow the description of a fairly complex cross-section

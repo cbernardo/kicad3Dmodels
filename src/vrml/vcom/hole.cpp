@@ -40,6 +40,7 @@ Hole::Hole()
     valid = false;
     hole = NULL;
     np = 16;
+    bev = -1.0;
     return;
 }
 
@@ -50,7 +51,7 @@ Hole::~Hole()
 }
 
 int Hole::Calc(double w1, double d1, double w2, double d2, Transform &tx,
-        bool square, double ow, double od, int np)
+        bool square, double ow, double od, int np, double bev)
 {
     if (valid)
     {
@@ -104,6 +105,16 @@ int Hole::Calc(double w1, double d1, double w2, double d2, Transform &tx,
         np = 16;
     }
     Hole::square = square;
+    if (square)
+    {
+        if ((bev > d2/4.0) || (bev > w2/4.0))
+        {
+            ERRBLURB;
+            cerr << "invalid bevel: must be < min(d2, w2)/4.0\n";
+            return -1;
+        }
+        Hole::bev = bev;
+    }
 
     // calculate the frame
     double tw, td;
@@ -131,6 +142,11 @@ int Hole::Calc(double w1, double d1, double w2, double d2, Transform &tx,
     if (square)
     {
         hole = new (nothrow) Rectangle;
+        if ((hole) && (bev > 0.0))
+        {
+            Rectangle *phole = dynamic_cast<Rectangle *> (hole);
+            if (phole) phole->SetBevel(bev, 1);
+        }
     }
     else
     {
@@ -226,7 +242,10 @@ int Hole::Build(bool top, Transform &t, VRMLMat &color, bool reuse,
     acc += SetupCoordIndex(fp, tabs +1);
     if (square)
     {
-        acc += writeRFacets(top, fp, tabs +2);
+        if (bev > 0.0)
+            acc += writeRFacetsB(top, fp, tabs +2);
+        else
+            acc += writeRFacets(top, fp, tabs +2);
     }
     else
     {
@@ -305,6 +324,26 @@ int Hole::writeRFacets(bool top, std::ofstream &fp, int tabs)
     {
         fp << fmt;
         fp << "1,0,4,5,-1,2,1,5,6,-1,3,2,6,7,-1,0,3,7,4,-1\n";
+    }
+
+    if (!fp.good()) return -1;
+    return 0;
+}
+
+int Hole::writeRFacetsB(bool top, std::ofstream &fp, int tabs)
+{
+    string fmt(tabs*4, ' ');
+    if (top)
+    {
+        fp << fmt;
+        fp << "0,5,4,-1,0,1,6,5,-1,1,7,6,-1,1,2,8,7,-1,";
+        fp << "2,9,8,-1,2,3,10,9,-1, 3,11,10,-1,3,0,4,11,-1\n";
+    }
+    else
+    {
+        fp << fmt;
+        fp << "0,4,5,-1,1,0,5,6,-1,1,6,7,-1,2,1,7,8,-1,";
+        fp << "2,8,9,-1,3,2,9,10,-1, 3,10,11,-1,0,3,11,4,-1\n";
     }
 
     if (!fp.good()) return -1;

@@ -98,7 +98,7 @@ int Resistor::makeHzLead(std::ofstream &fp)
     // vertical lead
     Transform tv;
     tv.setTranslation(0, 0, -params.wl);
-    double rw = params.d;   // wire diameter (formerly radius) // XXX - deprecate
+    double rw = params.d;   // wire diameter (formerly radius)
     lvert[0].Calc(rw, rw, tv);
     tv.setTranslation(0, 0, params.D/2 - params.d);
     lvert[1].Calc(rw, rw, tv);

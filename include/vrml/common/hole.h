@@ -48,6 +48,7 @@ private:
     double w2;      ///< width (X axis) of hole
     double d1;      ///< depth (Y axis) of frame
     double d2;      ///< depth (Y axis) of hole
+    double bev;     ///< bevel on inner hole (rectangular only)
     double ow;      ///< offset of hole along X axis (default 0 = centered)
     double od;      ///< offset of hole along Y axis (default 0 = centered)
     Polygon *hole;  ///< polygons representing the hole (circular or rectangular)
@@ -55,7 +56,7 @@ private:
     int np;         ///< number of points in a circular hole
 
     /**
-     * Write the facet index list
+     * Write the facet index list for a plain rectangular hole
      *
      * @param top   [in] TRUE if the surface is to be visible from the top (+Z)
      * @param fp    [in] open output file
@@ -65,7 +66,17 @@ private:
     int writeRFacets(bool top, std::ofstream &fp, int tabs = 0);
 
     /**
-     * Write the facet coordinate list
+     * Write the facet index list for a beveled rectangular hole
+     *
+     * @param top   [in] TRUE if the surface is to be visible from the top (+Z)
+     * @param fp    [in] open output file
+     * @param tabs  [in] indent level for formatting
+     * @return
+     */
+    int writeRFacetsB(bool top, std::ofstream &fp, int tabs = 0);
+
+    /**
+     * Write the facet index list for a circular hole
      *
      * @param v0 [in] starting index for frame vertices
      * @param v1 [in] ending index for frame vertices
@@ -100,10 +111,11 @@ public:
      * @param ow [in] hole offset along X axis (default 0 = centered on X)
      * @param od [in] hole offset along Y axis (default 0 = centered on Y)
      * @param np [in] number of vertices for an elliptical hole (must be multiple of 4 in the range 4..360)
+     * @param bev [in] bevel on the inner (rectangular) hole
      * @return 0 for success, -1 for failure
      */
     int Calc(double w1, double d1, double w2, double d2, Transform &tx,
-            bool square, double ow = 0.0, double od = 0.0, int np = 16);
+            bool square, double ow = 0.0, double od = 0.0, int np = 16, double bev = -1.0);
 
     /**
      * Render a surface with a hole

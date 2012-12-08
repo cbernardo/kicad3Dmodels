@@ -16,19 +16,6 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-    TODO:
-  Notes:
-    These classes were created to support the
-    programmatic creation of VRML models for
-    use with KiCad.
-
-    ** This is very bare and there is a lot of hard-coding
-        which was done to rush the generation of a set of models.
-
-    ** Calc() should accept a list of pins to be rendered;
-        this would provide some flexibility in creating odd DIP
-        packages such as a magnetic reed switch which may have a
-        long package but only 4 pins.
  */
 
 #include <cstdio>

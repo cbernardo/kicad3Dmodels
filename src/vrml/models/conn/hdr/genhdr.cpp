@@ -18,6 +18,12 @@
  *
  */
 
+/// TODO:
+/// 1. Support rectangular pins on bottom half of female headers
+/// 2. Support round bottom pins with rectangular sockets on female headers
+/// 3. Support +/- dimensions at the connector edges (break the enforced square shape rule)
+/// NOTE: This requires similar support in the HdrCase class
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -94,7 +100,7 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
         return -1;
     }
 
-    if ((!male) && (!square)) val += makeShrouds(t, fp, tabs+2);
+    if ((!male) && (!squaretop)) val += makeShrouds(t, fp, tabs+2);
     if (val)
     {
         ERRBLURB;
@@ -123,13 +129,14 @@ int Genhdr::Build(Transform &t, std::string part, std::ofstream &fp, int tabs)
 
 
 
-int Genhdr::SetColors(std::string bcolor, std::string pcolor, std::string fcolor)
+int Genhdr::SetColors(std::string bcolor, std::string pcolor, std::string fcolor, std::string scolor)
 {
     hasColors = false;
     int val = 0;
     val += Genhdr::bcolor.Load(bcolor);
     val += Genhdr::pcolor.Load(pcolor);
     val += Genhdr::fcolor.Load(fcolor);
+    val += Genhdr::scolor.Load(scolor);
     if (val)
     {
         ERRBLURB;
@@ -143,7 +150,7 @@ int Genhdr::SetColors(std::string bcolor, std::string pcolor, std::string fcolor
 
 
 int Genhdr::SetCase(int col, int row, double colpitch, double rowpitch,
-        double height, double shoulder, double bevel)
+        double height, double shoulder, bool hassh, double bevel)
 {
     hasBparams = false;
 
@@ -194,6 +201,7 @@ int Genhdr::SetCase(int col, int row, double colpitch, double rowpitch,
         return -1;
     }
     sh = shoulder;
+    Genhdr::hassh = hassh;
 
     if ((bevel > colpitch/3.0) || (bevel > rowpitch/3.0))
     {
@@ -209,13 +217,12 @@ int Genhdr::SetCase(int col, int row, double colpitch, double rowpitch,
 
 
 
-int Genhdr::SetPins(bool square, bool male, double depth, double length,
-        double pd0, double pd1, double pd2, double taper, double ts,
-        int sides, double funneldepth)
+int Genhdr::SetPins(bool squarebot, bool squaretop, bool male, double pbev,
+        double fbev, double depth, double length, double pd0, double pdy, double pd1,
+        double pd2, double taper, double ts, int sides, double funneldepth)
 {
     hasPparams = false;
 
-    Genhdr::square = square;
     Genhdr::male = male;
 
     if (depth < 0.0)
@@ -241,9 +248,30 @@ int Genhdr::SetPins(bool square, bool male, double depth, double length,
         cerr << "invalid pd0 (<= 0)\n";
         return -1;
     }
-    Genhdr::pd0 = pd0;
 
-    if (!male)
+    if (squarebot)
+    {
+        if (pdy < pd0/10.0)
+        {
+            ERRBLURB;
+            cerr << "pdy must be >= pd0/10\n";
+            return -1;
+        }
+        Genhdr::pdy = pdy;
+        if ((pbev > pd0/4.0) || (pbev > pdy/4.0))
+        {
+            ERRBLURB;
+            cerr << "pin bevel (pbev) must be <= min(pd0, pdy)/4.0\n";
+            return -1;
+        }
+        Genhdr::pbev = pbev;
+    }
+    Genhdr::pd0 = pd0;
+    if (male)
+    {
+        squaretop = squarebot;
+    }
+    else
     {
         if (pd1 < pd0)
         {
@@ -252,14 +280,28 @@ int Genhdr::SetPins(bool square, bool male, double depth, double length,
             return -1;
         }
         Genhdr::pd1 = pd1;
-        if (pd2 > pd1)
+        if (pd2 > pd1/1.3)
         {
             ERRBLURB;
-            cerr << "invalid pd2 (> pd1)\n";
+            cerr << "invalid pd2 (> pd1/1.3)\n";
             return -1;
         }
         Genhdr::pd2 = pd2;
+        if ((squaretop) && (fbev > (pd1 - pd2)/2.0))
+        {
+            ERRBLURB;
+            cerr << "fbev must be <= (pd1 - pd2)/2.0\n";
+            return -1;
+        }
+        Genhdr::fbev = fbev;
+        if (!squarebot)
+        {
+            Genhdr::pdy = pd0;
+        }
     }
+
+    Genhdr::squarebot = squarebot;
+    Genhdr::squaretop = squaretop;
 
     if (taper >= depth)
     {
@@ -277,7 +319,7 @@ int Genhdr::SetPins(bool square, bool male, double depth, double length,
     }
     pts = ts;
 
-    if (!square)
+    if ((!squarebot) || (!squaretop))
     {
         if ((sides < 4) || (sides > 360) || (sides %4))
         {
@@ -288,16 +330,7 @@ int Genhdr::SetPins(bool square, bool male, double depth, double length,
         ns = sides;
     }
 
-    if (!male)
-    {
-        if (funneldepth < 0.0)
-        {
-            ERRBLURB;
-            cerr << "invalid funnel depth (< 0)\n";
-            return -1;
-        }
-        fd = funneldepth;
-    }
+    fd = funneldepth;
 
     hasPparams = true;
     return 0;
@@ -309,10 +342,11 @@ int Genhdr::makeCase(kc3d::Transform &t, std::ofstream &fp, int tabs)
     int val = 0;
     Hdrbase hbase;
 
-    if (male)
-        val += hbase.SetParams(xp, yp, bev, bh, sh, pd0, pd0, square, cols, rows, ns);
-    else
-        val += hbase.SetParams(xp, yp, bev, bh, sh, pd0, pd1, square, cols, rows, ns);
+    double ch = bh;
+    if ((!male) && (fd < 0.0)) ch += fd;
+    val += hbase.SetParams(xp, yp, bev, ch, sh, hassh, pd0, pdy, pd1,
+            squarebot, squaretop, male, pbev, fbev, cols, rows, ns);
+
     if (val)
     {
         ERRBLURB;
@@ -335,15 +369,13 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
     Transform t0, t1;
     Pin pin[2];
 
-    if (!square)
-    {
-        pin[0].SetShape(false);
-        pin[1].SetShape(false);
-    }
+    pin[0].SetShape(squarebot);
+    pin[1].SetShape(squarebot);
 
     PParams p0, p1;
     double tpl; // total pin length (pin[0])
     double tpo, tph, tpt, tps; // second pin's offset, height, taper, and taper ratio
+    double dtmp;
     if (male)
     {
         tpl = pl;
@@ -353,16 +385,18 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
         tpl = pd;
         if (sh > 0)
         {
-            if (square)
+            if (squarebot)
             {
                 tpl += sh;
             }
             else
             {
-                tpl += sh/3.0;
-                tpo = sh/3.0;
-                tph = tpo*2.0;
-                tpt = tpo;
+                // ensure that the angle is <= 45 deg
+                dtmp = sh/3.0;
+                if (dtmp > ((pd1 - pd0)/2.0)) dtmp = (pd1 - pd0)/2.0;
+                tpo = 0.0;
+                tph = sh;
+                tpt = dtmp;
                 tps = pd0/pd1;
             }
         }
@@ -370,20 +404,34 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
 
     // compute the pins
     p0.bend = -1;
-    p0.bev = -1;
-    p0.d = pd0;
     p0.w = pd0;
     if (male)
+    {
         p0.dbltap = true;
+        p0.bev = pbev;
+        p0.d = pdy;
+    }
     else
+    {
         p0.dbltap = false;
+        if (squarebot)
+        {
+            p0.d = pdy;
+            p0.bev = pbev;
+        }
+        else
+        {
+            p0.d = pd0;
+            p0.bev = -1;
+        }
+    }
     p0.tap = pt;
     p0.h = tpl;
     p0.l = -1;
     p0.ns = ns;
     p0.std = pts;
     p0.stw = pts;
-    if ((!male)&&(!square))
+    if ((!male)&&(!squarebot))
     {
         p1.bend = -1;
         p1.bev = -1;
@@ -417,7 +465,7 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
             else
                 val += pin[0].Build(true, false, t, pcolor, reuse_pc, fp, tabs);
             reuse_pc = true;
-            if ((!male) && (!square))
+            if ((!male) && (!squarebot))
             {
                 t1.setTranslation(oxb, oyb, tpo);
                 val += pin[1].Calc(p1, t1);
@@ -447,17 +495,37 @@ int Genhdr::makeShrouds(kc3d::Transform &t, std::ofstream &fp, int tabs)
 
     // circle[0] : edge of header casing
     // circle[1] : depressed circle surrounding funnel
-    // circle[2] : inner circle, planar with circle[1]
-    Circle circ[3];
+    // circle[2] : inner circle 1, planar with circle[1]
+    // circle[3] : inner circle 2, planar with circle[1]
+    Circle circ[4];
 
     Transform t0, t1;
 
     int i, j;
     int val = 0;
-    double td = pd2 + (pd1 - pd2)/3.0;
+    double td1 = pd2*1.1;
+    double td0 = td1 + (pd1 - td1)*0.4;
     double ox, oy, oxb, oyb;
     ox = (1 - cols)*xp/2.0;
     oy = (1 - rows)*yp/2.0;
+
+    double ch = bh; // case height
+    bool raised = false;
+    if (!male)
+    {
+        if (fd < -1e-9)
+        {
+            raised = true;
+            ch = bh + fd;
+        }
+        if (fd > 1e-9) raised = true;
+    }
+
+    bool reuse = false;
+    if (!bcolor.GetName().compare(scolor.GetName())) reuse = true;
+    if (!pcolor.GetName().compare(scolor.GetName())) reuse = true;
+
+    for (i = 0; i < 4; ++i) circ[i].SetNVertices(ns);
 
     for (i = 0; i < rows; ++ i)
     {
@@ -465,13 +533,15 @@ int Genhdr::makeShrouds(kc3d::Transform &t, std::ofstream &fp, int tabs)
         for (j = 0; j < cols; ++j)
         {
             oxb = ox + j*xp;
-            t0.setTranslation(oxb, oyb, bh);
-            t1.setTranslation(oxb, oyb, bh - fd);
+            t0.setTranslation(oxb, oyb, ch);
+            t1.setTranslation(oxb, oyb, ch - fd);
             circ[0].Calc(pd1, pd1, t0);
             circ[1].Calc(pd1, pd1, t1);
-            circ[2].Calc(td, td, t1);
-            if (fd > 1e-9) val += circ[0].Stitch(true, circ[1], t, bcolor, true, fp, tabs);
-            val += circ[1].Stitch(true, circ[2], t, pcolor, true, fp, tabs);
+            circ[2].Calc(td0, td0, t1);
+            circ[3].Calc(td1, td1, t1);
+            if (raised) val += circ[0].Stitch(true, circ[1], t, scolor, reuse, fp, tabs);
+            val += circ[1].Stitch(true, circ[2], t, scolor, true, fp, tabs);
+            val += circ[2].Stitch(true, circ[3], t, pcolor, true, fp, tabs);
         }
     }
     if (val)
@@ -498,7 +568,7 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
     int val = 0;
     // set the parameters based on square/circle and funnel depth
     double fdia;            // funnel diameter
-    double fh0, fh1, fh2;   // funnel bits
+    double fh0, fh1, fh2;   // funnel flute and stem heights
     double fz;              // z offset for funnels
     VRMLMat *f0col, *f1col;
 
@@ -507,9 +577,9 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
 
     bool reuse_f0col = false;
     bool reuse_f1col = false;
-    if (square)
+    if (squaretop)
     {
-        fun.SetShape(true, -1.0);
+        fun.SetShape(true, fbev);
         fdia = pd1;
         fz = bh;
         fh0 = fd;
@@ -519,24 +589,33 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
         if (fh1 > tvar) fh1 = tvar/3.0;
         fh2 = tvar - fh1;
         f0col = &bcolor;
-        reuse_f0col = true;
         f1col = &fcolor;
     }
     else
     {
         fun.SetShape(false, -1.0);
-        tvar -= fd;
-        fdia = pd2 + (pd1 - pd2)/3.0;
-        fz = bh - fd;
-        fh0 = pd2/3.0;
+        if (sh > 1e-9) tvar -= fd;
+        fdia = pd2*1.1;
+        if (fd < -1e-9)
+            fz = bh;
+        else
+            fz = bh - fd;
+        // fh0 is nominally calculated for a 45 deg slope
+        fh0 = pd2*0.1;
         tvar *= 0.9;
         if (fh0 >= tvar) fh0 = tvar/3.0;
         fh1 = 0.0;
         fh2 = tvar - fh0;
         f0col = &fcolor;
         f1col = &fcolor;
-        reuse_f1col = true;
     }
+    // conditions under which we reuse the colors
+    if (!f0col->GetName().compare(bcolor.GetName())) reuse_f0col = true;
+    if (!f0col->GetName().compare(pcolor.GetName())) reuse_f0col = true;
+    if ((!f0col->GetName().compare(scolor.GetName())) && (!male) && (!squaretop)) reuse_f0col = true;
+    if (!f1col->GetName().compare(bcolor.GetName())) reuse_f1col = true;
+    if (!f1col->GetName().compare(pcolor.GetName())) reuse_f1col = true;
+    if ((!f1col->GetName().compare(scolor.GetName())) && (!male) && (!squaretop)) reuse_f1col = true;
 
     Transform t0;
     int i, j;

@@ -180,11 +180,6 @@ double Wire::Build(const Polygon &shape, bool cap0, bool cap1,
 
     do {
         p3 = *idx++;
-        /* XXX;
-        cerr << "p1: " << p1.w << ", " << p1.x << ", " << p1.y << ", " << p1.z << "\n";
-        cerr << "p2: " << p2.w << ", " << p2.x << ", " << p2.y << ", " << p2.z << "\n";
-        cerr << "p3: " << p3.w << ", " << p3.x << ", " << p3.y << ", " << p3.z << "\n";
-        */
         acc += render(p1, p2, p3, v0, outline, length, cap0, outside, t, color, freuse, file, tabs);
         freuse = true;
         cap0 = false;

@@ -57,6 +57,7 @@ private:
     kc3d::VRMLMat bcolor; // body (casing) color
     kc3d::VRMLMat pcolor; // pin color
     kc3d::VRMLMat fcolor; // funnel color (for female hdr only)
+    kc3d::VRMLMat scolor; // shroud color (for female hdr, circular funnel only)
 
     int cols;       // columns; must be >= 2
     int rows;       // rows; must be >= 1
@@ -65,12 +66,17 @@ private:
     double sh;      // shoulder height
     double bh;      // body height
     double bev;     // bevel
+    bool hassh;     // true if we wish to render a shoulder
 
-    bool square;    // true for square pins
+    bool squarebot; // true for square bottom pins
+    bool squaretop; // true for square top pins (for M connector, must be same as squarebot)
     bool male;      // true if male header
+    double pbev;    // pin bevel (square pins only)
+    double fbev;    // funnel bevel (female square pins only)
     double pd;      // pin depth (below top of board)
     double pl;      // pin length (primarily for male pin)
     double pd0;     // pin diameter 0 (or length of side)
+    double pdy;     // pin dimension in Y direction (square pins only)
     double pd1;     // pin diameter 1 (Female, pin dia. within header)
     double pd2;     // pin diameter 2 (Female, dia. of funnel)
     double pt;      // pin taper
@@ -97,14 +103,20 @@ public:
 
     int Build(kc3d::Transform &t, std::string part, std::ofstream &fp, int tabs = 0);
 
-    int SetColors(std::string bcolor, std::string pcolor, std::string fcolor);
+    int SetColors(std::string bcolor, std::string pcolor, std::string fcolor, std::string scolor);
 
     int SetCase(int col, int row, double colpitch, double rowpitch,
-            double height, double shoulder, double bevel);
+            double height, double shoulder, bool hassh, double bevel);
 
+    /* XXX -- remove
     int SetPins(bool square, bool male, double depth, double length,
             double pd0, double pd1, double pd2, double taper, double ts,
             int sides, double funneldepth);
+    */
+
+    int SetPins(bool squarebot, bool squaretop, bool male, double pbev, double fbev,
+            double depth, double length, double pd0, double pdy, double pd1,
+            double pd2, double taper, double ts, int sides, double funneldepth);
 };
 
 }   // namespace kc3dconn

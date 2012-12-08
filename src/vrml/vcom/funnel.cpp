@@ -344,7 +344,7 @@ int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
     ++idx;
     if (cap)
     {
-        acc += poly[idx]->Paint(true, t, stemcolor, false, fp, tabs);
+        acc += poly[idx]->Paint(true, t, stemcolor, true, fp, tabs);
     }
     if (acc)
     {

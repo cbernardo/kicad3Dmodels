@@ -34,11 +34,6 @@
 using namespace std;
 using namespace kc3d;
 
-// XXX TODO: Break inheritance from Polygon since we
-// don't conform to a Polygon. To do this, move
-// FakePoly to polygon.{h,cpp} and rely on two
-// FakePolys to carry out all operations.
-
 // 0.3mm is a paper thin header; presumably we will have no such thing
 #define MIN_HDR_HEIGHT (0.3)
 
@@ -86,12 +81,18 @@ Hdrbase::Hdrbase(const Hdrbase &p)
     height = p.height;
     xpins = p.xpins;
     ypins = p.ypins;
-    square = p.square;
     hd0 = p.hd0;
     hd1 = p.hd1;
     sh = p.sh;
     xpitch = p.xpitch;
     ypitch = p.ypitch;
+    squarebot = p.squarebot;
+    squaretop = p.squaretop;
+    pbev = p.pbev;
+    fbev = p.fbev;
+    hdy = p.hdy;
+    hassh = p.hassh;
+    male = p.male;
 
     if (!valid) return;
 
@@ -195,12 +196,18 @@ Hdrbase & Hdrbase::operator=(const Hdrbase &p)
     height = p.height;
     xpins = p.xpins;
     ypins = p.ypins;
-    square = p.square;
     hd0 = p.hd0;
     hd1 = p.hd1;
     sh = p.sh;
     xpitch = p.xpitch;
     ypitch = p.ypitch;
+    squarebot = p.squarebot;
+    squaretop = p.squaretop;
+    pbev = p.pbev;
+    fbev = p.fbev;
+    hdy = p.hdy;
+    hassh = p.hassh;
+    male = p.male;
 
     if (!valid) return *this;
 
@@ -268,23 +275,35 @@ void Hdrbase::setDefaults(void)
     height = 2.72;
     xpins = 3;
     ypins = 1;
-    square = true;
+    squarebot = true;
+    squaretop = true;
+    male = true;
     hd0 = 0.64;
+    hdy = 0.64;
     hd1 = 1.6;
     sh = 0.72;
+    hassh = true;
     xpitch = 2.54;
     ypitch = 2.54;
     ns = 16;
+    male = true;
+    pbev = -1.0;
+    fbev = -1.0;
 
     return ;
 }
 
 
 
-
+/* XXX - delete
 int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
         double height, double sh, double hd0, double hd1,
         bool square, int columns, int rows, int ns)
+*/
+int Hdrbase::SetParams(double xpitch, double ypitch, double bevel, double height,
+        double sh, bool hassh, double hd0, double hdy, double hd1,
+        bool squarebot, bool squaretop, bool male, double pbev, double fbev,
+        int columns, int rows, int ns)
 {
     if (valid)
     {
@@ -310,6 +329,24 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
     }
     Hdrbase::height = height;
 
+    if (squarebot && ((pbev > hd0/4.0) || (pbev > hdy/4.0)))
+    {
+        ERRBLURB;
+        cerr << "pbev must be < min(hd0, hdy)/4\n";
+        return -1;
+    }
+    Hdrbase::pbev = pbev;
+    if (!male)
+    {
+        if (fbev > hd1/3.0)
+        {
+            ERRBLURB;
+            cerr << "fbev must be <= hd1/3\n";
+            return -1;
+        }
+        Hdrbase::fbev = fbev;
+    }
+
     if (columns < 2)
     {
         ERRBLURB;
@@ -326,7 +363,9 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
     }
     Hdrbase::ypins = rows;
 
-    Hdrbase::square = square;
+    Hdrbase::squarebot = squarebot;
+    Hdrbase::squaretop = squaretop;
+    Hdrbase::male = male;
 
     // note: hole dimensions can only be checked for validity
     // within Calc()
@@ -337,6 +376,25 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
         return -1;
     }
     Hdrbase::hd0 = hd0;
+    if (squarebot)
+    {
+        if (hdy < hd0/10.0)
+        {
+            ERRBLURB;
+            cerr << "hdy must be >= hd0/10\n";
+            return -1;
+        }
+        Hdrbase::hdy = hdy;
+    }
+    else
+    {
+        // round pins may only be circular
+        Hdrbase::hdy = hd0;
+    }
+
+    // force male pins to have equal dimensions on top and bottom
+    if (male) hd1 = hd0;
+
     if (hd1 <= 0)
     {
         ERRBLURB;
@@ -352,8 +410,9 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
         return -1;
     }
     Hdrbase::sh = sh;
+    if (sh > 0.0) Hdrbase::hassh = hassh;
 
-    if (!square)
+    if ((!squarebot) || (!squaretop))
     {
         if ((ns < 3) || (ns > 360))
         {
@@ -529,7 +588,7 @@ int Hdrbase::calc(void)
     }   // else [if (nv == 4)] -- calculating figure-8 vertices
 
     // calculate shoulders (if any)
-    if (sh > 0.0)
+    if ((sh > 0.0) && hassh)
     {
         if (bev > 0.0)
         {
@@ -544,7 +603,7 @@ int Hdrbase::calc(void)
 
             sv[1][2] = 0.8*bev;
             sv[1][3] = sv[1][2];
-}
+        }
         else
         {
             // no bevel
@@ -646,7 +705,6 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
     Transform t0, t1;
     double z0 = 0.0;
     if (sh > 1e-9) z0 = sh;
-
     double ox, oy;  // offset for locating the hole
     for (i = 0; i < ypins; ++i)
     {
@@ -656,8 +714,15 @@ int Hdrbase::paint(Transform &t, VRMLMat &color, bool reuse_color,
             ox = ((1 - xpins)/2.0 + j)*xpitch;
             t0.setTranslation(ox, oy, z0);
             t1.setTranslation(ox, oy, height);
-            bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
-            th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
+            bh.Calc(xpitch, ypitch, hd0, hdy, t0, squarebot, 0, 0, ns, pbev);
+            if (male)
+            {
+                th.Calc(xpitch, ypitch, hd0, hdy, t1, squarebot, 0, 0, ns, pbev);
+            }
+            else
+            {
+                th.Calc(xpitch, ypitch, hd1, hd1, t1, squaretop, 0, 0, ns, fbev);
+            }
             val += bh.Build(false, t, color, true, fp, tabs);
             val += th.Build(true, t, color, true, fp, tabs);
         }
@@ -725,7 +790,7 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
     Polygon::y = shr[1];
     Polygon::z = shr[2];
     Polygon::nv = 4;
-    val += Polygon::Stitch(true, pol, t, color, reuse_color, fp, tabs);
+    val += Polygon::Stitch(true, pol, t, color, true, fp, tabs);
     Polygon::x = NULL;
     Polygon::y = NULL;
     Polygon::z = NULL;
@@ -738,7 +803,7 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
     }
 
 
-    if (sh <= 1e-9) return 0;
+    if (!hassh) return 0;
     // render the shoulders
     double tsv[3][8];
     Polygon::x = tsv[0];
@@ -751,7 +816,6 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
     xo = -(xpins -1)/2.0*xpitch;
     yo = -ypitch*ypins/2.0;
     int i, j, k;
-    bool reuse = reuse_color;
     if (bev > 0.0)
     {
         k = 0;
@@ -767,11 +831,9 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
                     tsv[2][j] = sv[2][j];
                 }
                 t0.transform(tsv[0], tsv[1], tsv[2], 8);
-                val +=Polygon::Stitch(true, pol, t, color, reuse, fp, tabs);
+                val +=Polygon::Stitch(true, pol, t, color, true, fp, tabs);
                 // paint the ends as well
                 val += Polygon::Paint(false, t, color, true, fp, tabs);
-                //val += pol.Paint(true, t, color, true, fp, tabs);
-                reuse = true;
             }
             ++k;
             yo = -yo;
@@ -786,15 +848,13 @@ int Hdrbase::stitch(Transform &t, VRMLMat &color, bool reuse_color,
             tsv[1][i] = sv[1][i];
             tsv[2][i] = sv[2][i];
         }
-        val += Polygon::Stitch(true, pol, t, color, reuse, fp, tabs);
-        reuse = true;
+        val += Polygon::Stitch(true, pol, t, color, true, fp, tabs);
         Polygon::Paint(false, t, color, true, fp, tabs);
         pol.Paint(true, t, color, true, fp, tabs);
         t0.setRotation(M_PI, 0, 0, 1);
         t0.transform(tsv[0], tsv[1], tsv[2], 8);
         val += Polygon::Stitch(true, pol, t, color, true, fp, tabs);
         val += Polygon::Paint(false, t, color, true, fp, tabs);
-        //val += pol.Paint(true, t, color, true, fp, tabs);
     }
     Polygon::x = NULL;
     Polygon::y = NULL;
@@ -831,8 +891,15 @@ int Hdrbase::makeHoles1(Transform &t, VRMLMat &color, bool reuse_color,
         ox = ((1 - xpins)/2.0 + i)*xpitch;
         t0.setTranslation(ox, 0, z0);
         t1.setTranslation(ox, 0, height);
-        bh.Calc(xpitch, ypitch - 2.0*bev, hd0, hd0, t0, square, 0, 0, ns);
-        th.Calc(xpitch, ypitch - 2.0*bev, hd1, hd1, t1, square, 0, 0, ns);
+        bh.Calc(xpitch, ypitch - 2.0*bev, hd0, hdy, t0, squarebot, 0, 0, ns, pbev);
+        if (male)
+        {
+            th.Calc(xpitch, ypitch - 2.0*bev, hd0, hdy, t1, squarebot, 0, 0, ns, pbev);
+        }
+        else
+        {
+            th.Calc(xpitch, ypitch - 2.0*bev, hd1, hd1, t1, squaretop, 0, 0, ns, fbev);
+        }
         val += bh.Build(false, t, color, reuse, fp, tabs);
         reuse = true;
         val += th.Build(true, t, color, true, fp, tabs);
@@ -871,8 +938,15 @@ int Hdrbase::makeHoles2(Transform &t, VRMLMat &color, bool reuse_color,
             ox = ((1 - xpins)/2.0 + i)*xpitch;
             t0.setTranslation(ox, oy, z0);
             t1.setTranslation(ox, oy, height);
-            bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, ho, ns);
-            th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, ho, ns);
+            bh.Calc(xpitch, ypitch - bev, hd0, hdy, t0, squarebot, 0, ho, ns, pbev);
+            if (male)
+            {
+                th.Calc(xpitch, ypitch - bev, hd0, hdy, t1, squarebot, 0, ho, ns, pbev);
+            }
+            else
+            {
+                th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, squaretop, 0, ho, ns, fbev);
+            }
             val += bh.Build(false, t, color, reuse, fp, tabs);
             reuse = true;
             val += th.Build(true, t, color, true, fp, tabs);
@@ -904,9 +978,7 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
     if (sh > 1e-9) z0 = sh;
 
     double ox, oy;  // offsets for locating the hole
-    double ho;      // hole offset (Y axis only)
     oy = (1 - ypins)*ypitch/2.0 + bev/2.0;
-    ho = -bev/2.0;
     j = 0;
     bool reuse = reuse_color;
     while (j < 2)
@@ -916,13 +988,19 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             ox = ((1 - xpins)/2.0 + i)*xpitch;
             t0.setTranslation(ox, oy, z0);
             t1.setTranslation(ox, oy, height);
-            bh.Calc(xpitch, ypitch - bev, hd0, hd0, t0, square, 0, 0, ns);
-            th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, square, 0, 0, ns);
+            bh.Calc(xpitch, ypitch - bev, hd0, hdy, t0, squarebot, 0, 0, ns, pbev);
+            if (male)
+            {
+                th.Calc(xpitch, ypitch - bev, hd0, hdy, t1, squarebot, 0, 0, ns, pbev);
+            }
+            else
+            {
+                th.Calc(xpitch, ypitch - bev, hd1, hd1, t1, squaretop, 0, 0, ns, fbev);
+            }
             val += bh.Build(false, t, color, reuse, fp, tabs);
             reuse = true;
             val += th.Build(true, t, color, true, fp, tabs);
         }
-        ho = -ho;
         oy = -oy;
         ++j;
     }
@@ -935,8 +1013,15 @@ int Hdrbase::makeHoles3(Transform &t, VRMLMat &color, bool reuse_color,
             ox = ((1 - xpins)/2.0 + j)*xpitch;
             t0.setTranslation(ox, oy, z0);
             t1.setTranslation(ox, oy, height);
-            bh.Calc(xpitch, ypitch, hd0, hd0, t0, square, 0, 0, ns);
-            th.Calc(xpitch, ypitch, hd1, hd1, t1, square, 0, 0, ns);
+            bh.Calc(xpitch, ypitch, hd0, hdy, t0, squarebot, 0, 0, ns, pbev);
+            if (male)
+            {
+                th.Calc(xpitch, ypitch, hd0, hdy, t1, squarebot, 0, 0, ns, pbev);
+            }
+            else
+            {
+                th.Calc(xpitch, ypitch, hd1, hd1, t1, squaretop, 0, 0, ns, fbev);
+            }
             val += bh.Build(false, t, color, true, fp, tabs);
             val += th.Build(true, t, color, true, fp, tabs);
         }

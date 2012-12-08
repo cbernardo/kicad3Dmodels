@@ -14,7 +14,7 @@ project (K3D CXX)
 # option should be controlled by a 'DEBUG' switch.
 # These switches are also specific to gcc so this control
 # file is not portable across compilers.
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS "-g -Wall -DBOOST_PYTHON_MAX_ARITY=20")
 
 # install executables in the scripting directory
 set(CMAKE_INSTALL_PREFIX ${K3D_SOURCE_DIR}/scripts)
