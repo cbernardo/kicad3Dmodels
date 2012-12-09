@@ -79,6 +79,8 @@ private:
     double pdy;     // pin dimension in Y direction (square pins only)
     double pd1;     // pin diameter 1 (Female, pin dia. within header)
     double pd2;     // pin diameter 2 (Female, dia. of funnel)
+    double pd3;     // pin diameter, round pin, lower part
+    double ftc;     // funnel taper coefficient (nominal 1.1)
     double pt;      // pin taper
     double pts;     // pin taper ratio
     int ns;         // number of sides to a circular pin (must be 4*N, 4 .. 360)
@@ -108,15 +110,9 @@ public:
     int SetCase(int col, int row, double colpitch, double rowpitch,
             double height, double shoulder, bool hassh, double bevel);
 
-    /* XXX -- remove
-    int SetPins(bool square, bool male, double depth, double length,
-            double pd0, double pd1, double pd2, double taper, double ts,
-            int sides, double funneldepth);
-    */
-
     int SetPins(bool squarebot, bool squaretop, bool male, double pbev, double fbev,
             double depth, double length, double pd0, double pdy, double pd1,
-            double pd2, double taper, double ts, int sides, double funneldepth);
+            double pd2, double pd3, double ftc, double taper, double ts, int sides, double funneldepth);
 };
 
 }   // namespace kc3dconn

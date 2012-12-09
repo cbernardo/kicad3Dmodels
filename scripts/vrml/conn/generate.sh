@@ -1,7 +1,5 @@
-# Create the 4UCon Drawing 19950 SIL headers, 3-40 pins
-../../bin/make19950
+./mk4ucon.sh
 
-IDIR="../../../mcad/vrml/thru/conn/4UCON"
+./mksamss.sh
+./mksamsl.sh
 
-mkdir -p ${IDIR}
-mv *.wrl ${IDIR}

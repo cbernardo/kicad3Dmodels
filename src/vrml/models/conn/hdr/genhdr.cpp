@@ -219,7 +219,7 @@ int Genhdr::SetCase(int col, int row, double colpitch, double rowpitch,
 
 int Genhdr::SetPins(bool squarebot, bool squaretop, bool male, double pbev,
         double fbev, double depth, double length, double pd0, double pdy, double pd1,
-        double pd2, double taper, double ts, int sides, double funneldepth)
+        double pd2, double pd3, double ftc, double taper, double ts, int sides, double funneldepth)
 {
     hasPparams = false;
 
@@ -280,13 +280,30 @@ int Genhdr::SetPins(bool squarebot, bool squaretop, bool male, double pbev,
             return -1;
         }
         Genhdr::pd1 = pd1;
-        if (pd2 > pd1/1.3)
+        if (!squaretop)
         {
-            ERRBLURB;
-            cerr << "invalid pd2 (> pd1/1.3)\n";
-            return -1;
+            if (ftc < 1.1)
+            {
+                ERRBLURB;
+                cerr << "invalid ftc (must be >= 1.1)\n";
+                return -1;
+            }
+            Genhdr::ftc = ftc;
+            if (pd2 > pd1/ftc)
+            {
+                ERRBLURB;
+                cerr << "invalid pd2 (> pd1/ftc)\n";
+                return -1;
+            }
         }
         Genhdr::pd2 = pd2;
+        if ((!squarebot) && (pd3 < pd0))
+        {
+            ERRBLURB;
+            cerr << "invalid pd3 (< pd0)\n";
+            return -1;
+        }
+        Genhdr::pd3 = pd3;
         if ((squaretop) && (fbev > (pd1 - pd2)/2.0))
         {
             ERRBLURB;
@@ -344,8 +361,17 @@ int Genhdr::makeCase(kc3d::Transform &t, std::ofstream &fp, int tabs)
 
     double ch = bh;
     if ((!male) && (fd < 0.0)) ch += fd;
-    val += hbase.SetParams(xp, yp, bev, ch, sh, hassh, pd0, pdy, pd1,
-            squarebot, squaretop, male, pbev, fbev, cols, rows, ns);
+
+    if ((squarebot) || (male))
+    {
+        val += hbase.SetParams(xp, yp, bev, ch, sh, hassh, pd0, pdy, pd1,
+                squarebot, squaretop, male, pbev, fbev, cols, rows, ns);
+    }
+    else
+    {
+        val += hbase.SetParams(xp, yp, bev, ch, sh, hassh, pd3, pd3, pd1,
+                squarebot, squaretop, male, pbev, fbev, cols, rows, ns);
+    }
 
     if (val)
     {
@@ -393,11 +419,11 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
             {
                 // ensure that the angle is <= 45 deg
                 dtmp = sh/3.0;
-                if (dtmp > ((pd1 - pd0)/2.0)) dtmp = (pd1 - pd0)/2.0;
+                if (dtmp > ((pd3 - pd0)/2.0)) dtmp = (pd3 - pd0)/2.0;
                 tpo = 0.0;
                 tph = sh;
                 tpt = dtmp;
-                tps = pd0/pd1;
+                tps = pd0/pd3;
             }
         }
     }
@@ -435,8 +461,8 @@ int Genhdr::makePins(kc3d::Transform &t, std::ofstream &fp, int tabs)
     {
         p1.bend = -1;
         p1.bev = -1;
-        p1.d = pd1;
-        p1.w = pd1;
+        p1.d = pd3;
+        p1.w = pd3;
         p1.dbltap = false;
         p1.tap = tpt;
         p1.h = tph;
@@ -503,7 +529,7 @@ int Genhdr::makeShrouds(kc3d::Transform &t, std::ofstream &fp, int tabs)
 
     int i, j;
     int val = 0;
-    double td1 = pd2*1.1;
+    double td1 = pd2*ftc;
     double td0 = td1 + (pd1 - td1)*0.4;
     double ox, oy, oxb, oyb;
     ox = (1 - cols)*xp/2.0;
@@ -573,7 +599,22 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
     VRMLMat *f0col, *f1col;
 
     double tvar = bh;   // room for the funnel
-    if (sh > 1e-9) tvar -= sh;
+
+    // calculate the max allowable recess
+    if (sh > 1e-9)
+    {
+        if (squarebot)
+        {
+            tvar -= sh;
+        }
+        else
+        {
+            double so;
+            so = sh/3.0;
+            if (so > ((pd3 - pd0)/2.0)) so = (pd3 - pd0)/2.0;
+            tvar -= so;
+        }
+    }
 
     bool reuse_f0col = false;
     bool reuse_f1col = false;
@@ -594,14 +635,14 @@ int Genhdr::makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs)
     else
     {
         fun.SetShape(false, -1.0);
-        if (sh > 1e-9) tvar -= fd;
-        fdia = pd2*1.1;
+        if (fd > 1e-9) tvar -= fd;
+        fdia = pd2*ftc;
         if (fd < -1e-9)
             fz = bh;
         else
             fz = bh - fd;
         // fh0 is nominally calculated for a 45 deg slope
-        fh0 = pd2*0.1;
+        fh0 = pd2*(ftc - 1.0)/2.0;
         tvar *= 0.9;
         if (fh0 >= tvar) fh0 = tvar/3.0;
         fh1 = 0.0;

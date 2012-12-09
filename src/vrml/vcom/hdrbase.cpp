@@ -295,11 +295,6 @@ void Hdrbase::setDefaults(void)
 
 
 
-/* XXX - delete
-int Hdrbase::SetParams(double xpitch, double ypitch, double bevel,
-        double height, double sh, double hd0, double hd1,
-        bool square, int columns, int rows, int ns)
-*/
 int Hdrbase::SetParams(double xpitch, double ypitch, double bevel, double height,
         double sh, bool hassh, double hd0, double hdy, double hd1,
         bool squarebot, bool squaretop, bool male, double pbev, double fbev,
@@ -410,7 +405,10 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel, double height
         return -1;
     }
     Hdrbase::sh = sh;
-    if (sh > 0.0) Hdrbase::hassh = hassh;
+    if (sh > 1e-9)
+        Hdrbase::hassh = hassh;
+    else
+        Hdrbase::hassh = false;
 
     if ((!squarebot) || (!squaretop))
     {
