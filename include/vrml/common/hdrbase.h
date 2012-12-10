@@ -154,7 +154,7 @@ public:
      * @param hd0 [in] dimension for bottom holes
      * @param hd1 [in] dimension for top holes
      * @param square [in] TRUE if holes are square (false = circular)
-     * @param columns [in] number of columns (>= 2)
+     * @param columns [in] number of columns (>= 1)
      * @param rows [in] number of rows (>= 1)
      * @param ns [in] number of vertices (applies to round holes only)
      * @return 0 for success, -1 for failure

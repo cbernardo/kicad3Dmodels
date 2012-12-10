@@ -154,10 +154,10 @@ int Genhdr::SetCase(int col, int row, double colpitch, double rowpitch,
 {
     hasBparams = false;
 
-    if (col < 2)
+    if (col < 1)
     {
         ERRBLURB;
-        cerr << "invalid number of columns (" << col << "); must be >= 2\n";
+        cerr << "invalid number of columns (" << col << "); must be >= 1\n";
         return -1;
     }
     cols = col;
@@ -282,10 +282,10 @@ int Genhdr::SetPins(bool squarebot, bool squaretop, bool male, double pbev,
         Genhdr::pd1 = pd1;
         if (!squaretop)
         {
-            if (ftc < 1.1)
+            if (ftc < 1.0)
             {
                 ERRBLURB;
-                cerr << "invalid ftc (must be >= 1.1)\n";
+                cerr << "invalid ftc (must be >= 1.0)\n";
                 return -1;
             }
             Genhdr::ftc = ftc;

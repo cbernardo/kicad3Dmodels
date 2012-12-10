@@ -342,10 +342,10 @@ int Hdrbase::SetParams(double xpitch, double ypitch, double bevel, double height
         Hdrbase::fbev = fbev;
     }
 
-    if (columns < 2)
+    if (columns < 1)
     {
         ERRBLURB;
-        cerr << "invalid number of columns (< 2)\n";
+        cerr << "invalid number of columns (< 1)\n";
         return -1;
     }
     Hdrbase::xpins = columns;

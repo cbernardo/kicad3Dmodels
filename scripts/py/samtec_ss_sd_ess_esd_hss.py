@@ -48,7 +48,7 @@ tx.setScale(0.3937)
 K = 0.70710678
 
 # Samtec SS (single row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 33
 PARTBASE = "samtec_SS_1"
 PARTEND  = "_T_2_X_X"
@@ -178,7 +178,7 @@ for idx in range (MINPIN, MAXPIN):
     out.close()
 
 # Samtec ESS (single row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 33
 PARTBASE = "samtec_ESS_1"
 PARTEND  = "_T_03_X_X"
@@ -272,7 +272,7 @@ for idx in range (MINPIN, MAXPIN):
     out.close()
 
 # Samtec SD (double row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 37
 PARTBASE = "samtec_SD_1"
 PARTEND  = "_T_2_X_X"
@@ -337,7 +337,7 @@ for idx in range (MINPIN, MAXPIN):
     out.close()
 
 # Samtec ESD (double row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 37
 PARTBASE = "samtec_ESD_1"
 PARTEND  = "_T_03_X_X"

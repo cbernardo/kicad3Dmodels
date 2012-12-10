@@ -1,0 +1,59 @@
+\section{KC3DCONN: The Connector Toolbox}
+The module \textbf{kc3dconn} contains parametric models
+of connectors.  We have already seen an example of such
+a model in Section~\ref{sec:quick-example}.
+
+\subsection{kc3dconn:Genhdr}
+The class \textbf{Genhdr} represents a generic square-pitch vertical header.
+The header may have square or circular pins, may be male or female, may
+have a plain or beveled casing, and may have a shoulder on the casing.
+Section~\ref{sec:quick-example} presented this class and demonstrated its
+use although no details were discussed. Internally the class makes use of
+the classes \textbf{VRMLMat}, \textbf{Hole}, \textbf{Hdrbase}, \textbf{Pin},
+\textbf{Funnel}, and \textbf{Circle} to generate all the features of the
+header.
+
+The parameters controlling the final appearance of the header have been
+divided into a number of groups: Color parameters, Case parameters, and
+Pin parameters.
+
+The colors can be selected by invoking \textbf{setColors(case, pin\_out, pin\_in, shroud)}
+where each argument is of type VRMLMat, case is the color of the case, pin\_out is the outer
+appearance of the pin, and pin\_in is the inner appearance of the pin, and shroud is the appearance of
+the recess or protrusion around a pin; pin\_out and shroud are applicable only
+to female headers.
+
+The case parameters are set via \textbf{setCase(columns, rows, col\_pitch, row\_pitch, height, shoulder, hassh, bevel)}
+where height is the total case height, shoulder is the height of the case shoulder, and bevel is the
+case bevel between columns. The parameter hassh controls whether a shoulder is rendered (True) or if the shoulder
+parameter simply specifies a gap between teh PCB and the case (False).
+
+The pin parameters are set via
+\textbf{setPins(squarebot, squaretop, male, pbev, fbev, depth, length, pd0, pdy, pd1, pd2, pd3, ftc, taper, ts, sides, funneldepth)}:
+
+\begin{itemize}
+\item \textbf{squarebot}: set True if the pin is square or rectangular
+\item \textbf{squaretop}: set True if the receptacle is square (applicable only to female headers)
+\item \textbf{male}: set True if the header is male
+\item \textbf{pbev}: pin bevel; applicable only if squarebot is True
+\item \textbf{fbev}: funnel bevel; applicable only if male is False and squaretop is True
+\item \textbf{depth}: pin length below the top of the PCB
+\item \textbf{length}: total pin length (depth + total connector height above PCB)
+\item \textbf{pd0}: X dimension of pins
+\item \textbf{pdy}: Y dimension of pins; applicable only if squarebot is True
+\item \textbf{pd1}: dimension of the shroud around the receptacle; applicable only when male is False
+\item \textbf{pd2}: inner dimension of the receptacle; applicable only when male is False
+\item \textbf{pd3}: diameter of the pin where it enters the bottom of the casing; applicable only when
+    male and squarebot are False
+\item \textbf{ftc}: when male and squaretop are False, ftc controls the bevel at the receptacle's entrance;
+    valid values are $\ge1$.
+\item \textbf{taper}: pin taper length (set to $\le0$ for none
+\item \textbf{ts}: taper coefficient; controls the size of the tapered end
+\item \textbf{sides}: number of vertices to use for circular pins or receptacles
+\item \textbf{funneldepth}: for a square receptacle this is the depth of the funnel's flute and must be $\ge0$;
+    for a circular receptacle this is the depth of the recess ($>0$), the height of the protrusion ($<0$),
+    or 0 for a receptacle which is flush with the housing.
+\end{itemize}
+
+Genhdr has been used to create models for Samtec headers in series SS, HSS, ESS, SD, ESD, SL, and SLD
+and can be used to generate models for headers from many other manufacturers.

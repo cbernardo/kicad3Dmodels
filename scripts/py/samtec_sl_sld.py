@@ -25,7 +25,7 @@ tx.setScale(0.3937)
 #   19: micro-socket, hollow leg
 
 # Samtec SL -10 (single row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 33
 PARTBASE = "samtec_SL_1"
 PARTEND  = "_T_10"
@@ -96,7 +96,7 @@ for idx in range (MINPIN, MAXPIN):
     
 
 # Samtec SLD -10 (double row)
-MINPIN = 2
+MINPIN = 1
 MAXPIN = 37
 PARTBASE = "samtec_SLD_1"
 PARTEND  = "_T_10"
