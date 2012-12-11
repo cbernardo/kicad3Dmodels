@@ -314,7 +314,16 @@ int DipCase::calc(void)
     p[72].x = p[73].x = -p[70].x;
     p[70].y = p[71].y = p[72].y = -E1 / 2 + S + BEV;
     p[73].y = p[74].y = p[75].y = -p[70].y;
-
+    /* L9, 76 . .79 = the internal baffle */
+    p[76].z = p[77].z = p[78].z = p[79].z = A1 + A2 / 2 + MID / 2;
+    p[76].x = p[13].x;
+    p[76].y = p[13].y;
+    p[77].x = p[14].x;
+    p[77].y = p[14].y;
+    p[78].x = p[17].x;
+    p[78].y = p[17].y;
+    p[79].x = p[18].x;
+    p[79].y = p[18].y;
     valid = true;
     return 0;
 }
@@ -347,7 +356,7 @@ int DipCase::writeCoord(Transform &t, std::ofstream &fp, int tabs)
     }
     loc = p[i];
     t.transform(loc);
-    fp << setprecision(3) << " " << loc.x << " " << loc.y << " " << loc.z << " ]\n";
+    fp << setprecision(8) << " " << loc.x << " " << loc.y << " " << loc.z << " ]\n";
     fp << fmt << "}\n";
 
     return fp.good() ? 0 : -1;
@@ -391,7 +400,7 @@ int DipCase::writeFacets(std::ofstream &fp, int tabs)
     /* case, top */
     fp << fmt << "    68, 69, 70, 71, -1, 67, 68, 71, -1, 66, 67, 71, -1, 65, 66, 71, -1,\n";
     fp << fmt << "    74, 75, 60, 61, -1, 74, 61, 62, -1, 74, 62, 63, -1, 74, 63, 64, -1,\n";
-    fp << fmt << "    64, 65, 71, 74, -1, 71, 72, 73, 74, -1\n" << fmt << "]\n";
+    fp << fmt << "    64, 65, 71, 74, -1, 71, 72, 73, 74, -1, 76, 77, 78, 79, -1\n" << fmt << "]\n";
     return fp.good() ? 0 : -1;
 }
 

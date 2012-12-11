@@ -30,7 +30,12 @@
 
 #include "transform.h"
 
-#define CASE_NP (76)
+// note: original CASE_NP was 76; it was increased
+// to 80 to support an internal rectangle to improve
+// the cosmetic appearance. Without the internal
+// facet, you can see pinholes through the top
+// edge of the case.
+#define CASE_NP (80)
 
 namespace kc3ddip {
 
