@@ -2,4 +2,4 @@
 
 ./mksamss.sh
 ./mksamsl.sh
-
+./mksamtsw.sh
