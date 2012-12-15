@@ -1,0 +1,13 @@
+file: okc3tools-coil
+grot: 0.2 0 1 0
+
+.begin
+name: ../bgnd.wrl
+r: 0.2 0 -1 0
+.end
+
+.begin
+name: kc3tools-coil.wrl
+r: 0.5 -1 0 0
+.end
+

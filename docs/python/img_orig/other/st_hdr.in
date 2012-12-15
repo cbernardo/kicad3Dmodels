@@ -1,0 +1,11 @@
+file: okc3tools-hdr
+
+.begin
+name: ../bgnd.wrl
+.end
+
+.begin
+name: kc3tools-hdr.wrl
+r: 0.4 -1 0 0.66
+.end
+

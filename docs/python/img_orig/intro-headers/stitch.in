@@ -1,0 +1,60 @@
+file: headers
+#grot: 0.35 -1 0 0
+
+.begin
+name: ../bgnd.wrl
+.end
+
+.begin
+name: testhdr_MS_6x2_8mm.wrl
+r: 0.4 -1 0 0.66
+t: -10 10 0
+.end
+
+.begin
+name: testhdr_FS_6x2_8mm.wrl
+r: 0.4 -1 0 0.66
+t: 0 10 0
+.end
+
+.begin
+name: testhdr_FR_6x2_8mm.wrl
+r: 0.4 -1 0 0.66
+t: 10 10 0
+.end
+
+.begin
+name: samtec_ESS_108_T_07_X_X.wrl
+r: 0.4 -1 0 0.66
+t: -10 0 0
+.end
+
+.begin
+name: samtec_ESD_108_T_07_X_X.wrl
+r: 0.4 -1 0 0.66
+t: -10 -10 0
+.end
+
+.begin
+name: samtec_SL_106_T_19.wrl
+r: 0.4 -1 0 0.66
+t: 0 0 0
+.end
+
+.begin
+name: samtec_SLD_106_T_19.wrl
+r: 0.4 -1 0 0.66
+t: 0 -10 0
+.end
+
+.begin
+name: samtec_TSW_108_07_G_S_XX.wrl
+r: 0.4 -1 0 0.66
+t: 10 0 0
+.end
+
+.begin
+name: samtec_TSW_108_07_G_D_XX.wrl
+r: 0.4 -1 0 0.66
+t: 10 -10 0
+.end

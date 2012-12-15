@@ -1,0 +1,88 @@
+file: diodes
+
+.begin
+name: ../bgnd.wrl
+.end
+
+# DO35 diodes
+.begin
+name: do35_0I300H.wrl
+r: 0.5 -1 0 0
+t: -15 10 0
+.end
+
+.begin
+name: do35_0I100V.wrl
+r: 0.5 -1 0 0
+t: -15 0 0
+.end
+
+.begin
+name: do35_0I100VK2.wrl
+r: 0.5 -1 0 0
+t: -15 -10 0
+.end
+
+
+
+# DO41 diodes
+.begin
+name: do41_0I400H.wrl
+r: 0.5 -1 0 0
+t: -5 10 0
+.end
+
+.begin
+name: do41_0I100V.wrl
+r: 0.5 -1 0 0
+t: -5 0 0
+.end
+
+.begin
+name: do41_0I100VK2.wrl
+r: 0.5 -1 0 0
+t: -5 -10 0
+.end
+
+
+
+# DO201 diodes
+.begin
+name: do201_0I600H.wrl
+r: 0.5 -1 0 0
+t: 5 10 0
+.end
+
+.begin
+name: do201_0I200V.wrl
+r: 0.5 -1 0 0
+t: 5 0 0
+.end
+
+.begin
+name: do201_0I200VK2.wrl
+r: 0.5 -1 0 0
+t: 5 -10 0
+.end
+
+
+
+# DO204 diodes
+.begin
+name: do204_0I600H.wrl
+r: 0.5 -1 0 0
+t: 15 10 0
+.end
+
+.begin
+name: do204_0I200V.wrl
+r: 0.5 -1 0 0
+t: 15 0 0
+.end
+
+.begin
+name: do204_0I200VK2.wrl
+r: 0.5 -1 0 0
+t: 15 -10 0
+.end
+

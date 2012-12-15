@@ -1,0 +1,11 @@
+file: okc3tools-board
+
+.begin
+name: ../bgnd.wrl
+.end
+
+.begin
+name: kc3tools-board.wrl
+r: 0.1 -1 0 0.66
+.end
+

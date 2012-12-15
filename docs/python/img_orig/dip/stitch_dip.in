@@ -1,0 +1,28 @@
+file: dipn
+
+.begin
+name: ../bgnd.wrl
+.end
+
+.begin
+name: dil40_i600.wrl
+r: 0.4 -1 0 0.66
+.end
+
+.begin
+name: dil28_i300.wrl
+r: 0.4 -1 0 0.66
+t: 5 -5 0
+.end
+
+.begin
+name: dil12_i300.wrl
+r: 0.4 -1 0 0.66
+t: -7 3 0
+.end
+
+.begin
+name: DIL_12_special.wrl
+r: 0.4 -1 0 0.66
+t: 0 7 0
+.end

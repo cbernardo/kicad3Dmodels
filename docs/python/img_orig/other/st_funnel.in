@@ -1,0 +1,13 @@
+file: okc3tools-funnel
+grot: 0.35 -1 0 0
+
+.begin
+name: ../bgnd.wrl
+r: 0.35 1 0 0
+.end
+
+.begin
+name: kc3tools-funnel.wrl
+r: 0.25 0 0 1
+.end
+

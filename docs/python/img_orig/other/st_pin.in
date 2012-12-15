@@ -1,0 +1,11 @@
+file: okc3tools-pin
+
+.begin
+name: ../bgnd.wrl
+.end
+
+.begin
+name: kc3tools-pin.wrl
+r: 0.4 -1 0 0.66
+.end
+

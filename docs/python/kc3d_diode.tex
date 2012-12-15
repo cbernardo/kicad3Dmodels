@@ -7,6 +7,14 @@ of diodes. The models are as follows:
 \item \textbf{GenDiode}: Generic tubular axial diode
 \end{itemize}
 
+\begin{figure}
+\label{fig:k3ddiode-diodes}
+\centering
+\includegraphics[width = 0.8\textwidth]{img/k3ddiode.png}
+\caption{Glass encapsulated diodes (do35) produced via the do35 model;
+DO-41, DO-201, and DO-204 models produced via the GenDiode model.}
+\end{figure}
+
 \subsection{kc3ddiode:do35}
 The class \textbf{do35} represents a DO-35 package glass encapsulated
 axial diode such as the 1N4148. Most parameters are fixed according
@@ -67,8 +75,6 @@ diode.build("do35_0I100V", 0.3937, False, False, 2.54)
 # vertical with 0.1" pitch, the cathode is pin 2
 diode.build("do35_0I100VK2", 0.3937, False, True, 2.54)
 \end{verbatim}
-
-
 
 
 \subsection{kc3ddiode:GenDiode}

@@ -107,6 +107,25 @@ a material block appropriate for inclusion in a VRML Shape block is generated,
 otherwise a material block appropriate for inclusion in the main VRML body
 is generated.  Return values are 0 for success and -1 for failure.
 
+For more information on material specifications, see the VRML2.0 specification.
+The use of material specification files is encouraged to promote uniformity of
+appearance between related classes of models created by different users or by
+a single user at a different time. Below are the contents of a material
+specification file for the appearance of the glass envelope of a DO-35 packaged
+axial glass encapsulated diode:
+
+\begin{verbatim}
+# Clear glass
+
+name: glass_clr
+diffuse: 0.3 0.3 0.3
+emissive: 0 0 0
+specular: 0.3 0.3 0.3
+ambient: 1
+transparency: 0.6
+shininess: 1
+\end{verbatim}
+
 \subsection{kc3d.Quat()}
 The \textbf{Quat} class is the representation of a basic quaternion. It supports
 multiplication and division by a scalar and addition and subtraction of quaternions
@@ -332,6 +351,23 @@ CloseXForm(out, 0)
 out.close()
 \end{verbatim}
 
+\begin{figure}
+\label{fig:k3dtools-weird}
+\centering
+\includegraphics[width = 0.5\textwidth]{img/k3dtools-weird.png}
+\caption{This is an unusual figure demonstrating the stitch operation employed on a
+beveled rectangle and an octagon inscribed within an ellipse. The stitch operation
+only requires that the two polygons have the same number of vertices and a polygon may
+even have degenerate vertices; for example we may have an octagon which represents a point.}
+\end{figure}
+
+\begin{figure}
+\label{fig:k3dtools-extrude}
+\centering
+\includegraphics[width = 0.5\textwidth]{img/k3dtools-extrude.png}
+\caption{A beveled polygon extruded to produce a cube.}
+\end{figure}
+
 \subsubsection{kc3d.Circle()}
 \label{sec:kc3dCircle}
 The \textbf{Circle} class derives from Polygon and implements a polygon of
@@ -413,6 +449,14 @@ r1.stitch(True, r2, tx, color, True, out, 2)
 CloseXForm(out, 0)
 out.close()
 \end{verbatim}
+
+\begin{figure}
+\label{fig:k3dtools-board}
+\centering
+\includegraphics[width = 0.6\textwidth]{img/k3dtools-board.png}
+\caption{A rectangle may be plain, as in the case of the black box, or have beveled (blue box)
+or rounded corners (green board).}
+\end{figure}
 
 \subsection{kc3d.Pin()}
 The \textbf{Pin} class is a representation of a vertical wire with an optional bend. The wire
@@ -513,6 +557,14 @@ pin2.build(False, True, tx0, color, True, out, 2)
 kc3d.CloseXForm(out, 0)
 out.close()
 \end{verbatim}
+
+\begin{figure}
+\label{fig:k3dtools-pin}
+\centering
+\includegraphics[width = 0.5\textwidth]{img/k3dtools-pin.png}
+\caption{A pin for a typical SMD connector can be formed by superimposing
+two pin objects.}
+\end{figure}
 
 \subsection{kc3d:Wire}
 The class \textbf{Wire} represents a path swept with a polygon.
@@ -621,6 +673,15 @@ CloseXForm(out, 0)
 out.close()
 \end{verbatim}
 
+\begin{figure}
+\label{fig:k3dtools-coil}
+\centering
+\includegraphics[width = 0.5\textwidth]{img/k3dtools-coil.png}
+\caption{The wire model can be used to create objects such as an inductor. Care must be taken
+when using the wire model because the resulting file may be very large; the model shown
+has a file size of almost 2MB.}
+\end{figure}
+
 \subsection{kc3d.Funnel()}
 The \textbf{Funnel} class is a representation of a rectangular or elliptical funnel typical
 of the pin recesses in a connector. The default shape of the funnel is rectangular but the
@@ -666,6 +727,15 @@ fun.build(True, tx, fcolor, False, scolor, False, out, 2)
 kc3d.CloseXForm(out, 0)
 out.close()
 \end{verbatim}
+
+\begin{figure}
+\label{fig:k3dtools-funnel}
+\centering
+\includegraphics[width = 0.5\textwidth]{img/k3dtools-funnel.png}
+\caption{A square funnel typical of female header connectors. The funnel model
+can also produce circular funnels and more esoteric shapes such as rectangular
+and elliptical funnels.}
+\end{figure}
 
 \subsection{kc3d.Hole()}
 The \textbf{Hole} class represents a plain rectangular panel with a rectangular or elliptical
@@ -748,3 +818,11 @@ hdr.build(tx0, color, False, out, 2)
 kc3d.CloseXForm(out, 0)
 out.close()
 \end{verbatim}
+
+\begin{figure}
+\label{fig:k3dtools-hdrcase}
+\centering
+\includegraphics[width = 0.6\textwidth]{img/k3dtools-hdrcase.png}
+\caption{A sample of a header casing suitable for a female header connector.
+The multiple holes on the top are rendered by the Hole object.}
+\end{figure}
