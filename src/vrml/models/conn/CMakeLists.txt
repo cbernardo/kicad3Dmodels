@@ -29,7 +29,7 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/conn"
     )
     
-add_library(vconn
+add_library(vconn SHARED
     hdr/genhdr.cpp 
     )
 

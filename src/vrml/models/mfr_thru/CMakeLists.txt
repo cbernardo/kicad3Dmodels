@@ -37,7 +37,7 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/resistor"
     )
     
-add_library(vresist
+add_library(vresist SHARED
     resistor.cpp 
     )
 

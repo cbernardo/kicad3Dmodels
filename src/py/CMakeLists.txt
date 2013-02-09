@@ -13,7 +13,7 @@ SET(PYTHON_INCLUDE "/usr/include/python2.7")
 SET(PYTHON_VERSION python2.7)
 
 # Ensure the specified Boost version matches what's installed
-find_package(Boost 1.49 EXACT REQUIRED COMPONENTS python)
+find_package(Boost 1.49 REQUIRED COMPONENTS python)
 
 # The Python include directory must be specified
 INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}" "${PYTHON_INCLUDE}")

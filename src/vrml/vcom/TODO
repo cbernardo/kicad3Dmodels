@@ -44,5 +44,18 @@ Text:
 	the typical font used on PCBs. Minimal character set shall include:
 	A..Z  a..z , 0..9 . + -
 
-
+Screw:
+	Render a screwhead and optionally part of a shaft (no thread).
+	Screw head types to support:
+		cheesehead: PH, FB, PH-FB, PZ, JST
+		countersunk: PH, FB, PH-FB, PZ, JST, HX
+		caphead: PH, FB, PH-FB, PZ, JST, HX
+		buttonhead: HX
+	Driver legend:
+		PH: Philips
+		FB: Flat Blade
+		PH-FB: Hybrid Philips-Flat
+		PZ: Pozidriv
+		JST: Japanese Standard cross-drive
+		HX: Hex
 

@@ -132,7 +132,7 @@ multiplication and division by a scalar and addition and subtraction of quaterni
 and scalars. The quaternion can be normalized by invoking the method \textbf{normalize()}
 or the vector component alone can be normalized via a call to \textbf{vnormalize()}.
 The individual components w, x, y, and z are publicly exposed. The cross product
-and angle of two vectors can be calculated by \textbf(cross(vector\_b)) as demonstrated
+and angle of two vectors can be calculated by \textbf{cross(vector\_b)} as demonstrated
 in the script below. The cross product assumes a right-handed coordinate system; if
 you are using a left-handed coordinate system you must multiply the pseudovector
 coefficients by the appropriate unit vector coefficients.
@@ -358,7 +358,9 @@ out.close()
 \caption{This is an unusual figure demonstrating the stitch operation employed on a
 beveled rectangle and an octagon inscribed within an ellipse. The stitch operation
 only requires that the two polygons have the same number of vertices and a polygon may
-even have degenerate vertices; for example we may have an octagon which represents a point.}
+even have degenerate vertices; for example we may have an octagon which represents a point.
+The vertices of a polygon object are not strictly limited to a plane but the default
+paint method will only work for planar vertices.}
 \end{figure}
 
 \begin{figure}

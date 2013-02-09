@@ -9,7 +9,7 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/diode"
     )
     
-add_library(vdiode
+add_library(vdiode SHARED
     do35/do35.cpp
     generic/gendiode.cpp
     )
