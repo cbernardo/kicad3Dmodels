@@ -19,10 +19,10 @@ diode.build("do204_1I000H", 0.3937, True, False, 25.4, 4)
 
 diode.setNVertices(16, 48, 10)
 
-# vertical orientation, pin 1 is the cathode
+# vertical orientation, pin 1 is cathode, short lead on cathode
 diode.build("do204_0I200V", 0.3937, False, False, 5.08, 4)
 diode.build("do204_0I300V", 0.3937, False, False, 7.62, 4)
 
-# vertical orientation, pin 2 is the cathode
-diode.build("do204_0I200VK2", 0.3937, False, True, 5.08, 4)
-diode.build("do204_0I300VK2", 0.3937, False, True, 7.62, 4)
+# vertical orientation, pin 1 is cathode, short lead on anode
+diode.build("do204_0I200VA", 0.3937, False, True, 5.08, 4)
+diode.build("do204_0I300VA", 0.3937, False, True, 7.62, 4)

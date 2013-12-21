@@ -292,6 +292,12 @@ int DO35::Build(const std::string &partname, double scale, bool horiz, bool vfli
     }
     else
     {
+        if( vflip )
+        {
+            t0.setRotation(M_PI, 0, 0, 1);
+            t0.setTranslation(l0, 0, 0);
+        }
+        
         // leads
         acc += leads[0].Build(true, false, t0, wcol, false, fp, 2);
         acc += leads[1].Build(false, true, t0, wcol, true, fp, 2);

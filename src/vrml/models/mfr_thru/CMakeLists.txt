@@ -48,3 +48,5 @@ add_library(vresist SHARED
 
 
 target_link_libraries(vresist vcom)
+
+install(TARGETS vresist LIBRARY DESTINATION lib)

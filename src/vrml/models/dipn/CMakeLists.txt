@@ -21,3 +21,5 @@ add_library(vdip SHARED
 target_link_libraries(vdip vcom)
 
 install(TARGETS makeDip RUNTIME DESTINATION bin)
+
+install(TARGETS vdip LIBRARY DESTINATION lib)

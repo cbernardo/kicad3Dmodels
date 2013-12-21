@@ -15,3 +15,5 @@ add_library(vdiode SHARED
     )
 
 target_link_libraries(vdiode vcom)
+
+install(TARGETS vdiode LIBRARY DESTINATION lib)

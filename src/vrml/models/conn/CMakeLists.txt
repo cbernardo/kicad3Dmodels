@@ -40,4 +40,6 @@ add_library(vconn SHARED
 
 
 target_link_libraries(vconn vcom)
+
+install(TARGETS vconn LIBRARY DESTINATION lib)
     

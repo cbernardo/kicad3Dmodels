@@ -21,10 +21,10 @@ diode.build("do41_1I000H", 0.3937, True, False, 25.4, 4)
 
 diode.setNVertices(16, 48, 10)
 
-# vertical orientation, pin 1 is the cathode
+# vertical orientation, pin 1 is cathode with short lead
 diode.build("do41_0I100V", 0.3937, False, False, 2.54, 4)
 diode.build("do41_0I200V", 0.3937, False, False, 5.08, 4)
 
-# vertical orientation, pin 2 is the cathode
-diode.build("do41_0I100VK2", 0.3937, False, True, 2.54, 4)
-diode.build("do41_0I200VK2", 0.3937, False, True, 5.08, 4)
+# vertical orientation, pin 1 is cathode, anode has short lead
+diode.build("do41_0I100VA", 0.3937, False, True, 2.54, 4)
+diode.build("do41_0I200VA", 0.3937, False, True, 5.08, 4)

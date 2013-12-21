@@ -324,7 +324,7 @@ int GenDiode::Build(const std::string &partname, double scale, bool horiz, bool 
         body[j++].Calc(dbody, dbody, t0);
         if (!vflip)
         {
-            // cathode is at pin1
+            // cathode is at short lead
             if (scath > 1e-9)
             {
                 l1 = scath - 0.02*dbody;
@@ -345,7 +345,7 @@ int GenDiode::Build(const std::string &partname, double scale, bool horiz, bool 
         }
         else
         {
-            // cathode is at pin2
+            // cathode is at long lead
             l0 = dwire + lbody - scath - wcath;
             t0.setTranslation(0, 0, l0);
             body[j++].Calc(dbody, dbody, t0);
@@ -415,6 +415,12 @@ int GenDiode::Build(const std::string &partname, double scale, bool horiz, bool 
     }
     else
     {
+        if( vflip )
+        {
+            t0.setRotation(M_PI, 0, 0, 1);
+            t0.setTranslation(l0, 0, 0);
+        }
+
         // leads
         acc += leads[0].Build(true, false, t0, wcol, false, fp, 2);
         acc += leads[1].Build(false, true, t0, wcol, true, fp, 2);

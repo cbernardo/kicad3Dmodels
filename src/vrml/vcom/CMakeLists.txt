@@ -13,3 +13,5 @@ add_library(vcom SHARED vcom.cpp polygon.cpp circle.cpp rectangle.cpp
     wire.cpp)
 
 target_link_libraries(vcom common)
+
+install(TARGETS vcom LIBRARY DESTINATION lib)

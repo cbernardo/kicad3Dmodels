@@ -12,4 +12,4 @@ add_executable(makePCC-SMP pccsmpx.cpp)
 
 target_link_libraries(makePCC-SMP vcom)
 
-#install(TARGETS make19950 RUNTIME DESTINATION bin)
+install(TARGETS makePCC-SMP RUNTIME DESTINATION bin)

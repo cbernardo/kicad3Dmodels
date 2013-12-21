@@ -7,3 +7,5 @@
 include_directories(${K3D_SOURCE_DIR}/include/common)
 
 add_library(common SHARED keyvalparser.cpp transform.cpp material.cpp vrmlmat.cpp)
+
+install(TARGETS common LIBRARY DESTINATION lib)
