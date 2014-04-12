@@ -8,10 +8,10 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/common"
     ) 
 
-add_library(vcom SHARED vcom.cpp polygon.cpp circle.cpp rectangle.cpp
+add_library(kc3d_vcom SHARED vcom.cpp polygon.cpp circle.cpp rectangle.cpp
     pin.cpp shoulder.cpp funnel.cpp hole.cpp hdrbase.cpp
     wire.cpp)
 
-target_link_libraries(vcom common)
+target_link_libraries(kc3d_vcom kc3d_common)
 
-install(TARGETS vcom LIBRARY DESTINATION lib)
+install(TARGETS kc3d_vcom LIBRARY DESTINATION lib)

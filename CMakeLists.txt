@@ -17,12 +17,13 @@ project (K3D CXX)
 set(CMAKE_CXX_FLAGS "-g -Wall -DBOOST_PYTHON_MAX_ARITY=20")
 
 # install executables in the scripting directory
-set(CMAKE_INSTALL_PREFIX ${K3D_SOURCE_DIR}/scripts)
+# set(CMAKE_INSTALL_PREFIX ${K3D_SOURCE_DIR}/scripts)
 
 # Version information
 set(K3D_VERSION_MAJOR 0)
-set(K3D_VERSION_MINOR 9)
-set(K3D_TOP_DIR ${K3D_SOURCE_DIR})
+set(K3D_VERSION_MINOR 10)
+#set(K3D_TOP_DIR ${K3D_SOURCE_DIR})
+set(K3D_TOP_DIR "${CMAKE_INSTALL_PREFIX}/share")
 
 # create a config file
 configure_file(${K3D_SOURCE_DIR}/src/k3dconfig.h.in ${K3D_BINARY_DIR}/src/k3dconfig.h)
@@ -40,3 +41,9 @@ add_subdirectory (src)
 #	executables and move the output to their places
 #	in the model directory tree
 #
+
+# install the material appearance definitions
+install(
+    DIRECTORY mcad/colors/
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mcad/colors"
+)

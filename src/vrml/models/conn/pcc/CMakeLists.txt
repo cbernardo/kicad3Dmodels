@@ -10,6 +10,6 @@ link_directories(${K3D_BINARY_DIR}/src/common ${K3D_BINARY_DIR}/src/mat
 
 add_executable(makePCC-SMP pccsmpx.cpp)
 
-target_link_libraries(makePCC-SMP vcom)
+target_link_libraries(makePCC-SMP kc3d_vcom)
 
 install(TARGETS makePCC-SMP RUNTIME DESTINATION bin)

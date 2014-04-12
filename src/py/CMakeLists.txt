@@ -41,23 +41,23 @@ link_directories(
 
 # KC3D: General Tools
 add_library(kc3d SHARED kc3d.cpp)
-target_link_libraries(kc3d vcom ${Boost_LIBRARIES} ${PYTHON_VERSION})
+target_link_libraries(kc3d kc3d_vcom ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # KC3DCONN: Connectors
 add_library(kc3dconn SHARED kc3dconn.cpp)
-target_link_libraries(kc3dconn vconn ${Boost_LIBRARIES} ${PYTHON_VERSION})
+target_link_libraries(kc3dconn kc3d_vconn ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # KC3DRES: Resistors
 add_library(kc3dres SHARED kc3dres.cpp)
-target_link_libraries(kc3dres vresist ${Boost_LIBRARIES} ${PYTHON_VERSION})
+target_link_libraries(kc3dres kc3d_vresist ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # KC3DDIP: DIL Packages
 add_library(kc3ddip SHARED kc3ddip.cpp)
-target_link_libraries(kc3ddip vdip ${Boost_LIBRARIES} ${PYTHON_VERSION})
+target_link_libraries(kc3ddip kc3d_vdip ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # KC3DDIP: DIL Packages
 add_library(kc3ddiode SHARED kc3ddiode.cpp)
-target_link_libraries(kc3ddiode vdiode ${Boost_LIBRARIES} ${PYTHON_VERSION})
+target_link_libraries(kc3ddiode kc3d_vdiode ${Boost_LIBRARIES} ${PYTHON_VERSION})
 
 # INSTALLATION
 install(TARGETS kc3d LIBRARY DESTINATION lib)
@@ -65,3 +65,45 @@ install(TARGETS kc3dconn LIBRARY DESTINATION lib)
 install(TARGETS kc3dres LIBRARY DESTINATION lib)
 install(TARGETS kc3ddip LIBRARY DESTINATION lib)
 install(TARGETS kc3ddiode LIBRARY DESTINATION lib)
+
+if( CMAKE_HOST_UNIX )
+
+    add_custom_command(
+        TARGET kc3d
+        POST_BUILD
+        COMMAND ln -s libkc3d.so kc3d.so
+    )
+
+    add_custom_command(
+        TARGET kc3dconn
+        POST_BUILD
+        COMMAND ln -s libkc3dconn.so kc3dconn.so
+    )
+
+    add_custom_command(
+        TARGET kc3ddiode
+        POST_BUILD
+        COMMAND ln -s libkc3ddiode.so kc3ddiode.so
+    )
+
+    add_custom_command(
+        TARGET kc3ddip
+        POST_BUILD
+        COMMAND ln -s libkc3ddip.so kc3ddip.so
+    )
+
+    add_custom_command(
+        TARGET kc3dres
+        POST_BUILD
+        COMMAND ln -s libkc3dres.so kc3dres.so
+    )
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/kc3d.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/kc3dconn.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/kc3ddiode.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/kc3ddip.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/kc3dres.so"
+    DESTINATION lib)
+
+endif( CMAKE_HOST_UNIX )

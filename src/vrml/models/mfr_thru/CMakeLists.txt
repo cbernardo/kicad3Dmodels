@@ -15,7 +15,7 @@ add_executable(makeEnnn makeEnnn.cpp colorcodes.cpp)
 
 # Parametric model for tubular thru-hole resistors
 add_executable(makeMFR makeMFR.cpp resistor.cpp)
-target_link_libraries(makeMFR vcom)
+target_link_libraries(makeMFR kc3d_vcom)
 
 install(TARGETS makeMFR makeEnnn RUNTIME DESTINATION bin)
 
@@ -37,7 +37,7 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/resistor"
     )
     
-add_library(vresist SHARED
+add_library(kc3d_vresist SHARED
     resistor.cpp 
     )
 
@@ -47,6 +47,6 @@ add_library(vresist SHARED
 #    ) 
 
 
-target_link_libraries(vresist vcom)
+target_link_libraries(kc3d_vresist kc3d_vcom)
 
-install(TARGETS vresist LIBRARY DESTINATION lib)
+install(TARGETS kc3d_vresist LIBRARY DESTINATION lib)

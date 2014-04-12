@@ -9,11 +9,11 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/models/diode"
     )
     
-add_library(vdiode SHARED
+add_library(kc3d_vdiode SHARED
     do35/do35.cpp
     generic/gendiode.cpp
     )
 
-target_link_libraries(vdiode vcom)
+target_link_libraries(kc3d_vdiode kc3d_vcom)
 
-install(TARGETS vdiode LIBRARY DESTINATION lib)
+install(TARGETS kc3d_vdiode LIBRARY DESTINATION lib)

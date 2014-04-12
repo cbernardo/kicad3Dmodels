@@ -70,29 +70,18 @@ the files:
 mkdir build
 cd build
 cmake ..
-make install
+sudo make install
+sudo ldconfig
 \end{verbatim}
 
 The various tools and libraries will be built; executable files will be installed within
-the \verb#scripts/bin# directory in the project tree and the Python modules will be
-installed within the \verb#scripts/lib# directory. The Python modules will have names
-such as \verb#libkc3d.so# while Python expects names such as \verb#kc3d.so#; you may work
-around this issue by renaming the files or by using symlinks, for example:
+the \verb#/usr/local/bin# directory in the project tree and the shared libraries,
+including Python modules, will be installed within the \verb#/usr/local/lib# directory.
+Material appearance specifications will be installed in \verb#/usr/local/share/mcad/colors#.
 
-\begin{verbatim}
-cd scripts/lib
-ln -s libkc3d.so kc3d.so
-ln -s libkc3dconn.so kc3dconn.so
-ln -s libkc3ddiode.so kc3ddiode.so
-ln -s libkc3ddip.so kc3ddip.so
-ln -s libkc3dres.so kc3dres.so
-\end{verbatim}
-
-This software is in its early development stages so it is recommended that the modules
-remain in the \verb#scripts/lib# directory. To check that everything is fine, set the
-\verb#PYTHONPATH# environment variable to include the \verb#scripts/lib# directory;
-if the environment variable is not set, one way to set its value is to change to the
-\verb#script/lib# directory and then execute the command \verb#export PYTHONPATH=${PWD}#.
+To check that everything is fine, set the
+\verb#PYTHONPATH# environment variable to include the \verb#/usr/local/lib# directory.
+This can be done via the command ``\verb#export PYTHONPATH=/usr/local/lib#''.
 We should now be able to load the modules from within Python:
 
 \begin{verbatim}
@@ -104,6 +93,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import kc3dconn
 \end{verbatim}
 
+Some executables such as \verb#makeDip#,  \verb#make19950#,  and
+\verb#makePCC-SMP# assume that the material appearance definitions
+are in the directory \verb#/usr/local/share/mcad/colors# and will
+fail if the definitions are not present.
+
 \section{Quick Example}
 \label{sec:quick-example}
 In this brief example we will invoke a single parametric model to
@@ -113,7 +107,17 @@ flexibility of parametric models.
 For consistency in the appearance of materials in the models, material
 appearances are defined in files within the directory \verb#mcad/colors#.
 For the convenience of this exercise and all future exercises in this
-tutorial, we will create models from the directory \verb#mcad/test#;
+tutorial, we will create models from the directory \verb#mcad/test#.
+To set up, execute the following commands:
+
+\begin{verbatim}
+mkdir mcad
+cd mcad
+ln -s /usr/local/share/mcad/colors .
+mkdir test
+cd test
+\end{verbatim}
+
 create the test directory and change to it. Ensure that the PYTHONPATH
 had been set as discussed in the section on installing the software.
 All future examples in this tutorial will assume that the working

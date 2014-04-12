@@ -10,6 +10,6 @@ link_directories(${K3D_BINARY_DIR}/src/vrml/vcom)
 
 add_executable(vrmlstitch vrmlstitch.cpp)
 
-target_link_libraries(vrmlstitch vcom)
+target_link_libraries(vrmlstitch kc3d_vcom)
 
 install(TARGETS vrmlstitch RUNTIME DESTINATION bin)
