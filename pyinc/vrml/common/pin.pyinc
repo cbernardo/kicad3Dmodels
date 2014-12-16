@@ -1,15 +1,15 @@
 /*
     file: pin.pyinc
-    
-    Python bindings for kc3d::Pin
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::PIN
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,38 +20,38 @@
 
 */
 
-    class_<kc3d::PParams>("PParams","Pin parameters")
-        .def_readwrite("w", &kc3d::PParams::w, "X dimension of the pin")
-        .def_readwrite("d", &kc3d::PParams::d, "Y dimension of the pin")
-        .def_readwrite("tap", &kc3d::PParams::tap, "taper length")
-        .def_readwrite("stw", &kc3d::PParams::stw, "taper scale factor in X")
-        .def_readwrite("std", &kc3d::PParams::std, "taper scale factor in Y")
-        .def_readwrite("dbltap", &kc3d::PParams::dbltap, "1 for double taper, 0 for no taper")
-        .def_readwrite("h", &kc3d::PParams::h, "length of the straight vertical section, <0 for none")
-        .def_readwrite("r", &kc3d::PParams::r, "radius of the bend, <0 for none")
-        .def_readwrite("nb", &kc3d::PParams::nb, "number of segments in the bend (3 or more)")
-        .def_readwrite("l", &kc3d::PParams::l, "length of the straight segment after the bend, <0 for none")
-        .def_readwrite("bev", &kc3d::PParams::bev, "length of the bevel (applies only to square pins)")
-        .def_readwrite("bend", &kc3d::PParams::bend, "angle of the bend (0 .. PI radians)")
-        .def_readwrite("ns", &kc3d::PParams::ns, "number of vertices in an elliptical pin, 3 .. 360")
+    class_<KC3D::PPARAMS>("PParams","PIN parameters")
+        .def_readwrite("w", &KC3D::PPARAMS::w, "X dimension of the pin")
+        .def_readwrite("d", &KC3D::PPARAMS::d, "Y dimension of the pin")
+        .def_readwrite("tap", &KC3D::PPARAMS::tap, "taper length")
+        .def_readwrite("stw", &KC3D::PPARAMS::stw, "taper scale factor in X")
+        .def_readwrite("std", &KC3D::PPARAMS::std, "taper scale factor in Y")
+        .def_readwrite("dbltap", &KC3D::PPARAMS::dbltap, "1 for double taper, 0 for no taper")
+        .def_readwrite("h", &KC3D::PPARAMS::h, "length of the straight vertical section, <0 for none")
+        .def_readwrite("r", &KC3D::PPARAMS::r, "radius of the bend, <0 for none")
+        .def_readwrite("nb", &KC3D::PPARAMS::nb, "number of segments in the bend (3 or more)")
+        .def_readwrite("l", &KC3D::PPARAMS::l, "length of the straight segment after the bend, <0 for none")
+        .def_readwrite("bev", &KC3D::PPARAMS::bev, "length of the bevel (applies only to square pins)")
+        .def_readwrite("bend", &KC3D::PPARAMS::bend, "angle of the bend (0 .. PI radians)")
+        .def_readwrite("ns", &KC3D::PPARAMS::ns, "number of vertices in an elliptical pin, 3 .. 360")
     ;
 
-    
-    
-    class_<kc3d::Pin>("Pin", "Model of a wire (pin) with an optional single bend", init<>())
-        .def(init<const kc3d::Pin &>())
-        
-        .def("calc", &kc3d::Pin::Calc, "Calculate the vertices",
+
+
+    class_<KC3D::PIN>("Pin", "Model of a wire (pin) with an optional single bend", init<>())
+        .def(init<const KC3D::PIN &>())
+
+        .def("calc", &KC3D::PIN::Calc, "Calculate the vertices",
             args("pp: pin parameters", "t: transform to apply to result"))
-            
-        .def("build", &kc3d::Pin::Build, "Render the pin to a file",
+
+        .def("build", &KC3D::PIN::Build, "Render the pin to a file",
             args("cap0: 1 to render first wire end",
             "cap1: 1 to render terminal wire end",
             "t: transform to apply to output",
             "color: appearance specification",
             "reuse: 1 to reuse color", "fp: open output file",
             "tabs: formatting indent level"))
-            
-        .def("setShape", &kc3d::Pin::SetShape, "Set the pin shape",
+
+        .def("setShape", &KC3D::PIN::SetShape, "Set the pin shape",
             args("shape: 0=rectangular 1=elliptical"))
     ;

@@ -1,15 +1,15 @@
 /*
     file: genhdr.pyinc
-    
+
     Python bindings for kc3dconn::Genhdr
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,9 +21,9 @@
 */
 
 
-class_<kc3dconn::Genhdr>("Genhdr", init<>())
-    .def("build", &kc3dconn::Genhdr::Build)
-    .def("setColors", &kc3dconn::Genhdr::SetColors)
-    .def("setCase", &kc3dconn::Genhdr::SetCase)
-    .def("setPins", &kc3dconn::Genhdr::SetPins)
+class_<KC3DCONN::GENHDR>("Genhdr", init<>())
+    .def("build", &KC3DCONN::GENHDR::Build)
+    .def("setColors", &KC3DCONN::GENHDR::SetColors)
+    .def("setCase", &KC3DCONN::GENHDR::SetCase)
+    .def("setPins", &KC3DCONN::GENHDR::SetPins)
     ;

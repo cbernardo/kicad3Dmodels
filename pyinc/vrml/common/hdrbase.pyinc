@@ -1,15 +1,15 @@
 /*
     file: hdrbase.pyinc
-    
-    Python bindings for kc3d::Hdrbase
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::HDRBASE
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,22 +20,14 @@
 
 */
 
-    class_<kc3d::Hdrbase>("Hdrbase", "Case for a square-pitch header", init<>())
+    class_<KC3D::HDRBASE>("HDRBASE", "Case for a square-pitch header", init<>())
         .def(init<double>())
-        .def(init<const kc3d::Hdrbase &>())
-        
-        .def("setParams", &kc3d::Hdrbase::SetParams, "Set up the case parameters")//,
+        .def(init<const KC3D::HDRBASE &>())
+
+        .def("setParams", &KC3D::HDRBASE::SetParams, "Set up the case parameters")//,
 //             args("xpitch", "ypitch", "bevel", "height", "shldhgt", "dim_bot", "dim_top",
 //             "square", "cols", "rows", "nvertex"))
 
-        .def("build", &kc3d::Hdrbase::Build, "Write the case shape to an output file")//,
+        .def("build", &KC3D::HDRBASE::Build, "Write the case shape to an output file")//,
 //            args("xform", "color", "reuse", "file", "tabs"))
-        
-        // these base methods are not supported and may never be supported
-//        .def("clone", &kc3d::Hdrbase::clone, "Create a copy of this polygon", return_value_policy<manage_new_object>())
-//        .def("xform", &kc3d::Polygon::Xform) // may be implemented as overload in hdrbase
-//        .def("calc", &kc3d::Hdrbase::Calc)
-//        .def("paint", &kc3d::Hdrbase::Paint)
-//        .def("stitch", &kc3d::Hdrbase::Stitch)
-//        .def("getVertices", &kc3d::Polygon::GetVertices)
     ;

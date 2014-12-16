@@ -1,7 +1,7 @@
 /*
  *      file: circle.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -23,14 +23,12 @@
 
 #include <iosfwd>
 
-#include "polygon.h"
+#include <polygon.h>
 
-namespace kc3d {
-
-class Transform;
-class VRMLMat;
-// ZZZ
-// class Rectangle;
+namespace KC3D
+{
+class TRANSFORM;
+class VRMLMAT;
 
 /**
  * \ingroup vrml_tools
@@ -38,24 +36,24 @@ class VRMLMat;
  * an inscribed regular convex polygon of 3 to 360 vertices
  * which may be independently scaled along the X and Y axes.
  */
-class Circle : public Polygon
+class CIRCLE : public POLYGON
 {
 public:
-    Circle();
-    Circle(int vertices);
-    Circle(const Circle &p);
-    virtual ~Circle();
+    CIRCLE();
+    CIRCLE( int nVertices );
+    CIRCLE( const CIRCLE& aCircle );
+    virtual ~CIRCLE();
 
-    Circle &operator=(const Circle &p);
+    CIRCLE& operator=( const CIRCLE& aCircle );
 
     /**
-     * Create a duplicate instance of this Circle.
+     * Create a duplicate instance of this CIRCLE.
      * Caveat: if system resources are low, the copy may
      * not be a valid duplicate.
      *
      * @return Duplicate of *this
      */
-    Polygon *clone(void) const;
+    POLYGON* Clone( void ) const;
 
     /**
      * \brief Calculate the vertices of an ellipse
@@ -72,12 +70,12 @@ public:
      * vertices will be created in a counter-clockwise direction
      * when viewing the XY plane from a point at +Z.
      *
-     * @param xdia [in] diameter of the ellipse along the X axis
-     * @param ydia [in] diameter of the ellipse along the Y axis
-     * @param t    [in] local transformation to apply to the results
+     * @param xDia [in] diameter of the ellipse along the X axis
+     * @param yDia [in] diameter of the ellipse along the Y axis
+     * @param aTransform [in] local transformation to apply to the results
      * @return 0 for success, -1 for failure
      */
-    virtual int Calc(double xdia, double ydia, Transform &t);
+    virtual int Calc( double xDia, double yDia, TRANSFORM& aTransform );
 
     /**
      * Set the number of vertices used to represent an ellipse
@@ -85,18 +83,9 @@ public:
      * @param nvert [in] number of vertices; valid range is 3 .. 360
      * @return 0 for success, -1 for failure
      */
-    int SetNVertices(int nvert);
-
-    /* ZZZ
-    // overloaded functions to keep Python happy
-    int StitchR(Rectangle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-                std::ofstream &fp, int tabs = 0);
-
-    int StitchC(Circle& rect, Transform &t, VRMLMat &color, bool reuse_color,
-                std::ofstream &fp, int tabs = 0);
-    */
+    int SetNVertices( int nVert );
 };
 
-}   // namespace kc3d
+}    // namespace kc3d
 
 #endif /* CIRCLE_H_ */

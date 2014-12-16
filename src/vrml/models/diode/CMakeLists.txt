@@ -8,12 +8,21 @@ include_directories(
     "${K3D_SOURCE_DIR}/include/vrml/common"
     "${K3D_SOURCE_DIR}/include/vrml/models/diode"
     )
-    
-add_library(kc3d_vdiode SHARED
+
+add_library(
+    kc3d_vdiode SHARED
     do35/do35.cpp
     generic/gendiode.cpp
     )
 
-target_link_libraries(kc3d_vdiode kc3d_vcom)
+set_target_properties( kc3d_vdiode PROPERTIES PREFIX "" )
 
-install(TARGETS kc3d_vdiode LIBRARY DESTINATION lib)
+target_link_libraries(
+    kc3d_vdiode
+    "-Wl,-Bdynamic" kc3d_vcom
+    )
+
+install(
+    TARGETS kc3d_vdiode
+    ${K3D_LIBDIR}
+    )

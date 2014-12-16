@@ -1,7 +1,7 @@
 /*
- *      file: polygon.cpp
+ *      file: circle.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -23,67 +23,77 @@
 #include <iomanip>
 #include <new>
 
-#include "vdefs.h"
-#include "vcom.h"
-#include "polygon.h"
-#include "circle.h"
-#include "transform.h"
-#include "vrmlmat.h"
+#include <vdefs.h>
+#include <vcom.h>
+#include <polygon.h>
+#include <circle.h>
+#include <transform.h>
+#include <vrmlmat.h>
 
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-Circle::Circle()
+CIRCLE::CIRCLE()
 {
-    Polygon::init();
+    POLYGON::init();
     nv = 16;
+
     return;
 }
 
-Circle::Circle(int vertices)
+
+CIRCLE::CIRCLE( int nVertices )
 {
-    Polygon::init();
-    if ((vertices < 3) || (vertices > 360))
+    POLYGON::init();
+
+    if( (nVertices < 3) || (nVertices > 360) )
     {
-	ERRBLURB;
-	cerr << "invalid vertices (" << vertices << "); range is 3 .. 360\n";
-	nv = 16;
-	return;
+        ERRBLURB;
+        cerr << "invalid nVertices (" << nVertices << "); range is 3 .. 360\n";
+        nv = 16;
+
+        return;
     }
-    nv = vertices;
+
+    nv = nVertices;
+
     return;
 }
 
 
-Circle::Circle(const Circle &p)
+CIRCLE::CIRCLE( const CIRCLE& aCircle )
 {
-    valid = p.valid;
-    nv = p.nv;
+    valid = aCircle.valid;
+    nv = aCircle.nv;
 
     x = NULL;
     y = NULL;
     z = NULL;
 
-    if (!valid) return;
+    if( !valid )
+        return;
 
-    x = new (nothrow) double [nv];
-    if (x == NULL)
+    x = new (nothrow) double[nv];
+
+    if( x == NULL )
     {
         valid = false;
         return;
     }
 
-    y = new (nothrow) double [nv];
-    if (y == NULL)
+    y = new (nothrow) double[nv];
+
+    if( y == NULL )
     {
         delete [] x;
         valid = false;
         return;
     }
 
-    z = new (nothrow) double [nv];
-    if (z == NULL)
+    z = new (nothrow) double[nv];
+
+    if( z == NULL )
     {
         delete [] x;
         delete [] y;
@@ -92,22 +102,24 @@ Circle::Circle(const Circle &p)
     }
 
     int i;
-    for (i = 0; i < nv; ++i)
+
+    for( i = 0; i < nv; ++i )
     {
-        x[i] = p.x[i];
-        y[i] = p.y[i];
-        z[i] = p.z[i];
+        x[i] = aCircle.x[i];
+        y[i] = aCircle.y[i];
+        z[i] = aCircle.z[i];
     }
 
     return;
 }
 
 
-Circle & Circle::operator=(const Circle &p)
+CIRCLE& CIRCLE::operator=( const CIRCLE& aCircle )
 {
-    if (this == &p) return *this;
+    if( this == &aCircle )
+        return *this;
 
-    if (valid)
+    if( valid )
     {
         delete [] x;
         delete [] y;
@@ -116,32 +128,36 @@ Circle & Circle::operator=(const Circle &p)
         valid = false;
     }
 
-    valid = p.valid;
-    nv = p.nv;
+    valid = aCircle.valid;
+    nv = aCircle.nv;
 
     x = NULL;
     y = NULL;
     z = NULL;
 
-    if (!valid) return *this;
+    if( !valid )
+        return *this;
 
-    x = new (nothrow) double [nv];
-    if (x == NULL)
+    x = new (nothrow) double[nv];
+
+    if( x == NULL )
     {
         valid = false;
         return *this;
     }
 
-    y = new (nothrow) double [nv];
-    if (y == NULL)
+    y = new (nothrow) double[nv];
+
+    if( y == NULL )
     {
         delete [] x;
         valid = false;
         return *this;
     }
 
-    z = new (nothrow) double [nv];
-    if (z == NULL)
+    z = new (nothrow) double[nv];
+
+    if( z == NULL )
     {
         delete [] x;
         delete [] y;
@@ -150,130 +166,155 @@ Circle & Circle::operator=(const Circle &p)
     }
 
     int i;
-    for (i = 0; i < nv; ++i)
+
+    for( i = 0; i < nv; ++i )
     {
-        x[i] = p.x[i];
-        y[i] = p.y[i];
-        z[i] = p.z[i];
+        x[i] = aCircle.x[i];
+        y[i] = aCircle.y[i];
+        z[i] = aCircle.z[i];
     }
 
     return *this;
 }
 
+
 // Clone the object
-Polygon *Circle::clone(void) const
+POLYGON* CIRCLE::Clone( void ) const
 {
-    return new (nothrow) Circle(*this);
+    return new (nothrow) CIRCLE( *this );
 }
 
 
-Circle::~Circle()
+CIRCLE::~CIRCLE()
 {
-    if (x) delete [] x;
-    if (y) delete [] y;
-    if (z) delete [] z;
-    Polygon::init();
-    return;
+    if( x )
+        delete [] x;
+
+    if( y )
+        delete [] y;
+
+    if( z )
+        delete [] z;
+
+    POLYGON::init();
 }
+
 
 #define MIN_RAD (0.000001)
 #define MAX_RAD (100.0)
 
 
-
-int Circle::Calc(double xdia, double ydia, Transform &t)
+int CIRCLE::Calc( double xDia, double yDia, TRANSFORM& aTransform )
 {
-    if (valid)
+    if( valid )
     {
-        if (x) delete [] x;
-        if (y) delete [] y;
-        if (z) delete [] z;
-        Polygon::init();
+        if( x )
+            delete [] x;
+
+        if( y )
+            delete [] y;
+
+        if( z )
+            delete [] z;
+
+        POLYGON::init();
         valid = false;
     }
-    double xrad, yrad;
-    xrad = xdia/2.0;
-    yrad = ydia/2.0;
 
-    if ((xrad < MIN_RAD)||(xrad > MAX_RAD))
+    double xrad, yrad;
+    xrad = xDia / 2.0;
+    yrad = yDia / 2.0;
+
+    if( (xrad < MIN_RAD) || (xrad > MAX_RAD) )
     {
         ERRBLURB;
-        cerr << "Invalid X radius (" << xrad << "). Range is " << MIN_RAD << " to " << MAX_RAD << "\n";
+        cerr << "Invalid X radius (" << xrad << "). Range is ";
+        cerr << MIN_RAD << " to " << MAX_RAD << "\n";
         return -1;
     }
 
-    if ((yrad < MIN_RAD)||(yrad > MAX_RAD))
+    if( (yrad < MIN_RAD) || (yrad > MAX_RAD) )
     {
         ERRBLURB;
-        cerr << "Invalid Y radius (" << yrad << "). Range is " << MIN_RAD << " to " << MAX_RAD << "\n";
+        cerr << "Invalid Y radius (" << yrad << "). Range is ";
+        cerr << MIN_RAD << " to " << MAX_RAD << "\n";
         return -1;
     }
 
     x = new (nothrow) double[nv];
-    if (x == NULL)
+
+    if( x == NULL )
     {
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
-	Polygon::init();
+        POLYGON::init();
         return -1;
     }
+
     y = new (nothrow) double[nv];
-    if (y == NULL)
+
+    if( y == NULL )
     {
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
         delete [] x;
-	Polygon::init();
+        POLYGON::init();
         return -1;
     }
+
     z = new (nothrow) double[nv];
-    if (z == NULL)
+
+    if( z == NULL )
     {
         ERRBLURB;
         cerr << "could not allocate points for vertices\n";
         delete [] x;
         delete [] y;
-	Polygon::init();
+        POLYGON::init();
         return -1;
     }
 
     // calculate the vertices then apply the transform
-    double da = M_PI/nv*2.0;
-    double ang = 0.0;
+    double da   = M_PI / nv * 2.0;
+    double ang  = 0.0;
     int i;
 
-    for (i = 0; i < nv; ++ i)
+    for( i = 0; i < nv; ++i )
     {
-        x[i] = xrad*cos(ang);
-        y[i] = yrad*sin(ang);
+        x[i] = xrad * cos( ang );
+        y[i] = yrad * sin( ang );
         z[i] = 0.0;
         ang += da;
     }
 
     // transform the vertices
-    t.transform(x, y, z, nv);
+    aTransform.Transform( x, y, z, nv );
 
     valid = true;
+
     return 0;
-}   // Calc
+}    // Calc
 
 
-int Circle::SetNVertices(int nvert)
+int CIRCLE::SetNVertices( int nVert )
 {
-    if ((nvert < 3) || (nvert > 360))
+    if( (nVert < 3) || (nVert > 360) )
     {
-	ERRBLURB;
-	cerr << "invalid number of vertices (" << nvert << ")\n";
-	cerr << "\tValid values are 3 .. 360 only\n";
-	return -1;
+        ERRBLURB;
+        cerr << "invalid number of vertices (" << nVert << ")\n";
+        cerr << "\tValid values are 3 .. 360 only\n";
+        return -1;
     }
-    if (valid)
+
+    if( valid )
     {
-	delete [] x;
-	delete [] y;
-	delete [] z;
-	Polygon::init();
+        delete [] x;
+        delete [] y;
+        delete [] z;
+        POLYGON::init();
     }
-    nv = nvert;
+
+    nv = nVert;
+
     return 0;
 }

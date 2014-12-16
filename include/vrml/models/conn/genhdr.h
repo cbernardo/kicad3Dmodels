@@ -1,7 +1,7 @@
 /*
  *      file: genhdr.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -40,51 +40,57 @@
  */
 
 
-
-#ifndef GENHDR_H_
-#define GENHDR_H_
+#ifndef GENHDR_H
+#define GENHDR_H
 
 #include <iosfwd>
 
-#include "vrmlmat.h"
-#include "transform.h"
+#include <vrmlmat.h>
+#include <transform.h>
 
-namespace kc3dconn {
+namespace KC3DCONN
+{
 
-class Genhdr
+/**
+ * \ingroup vrml_tools
+ * \brief GENHDR generic rectangular header
+ *
+ * This class represents a generic thru-hole rectangular header
+ */
+class GENHDR
 {
 private:
-    kc3d::VRMLMat bcolor; // body (casing) color
-    kc3d::VRMLMat pcolor; // pin color
-    kc3d::VRMLMat fcolor; // funnel color (for female hdr only)
-    kc3d::VRMLMat scolor; // shroud color (for female hdr, circular funnel only)
+    KC3D::VRMLMAT bcolor;   // body (casing) color
+    KC3D::VRMLMAT pcolor;   // pin color
+    KC3D::VRMLMAT fcolor;   // funnel color (for female hdr only)
+    KC3D::VRMLMAT scolor;   // shroud color (for female hdr, circular funnel only)
 
-    int cols;       // columns; must be >= 2
-    int rows;       // rows; must be >= 1
-    double xp;      // pitch for columns
-    double yp;      // pitch for rows
-    double sh;      // shoulder height
-    double bh;      // body height
-    double bev;     // bevel
-    bool hassh;     // true if we wish to render a shoulder
+    int cols;               // columns; must be >= 2
+    int rows;               // rows; must be >= 1
+    double xp;              // pitch for columns
+    double yp;              // pitch for rows
+    double sh;              // shoulder height
+    double bh;              // body height
+    double bev;             // bevel
+    bool hassh;             // true if we wish to render a shoulder
 
-    bool squarebot; // true for square bottom pins
-    bool squaretop; // true for square top pins (for M connector, must be same as squarebot)
-    bool male;      // true if male header
-    double pbev;    // pin bevel (square pins only)
-    double fbev;    // funnel bevel (female square pins only)
-    double pd;      // pin depth (below top of board)
-    double pl;      // pin length (primarily for male pin)
-    double pd0;     // pin diameter 0 (or length of side)
-    double pdy;     // pin dimension in Y direction (square pins only)
-    double pd1;     // pin diameter 1 (Female, pin dia. within header)
-    double pd2;     // pin diameter 2 (Female, dia. of funnel)
-    double pd3;     // pin diameter, round pin, lower part
-    double ftc;     // funnel taper coefficient (nominal 1.1)
-    double pt;      // pin taper
-    double pts;     // pin taper ratio
-    int ns;         // number of sides to a circular pin (must be 4*N, 4 .. 360)
-    double fd;      // funnel depth (for female headers)
+    bool squarebot;         // true for square bottom pins
+    bool squaretop;         // true for square top pins (for M connector, must be same as squarebot)
+    bool male;              // true if male header
+    double pbev;            // pin bevel (square pins only)
+    double fbev;            // funnel bevel (female square pins only)
+    double pd;              // pin depth (below top of board)
+    double pl;              // pin length (primarily for male pin)
+    double pd0;             // pin diameter 0 (or length of side)
+    double pdy;             // pin dimension in Y direction (square pins only)
+    double pd1;             // pin diameter 1 (Female, pin dia. within header)
+    double pd2;             // pin diameter 2 (Female, dia. of funnel)
+    double pd3;             // pin diameter, round pin, lower part
+    double ftc;             // funnel taper coefficient (nominal 1.1)
+    double pt;              // pin taper
+    double pts;             // pin taper ratio
+    int ns;                 // number of sides to a circular pin (must be 4*N, 4 .. 360)
+    double fd;              // funnel depth (for female headers)
 
     // book keeping
     bool hasColors;     // true when colors have been loaded
@@ -92,29 +98,90 @@ private:
     bool hasPparams;    // true when pin parameters have been set
 
     // render the case
-    int makeCase(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
+    int makeCase( KC3D::TRANSFORM& t, std::ofstream& fp, int tabs = 0 );
+
     // render the pins
-    int makePins(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
+    int makePins( KC3D::TRANSFORM& t, std::ofstream& fp, int tabs = 0 );
+
     // render shrouds for circular pins in female headers
-    int makeShrouds(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
+    int makeShrouds( KC3D::TRANSFORM& t, std::ofstream& fp, int tabs = 0 );
+
     // render funnels for female headers
-    int makeFunnels(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
+    int makeFunnels( KC3D::TRANSFORM& t, std::ofstream& fp, int tabs = 0 );
 
 public:
-    Genhdr();
+    GENHDR();
 
-    int Build(kc3d::Transform &t, std::string part, std::ofstream &fp, int tabs = 0);
+    /**
+     * Create the VRML object and write it to a file
+     *
+     * @param aTransform [in] geometric transform to apply to output
+     * @param aPartName [in] name of the part as used in the VRML file
+     * @param aVRMLFile [in] open VRMML output file
+     * @param aTabDepth [in] indentation level for output
+     * @return 0 for success, -1 for failure
+     */
+    int Build( KC3D::TRANSFORM& aTransform, std::string aPartName,
+               std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
-    int SetColors(std::string bcolor, std::string pcolor, std::string fcolor, std::string scolor);
+    /**
+     * Read VRML material appearances from file
+     *
+     * @param aBodyMatFileName [in] path to VRML appearance for body
+     * @param aPinMatFileName [in] path to VRML appearance for pin
+     * @param aFunnelMatFileName [in] path to VRML appearance for funnel
+     * @param aShroudMatFileName [in] path to VRML appearance for shroud
+     * @return 0 for success, -1 for failure
+     */
+    int SetColors( std::string aBodyMatFileName, std::string aPinMatFileName,
+                   std::string aFunnelMatFileName, std::string aShroudMatFileName );
 
-    int SetCase(int col, int row, double colpitch, double rowpitch,
-            double height, double shoulder, bool hassh, double bevel);
+    /**
+     * Set header case parameters
+     *
+     * @param nCols [in] number of columns in header (min: 1)
+     * @param nRows [in] number of rows in header (min: 1)
+     * @param aColPitch [in] column pitch
+     * @param aRowPitch [in] row pitch
+     * @param aHeight [in] total height of case
+     * @param aShoulder [in] height of shoulder (< 0 for no shoulder)
+     * @param hasShoulder [in] true if a shoulder is to be rendered
+     * @param aBevel [in] length of bevel in between pins
+     * @return 0 for success, -1 for failure
+     */
+    int SetCase( int nCols, int nRows, double aColPitch, double aRowPitch,
+                 double aHeight, double aShoulder, bool hasShoulder, double aBevel );
 
-    int SetPins(bool squarebot, bool squaretop, bool male, double pbev, double fbev,
-            double depth, double length, double pd0, double pdy, double pd1,
-            double pd2, double pd3, double ftc, double taper, double ts, int sides, double funneldepth);
+    /**
+     * Set header pin parameters
+     *
+     * @param isBotSquare [in] true if the bottom part of the pin is square/rectangular
+     * @param isTopSquare [in] true if the top part of the pin is square/rectangular
+     * @param isMale [in] true if the header is male
+     * @param aPinBevel [in] > 0 if the (rectangular) pin is beveled
+     * @param aFunnelBevel [in] > 0 if the funnel is beveled
+     * @param aPinDepth [in] legth of the pin below the PCB top
+     * @param aPinLength [in] total legth of the pin
+     * @param aBotPinXSize [in] X dimension of the bottom part of the pin
+     * @param aBotPinXSize [in] Y dimension of the bottom part of the pin
+     * @param aSocketSize [in] size/diameter of receptacle inside the header case
+     * @param aFunnelSize [in] size/diameter of funnel
+     * @param aPinOuterSize [in] outer diameter of a pin boss at either end of case
+     * @param aFunnelTaper [in] taper coefficient of funnel (nominally 1.1)
+     * @param aPinTaperLength [in] length of taper
+     * @param aPinTaperSize [in] size/dia of small end of taper
+     * @param aNSides [in] number of sides on the pin
+     * @param aSocketDepth [in] total depth of the receptacle
+     * @return 0 for success, -1 for failure
+     */
+    int SetPins( bool isBotSquare, bool isTopSquare, bool isMale, double aPinBevel,
+                 double aFunnelBevel, double aPinDepth, double aPinLength,
+                 double aBotPinXSize, double aBotPinYSize, double aSocketSize,
+                 double aFunnelSize, double aPinOuterSize, double aFunnelTaper,
+                 double aPinTaperLength, double aPinTaperSize, int aNSides,
+                 double aSocketDepth );
 };
 
-}   // namespace kc3dconn
+}    // namespace KC3DCONN
 
-#endif /* GENHDR_H_ */
+#endif // GENHDR_H

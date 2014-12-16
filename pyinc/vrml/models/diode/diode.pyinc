@@ -1,15 +1,15 @@
 /*
     file: diode.pyinc
-    
+
     Python bindings for kc3ddiode
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,15 +20,15 @@
 
 */
 
-    class_<kc3ddiode::DO35>("do35", "DO35 package diode")
-        .def("setNVertices", &kc3ddiode::DO35::SetNVertices, "set the number of wire and body vertices")
-        .def("setColors", &kc3ddiode::DO35::SetColors, "set the wire, glass, cathode, and tube colors")
-        .def("build", &kc3ddiode::DO35::Build, DO35Build())
+    class_<KC3DDIODE::DO35>("do35", "DO35 package diode")
+        .def("setNVertices", &KC3DDIODE::DO35::SetNVertices, "set the number of wire and body vertices")
+        .def("setColors", &KC3DDIODE::DO35::SetColors, "set the wire, glass, cathode, and tube colors")
+        .def("build", &KC3DDIODE::DO35::Build, DO35Build())
     ;
 
-    class_<kc3ddiode::GenDiode>("GenDiode", "Generic tubular package diode")
-        .def("setNVertices", &kc3ddiode::GenDiode::SetNVertices, "set the number of wire and body vertices")
-        .def("setParams", &kc3ddiode::GenDiode::SetParams)
-        .def("setColors", &kc3ddiode::GenDiode::SetColors, "set the wire, body, and cathode colors")
-        .def("build", &kc3ddiode::GenDiode::Build, GENDIODEBuild())
+    class_<KC3DDIODE::GENDIODE>("GenDiode", "Generic tubular package diode")
+        .def("setNVertices", &KC3DDIODE::GENDIODE::SetNVertices, "set the number of wire and body vertices")
+        .def("setParams", &KC3DDIODE::GENDIODE::SetParams)
+        .def("setColors", &KC3DDIODE::GENDIODE::SetColors, "set the wire, body, and cathode colors")
+        .def("build", &KC3DDIODE::GENDIODE::Build, GENDIODEBuild())
     ;

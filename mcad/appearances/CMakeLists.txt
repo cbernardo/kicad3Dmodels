@@ -1,0 +1,30 @@
+# install the material appearance definitions
+install(
+    FILES
+        README
+        black.mat
+        ceram_gry.mat
+        charcoal.mat
+        copper.mat
+        glass_blk.mat
+        glass_blu.mat
+        glass_clr.mat
+        gold.mat
+        nylon_wht.mat
+        rbc_blu_g.mat
+        rbc_crm_g.mat
+        rcc_blk_g.mat
+        rcc_blu_g.mat
+        rcc_brn_g.mat
+        rcc_gld_g.mat
+        rcc_grn_g.mat
+        rcc_gry_g.mat
+        rcc_org_g.mat
+        rcc_pur_g.mat
+        rcc_red_g.mat
+        rcc_slv_g.mat
+        rcc_wht_g.mat
+        rcc_yel_g.mat
+        tin.mat
+    DESTINATION "${K3D_DATA}/appearances"
+    )

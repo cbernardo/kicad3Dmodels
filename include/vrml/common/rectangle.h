@@ -1,7 +1,7 @@
 /*
  *      file: rectangle.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -18,40 +18,40 @@
  *
  */
 
-#ifndef RECTANGLE_H_
-#define RECTANGLE_H_
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
 
-#include "polygon.h"
+#include <polygon.h>
 
-namespace kc3d {
-
-class Transform;
+namespace KC3D
+{
+class TRANSFORM;
 
 /**
  * \ingroup vrml_tools
  * This class represents a rectangle; the rectangle
  * may be plain or beveled.
  */
-class Rectangle: public Polygon
+class RECTANGLE : public POLYGON
 {
 private:
-  double bev;   ///< the length of the bevel at each corner
-  int seg;      ///< number of segments to a bevel
-  
-public:
-    Rectangle();
-    Rectangle(double bevel);
-    Rectangle(const Rectangle &p);
-    virtual ~Rectangle();
+    double bev; ///< the length of the bevel at each corner
+    int seg;    ///< number of segments to a bevel
 
-    Rectangle &operator=(const Rectangle &p);
+public:
+    RECTANGLE();
+    RECTANGLE( double aBevel );
+    RECTANGLE( const RECTANGLE& aRectangle );
+    virtual ~RECTANGLE();
+
+    RECTANGLE& operator=( const RECTANGLE& p );
 
     /**
-     * Create a duplicate instance of this Rectangle
+     * Create a duplicate instance of this RECTANGLE
      *
      * @return Duplicate of *this
      */
-    Polygon *clone(void) const;
+    POLYGON* Clone( void ) const;
 
     /**
      * \brief Calculate the rectangle's vertices
@@ -60,12 +60,12 @@ public:
      * may be plain or beveled. The rectangle is centered on (0,0,0)
      * but may be transformed as the user specifies.
      *
-     * @param xl [in] length along X axis
-     * @param yl [in] length along Y axis
-     * @param t  [in] local transform to apply to results
+     * @param xLength    [in] length along X axis
+     * @param yLength    [in] length along Y axis
+     * @param aTransform [in] local transform to apply to results
      * @return 0 for success, -1 for failure
      */
-    virtual int Calc(double xl, double yl, Transform &t);
+    virtual int Calc( double xLength, double yLength, TRANSFORM& aTransform );
 
     /**
      * \brief Set the length of the bevel.
@@ -75,14 +75,13 @@ public:
      * must be less than half the length of the shortest side of
      * the rectangle.
      *
-     * @param bevel [in] length of the bevel; <= 0 means no bevel
-     * @param segments [in] number of segments (1 = bevel, >1 approximates a radius)
+     * @param aBevel [in] length of the bevel; <= 0 means no bevel
+     * @param nSegments [in] number of segments (1 = bevel, >1 approximates a radius)
      * @return 0 for success, -1 for failure
      */
-    int SetBevel(double bevel, int segments = 1);
-
+    int SetBevel( double aBevel, int nSegments = 1 );
 };
 
-}   // namespace kc3d
+}    // namespace KC3D
 
-#endif /* RECTANGLE_H_ */
+#endif // RECTANGLE_H

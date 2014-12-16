@@ -1,0 +1,14 @@
+This directory contains various scripts to generate
+VRML models.
+
+demo: Contains a python script as a basic example of how
+      to use the VRML tools.
+
+py: Contains python scripts which create VRML models; scripts
+    are generally parametric but some scripts may not be
+    parametric and may generate only a single specialized model.
+
+batch: Contains shell scripts which invoke binary executables
+       and python scripts to generate a very large number of
+       VRML models.
+

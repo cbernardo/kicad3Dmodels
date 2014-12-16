@@ -1,15 +1,26 @@
-# file: ${K3D_SOURCE_DIR}/src/vrml/pcc/CMakeLists.txt
+# file: ${K3D_SOURCE_DIR}/src/vrml/models/stitch/CMakeLists.txt
 #
-# Model PCC-SMP-X horizontal mount thermocouple connector
+# vrmlstitch tool for manual assembly of a VRML scene from existing models
 #
+
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
-include_directories(${K3D_SOURCE_DIR}/include/common ${K3D_SOURCE_DIR}/include/vrml/common) 
+include_directories(
+    "${K3D_SOURCE_DIR}/include/common"
+    "${K3D_SOURCE_DIR}/include/vrml/common"
+    )
 
-link_directories(${K3D_BINARY_DIR}/src/vrml/vcom)
+add_executable(
+    vrmlstitch
+    vrmlstitch.cpp
+    )
 
-add_executable(vrmlstitch vrmlstitch.cpp)
+target_link_libraries(
+    vrmlstitch
+    kc3d_vcom
+    )
 
-target_link_libraries(vrmlstitch kc3d_vcom)
-
-install(TARGETS vrmlstitch RUNTIME DESTINATION bin)
+install(
+    TARGETS vrmlstitch
+    RUNTIME DESTINATION bin
+    )

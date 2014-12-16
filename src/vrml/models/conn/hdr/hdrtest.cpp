@@ -1,7 +1,7 @@
 /*
  *      file: hdrtest.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -22,81 +22,82 @@
 #include <fstream>
 #include <string>
 
-#include "vdefs.h"
-#include "vcom.h"
-#include "transform.h"
-#include "vrmlmat.h"
-#include "hdrbase.h"
-#include "genhdr.h"
-#include "k3dconfig.h"
+#include <vdefs.h>
+#include <vcom.h>
+#include <transform.h>
+#include <vrmlmat.h>
+#include <hdrbase.h>
+#include <genhdr.h>
+#include <k3dconfig.h>
 
 using namespace std;
-using namespace kc3d;
-using namespace kc3dconn;
+using namespace KC3D;
+using namespace KC3DCONN;
 
-int testHdrbase(void);
+int testHdrbase( void );
 
 int main()
 {
-    Genhdr hdr;
-    Transform t0;
-    ofstream out;
+    GENHDR hdr;
+    TRANSFORM   t0;
+    ofstream    out;
 
     /*
-    hdr.SetColors(K3D_TOP_DIR "/mcad/colors/black.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
-            K3D_TOP_DIR "/mcad/colors/gold.mat");
-    hdr.SetColors(K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
-            K3D_TOP_DIR "/mcad/colors/gold.mat");
-    */
+     *  hdr.SetColors(K3D_TOP_DIR "/mcad/colors/black.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
+     *       K3D_TOP_DIR "/mcad/colors/gold.mat");
+     *  hdr.SetColors(K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
+     *       K3D_TOP_DIR "/mcad/colors/gold.mat");
+     */
 
-    hdr.SetColors(K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/gold.mat",
-            K3D_TOP_DIR "/mcad/colors/gold.mat");
+    hdr.SetColors( K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/gold.mat",
+            K3D_TOP_DIR "/mcad/colors/gold.mat" );
 
-    SetupVRML("hdrtest.wrl", out);
-    SetupXForm("HDR_TEST", out, 0);
+    SetupVRML( "hdrtest.wrl", out );
+    SetupXForm( "HDR_TEST", out, 0 );
     // square, male
-    hdr.SetCase(6, 1, 2.54, 2.54, 2.72, .72, 0.4);
-    hdr.SetPins(true, true, 2, 10, 0.64, 0.64, 0.64, 0.3, 0.8, 4, 0);
-    hdr.Build(t0, "HDR_MALE_SP", out, 2);
+    hdr.SetCase( 6, 1, 2.54, 2.54, 2.72, .72, 0.4 );
+    hdr.SetPins( true, true, 2, 10, 0.64, 0.64, 0.64, 0.3, 0.8, 4, 0 );
+    hdr.Build( t0, "HDR_MALE_SP", out, 2 );
 
-    hdr.SetColors(K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
-            K3D_TOP_DIR "/mcad/colors/gold.mat");
+    hdr.SetColors( K3D_TOP_DIR "/mcad/colors/rbc_crm_g.mat", K3D_TOP_DIR "/mcad/colors/tin.mat",
+            K3D_TOP_DIR "/mcad/colors/gold.mat" );
     // square, female
-    t0.setTranslation(0, -4, 0);
-    hdr.SetCase(6, 1, 2.54, 2.54, 8, .72, 0.4);
-    hdr.SetPins(true, false, 2, 10, 0.64, 1.6, 0.72, 0.3, 0.8, 24, 0.5);
-    hdr.Build(t0, "HDR_FEMALE_SP", out, 2);
+    t0.SetTranslation( 0, -4, 0 );
+    hdr.SetCase( 6, 1, 2.54, 2.54, 8, .72, 0.4 );
+    hdr.SetPins( true, false, 2, 10, 0.64, 1.6, 0.72, 0.3, 0.8, 24, 0.5 );
+    hdr.Build( t0, "HDR_FEMALE_SP", out, 2 );
 
     // round, female
-    t0.setTranslation(0, -8, 0);
-    hdr.SetCase(6, 1, 2.54, 2.54, 8, .72, 0.4);
-    hdr.SetPins(false, false, 2, 10, 0.64, 1.6, 0.96, 0.3, 0.8, 24, 0.1);
-    hdr.Build(t0, "HDR_FEMALE_RP", out, 2);
+    t0.SetTranslation( 0, -8, 0 );
+    hdr.SetCase( 6, 1, 2.54, 2.54, 8, .72, 0.4 );
+    hdr.SetPins( false, false, 2, 10, 0.64, 1.6, 0.96, 0.3, 0.8, 24, 0.1 );
+    hdr.Build( t0, "HDR_FEMALE_RP", out, 2 );
 
-    CloseXForm(out, 0);
+    CloseXForm( out, 0 );
     out.close();
     return 0;
 }
 
+
 int testHdrbase()
 {
-    VRMLMat color;
-    Transform t0;
-    Hdrbase h;
-    ofstream out;
+    VRMLMAT color;
+    TRANSFORM   t0;
+    HDRBASE     h;
+    ofstream    out;
 
-    color.Load("../../../../../mcad/colors/rbc_crm_g.mat");
-    h.SetParams(2.54, 2.54, 0.4, 2.72, 0.72, 0.9, 1.6, false, 5, 3, 24);
+    color.Load( "../../../../../mcad/colors/rbc_crm_g.mat" );
+    h.SetParams( 2.54, 2.54, 0.4, 2.72, 0.72, 0.9, 1.6, false, 5, 3, 24 );
 
-    SetupVRML("hdrtest.wrl", out);
-    SetupXForm("TEST_HDR", out, 0);
-    h.Build(t0, color, false, out, 2);
-    //h.Stitch(t0, color, false, out, 2);
-    //h.Paint(t0, color, false, out, 2);
-    t0.setTranslation(0, -10, 5);
-    t0.setRotation(M_PI*0.25, 0, 0, 1);
-    h.Build(t0, color, true, out, 2);
-    CloseXForm(out, 0);
+    SetupVRML( "hdrtest.wrl", out );
+    SetupXForm( "TEST_HDR", out, 0 );
+    h.Build( t0, color, false, out, 2 );
+    // h.Stitch(t0, color, false, out, 2);
+    // h.Paint(t0, color, false, out, 2);
+    t0.SetTranslation( 0, -10, 5 );
+    t0.SetRotation( M_PI * 0.25, 0, 0, 1 );
+    h.Build( t0, color, true, out, 2 );
+    CloseXForm( out, 0 );
     out.close();
     return 0;
 }

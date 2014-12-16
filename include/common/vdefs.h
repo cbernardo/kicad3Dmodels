@@ -1,7 +1,7 @@
 /*
  *      file: vdefs.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -25,13 +25,16 @@
  * \brief Macros common to K3D tools
  */
 
-#ifndef VDEFS_H_
-#define VDEFS_H_
+#ifndef VDEFS_H
+#define VDEFS_H
+
+#include <iostream>
+#include <wx/string.h>
 
 /**
  * \ingroup common_tools
  * Macro to dump file, line, function information to stderr
  */
-#define ERRBLURB cerr << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(): "
+#define ERRBLURB std::cerr << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(): "
 
-#endif /* VDEFS_H_ */
+#endif // VDEFS_H

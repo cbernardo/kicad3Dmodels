@@ -1,15 +1,15 @@
 /*
     file: wire.pyinc
-    
-    Python bindings for kc3d::Polygon
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::POLYGON
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,10 +20,10 @@
 
 */
 
-class_<kc3d::Wire>("Wire", "Swept path")
-    .def("clear", &kc3d::Wire::Clear, "Delete all points in path")
+class_<KC3D::WIRE>("Wire", "Swept path")
+    .def("clear", &KC3D::WIRE::Clear, "Delete all points in path")
     .def("addPoint", wire_ap1)
     .def("addPoint", wire_ap2)
-    .def("setParams", &kc3d::Wire::SetParams)
-    .def("build", &kc3d::Wire::Build)
-    ;
+    .def("setParams", &KC3D::WIRE::SetParams)
+    .def("build", &KC3D::WIRE::Build)
+;

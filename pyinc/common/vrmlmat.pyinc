@@ -1,15 +1,15 @@
 /*
     file: vrmlmat.pyinc
-    
-    Python bindings for kc3d::VRMLMat
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::VRMLMat
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,8 +21,8 @@
 */
 
 
-class_<kc3d::VRMLMat, bases<kc3d::Material> >("VRMLMat","VRML2.0 specific extensions to Material")
-    .def("Write", &kc3d::VRMLMat::WriteMaterial, "Write the material specification to the output file",
+class_<KC3D::VRMLMAT, bases<KC3D::MATERIAL> >("VRMLMat","VRML2.0 specific extensions to Material")
+    .def("Write", &KC3D::VRMLMAT::WriteMaterial, "Write the material specification to the output file",
     args("file: output file\n", "tabs: formatting indentation level\n",
     "mainblock: 1 if writing to the main VRML2.0 body otherwise 0\n"))
 ;

@@ -1,7 +1,7 @@
 /*
  *      file: shoulder.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -27,64 +27,73 @@
 #include <fstream>
 #include <cmath>
 
-#include "shoulder.h"
-#include "vdefs.h"
-#include "vcom.h"
-#include "transform.h"
+#include <shoulder.h>
+#include <vdefs.h>
+#include <vcom.h>
+#include <transform.h>
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-Shoulder::Shoulder()
+SHOULDER::SHOULDER()
 {
     valid = false;
     np = 0;
+
     return;
 }
 
-Shoulder::~Shoulder()
+
+SHOULDER::~SHOULDER()
 {
     valid = false;
+
     return;
 }
 
-int Shoulder::Calc(double l, double h, double w, double t, double r, Transform &tx)
+
+int SHOULDER::Calc( double aLength, double aHeight, double aWidth, double aTaper,
+                    double aRadius, TRANSFORM& aTransform )
 {
     valid = false;
 
     // validate the parameters
-    if (l <= 0.0)
+    if( aLength <= 0.0 )
     {
         ERRBLURB;
         cerr << "invalid length (<= 0)\n";
         return -1;
     }
-    if (h <= 0.0)
+
+    if( aHeight <= 0.0 )
     {
         ERRBLURB;
         cerr << "invalid height (<= 0)\n";
         return -1;
     }
-    if (w <= 0.0)
+
+    if( aWidth <= 0.0 )
     {
         ERRBLURB;
         cerr << "invalid width (<= 0)\n";
         return -1;
     }
 
-    bool has_t = false;
-    bool has_r = false;
+    bool    has_t   = false;
+    bool    has_r   = false;
 
-    if (t > 0.0)
+    if( aTaper > 0.0 )
     {
         has_t = true;
-        if (t > 0.4*M_PI)
+
+        if( aTaper > 0.4 * M_PI )
         {
             ERRBLURB;
             cerr << "invalid taper (> 0.4*M_PI)\n";
             return -1;
         }
-        if (l <= 2.0*h*tan(t))
+
+        if( aLength <= 2.0 * aHeight * tan( aTaper ) )
         {
             ERRBLURB;
             cerr << "invalid taper; angle is too steep or length is too small\n";
@@ -93,17 +102,20 @@ int Shoulder::Calc(double l, double h, double w, double t, double r, Transform &
     }
 
     np = 4;
-    if (r > 0.0)
+
+    if( aRadius > 0.0 )
     {
         has_r = true;
         np = 7;
-        if (r >= w)
+
+        if( aRadius >= aWidth )
         {
             ERRBLURB;
             cerr << "invalid radius (>= width)\n";
             return -1;
         }
-        if (r >= h)
+
+        if( aRadius >= aHeight )
         {
             ERRBLURB;
             cerr << "invalid radius (>= height)\n";
@@ -112,69 +124,82 @@ int Shoulder::Calc(double l, double h, double w, double t, double r, Transform &
     }
 
     int idx = 0;
-    double l2 = l/2.0;
+    double l2 = aLength / 2.0;
 
     // Point 0
-    p0[0][idx] = -l2;
-    p0[1][idx] = 0.0;
-    p0[2][idx] = h;
+    p0[0][idx]  = -l2;
+    p0[1][idx]  = 0.0;
+    p0[2][idx]  = aHeight;
     ++idx;
 
     // Point 1
-    p0[0][idx] = -l2;
-    p0[1][idx] = 0.0;
-    p0[2][idx] = 0.0;
-    if (has_t) p0[0][idx] += h*tan(t);
+    p0[0][idx]  = -l2;
+    p0[1][idx]  = 0.0;
+    p0[2][idx]  = 0.0;
+
+    if( has_t )
+        p0[0][idx] += aHeight * tan( aTaper );
+
     ++idx;
 
     int i;
-    if (has_r)
+
+    if( has_r )
     {
-        double da = 0.5*M_PI/3.0;
-        double ang;
-        for (i = 0; i < 4; ++i)
+        double  da = 0.5 * M_PI / 3.0;
+        double  ang;
+
+        for( i = 0; i < 4; ++i )
         {
-            ang = i*da;
-            p0[0][idx] = -l2;
-            p0[1][idx] = -w + r*(1 - sin(ang));
-            p0[2][idx] = r*(1 - cos(ang));
-            if (has_t) p0[0][idx] += (h - p0[2][idx])*tan(t);
+            ang = i * da;
+            p0[0][idx]  = -l2;
+            p0[1][idx]  = -aWidth + aRadius * ( 1 - sin( ang ) );
+            p0[2][idx]  = aRadius * ( 1 - cos( ang ) );
+
+            if( has_t )
+                p0[0][idx] += (aHeight - p0[2][idx]) * tan( aTaper );
+
             ++idx;
         }
     }
     else
     {
-        p0[0][idx] = -l2;
-        p0[1][idx] = -w;
-        p0[2][idx] = 0.0;
-        if (has_t) p0[0][idx] += h*tan(t);
+        p0[0][idx]  = -l2;
+        p0[1][idx]  = -aWidth;
+        p0[2][idx]  = 0.0;
+
+        if( has_t )
+            p0[0][idx] += aHeight * tan( aTaper );
+
         ++idx;
     }
 
     // Last point
-    p0[0][idx] = -l2;
-    p0[1][idx] = -w;
-    p0[2][idx] = h;
+    p0[0][idx]  = -l2;
+    p0[1][idx]  = -aWidth;
+    p0[2][idx]  = aHeight;
 
     // mirror the part
-    for (idx = 0; idx < np; ++ idx)
+    for( idx = 0; idx < np; ++idx )
     {
-        p1[0][idx] = -p0[0][idx];
-        p1[1][idx] = p0[1][idx];
-        p1[2][idx] = p0[2][idx];
+        p1[0][idx]  = -p0[0][idx];
+        p1[1][idx]  = p0[1][idx];
+        p1[2][idx]  = p0[2][idx];
     }
 
-    tx.transform(p0[0], p0[1], p0[2], np);
-    tx.transform(p1[0], p1[1], p1[2], np);
+    aTransform.Transform( p0[0], p0[1], p0[2], np );
+    aTransform.Transform( p1[0], p1[1], p1[2], np );
 
     valid = true;
+
     return 0;
 }
 
-int Shoulder::Build(Transform &t, VRMLMat &color, bool reuse,
-        std::ofstream &fp, int tabs)
+
+int SHOULDER::Build( TRANSFORM& aTransform, VRMLMAT& aMaterial, bool reuseMaterial,
+                     std::ofstream& aVRMLFile, int aTabDepth )
 {
-    if (!valid)
+    if( !valid )
     {
         ERRBLURB;
         cerr << "invoked with no prior successful call to Calc()\n";
@@ -184,69 +209,77 @@ int Shoulder::Build(Transform &t, VRMLMat &color, bool reuse,
     double tp0[3][14];
 
     int i;
-    for (i = 0; i < np; ++i)
+
+    for( i = 0; i < np; ++i )
     {
-        tp0[0][i] = p0[0][i];
-        tp0[1][i] = p0[1][i];
-        tp0[2][i] = p0[2][i];
-        tp0[0][i+np] = p1[0][i];
-        tp0[1][i+np] = p1[1][i];
-        tp0[2][i+np] = p1[2][i];
+        tp0[0][i]   = p0[0][i];
+        tp0[1][i]   = p0[1][i];
+        tp0[2][i]   = p0[2][i];
+        tp0[0][i + np]  = p1[0][i];
+        tp0[1][i + np]  = p1[1][i];
+        tp0[2][i + np]  = p1[2][i];
     }
 
-    t.transform(tp0[0], tp0[1], tp0[2], np*2);
+    aTransform.Transform( tp0[0], tp0[1], tp0[2], np * 2 );
 
     // CAP0
     // set up VRML Shape
-    SetupShape(color, reuse, fp, tabs);
+    SetupShape( aMaterial, reuseMaterial, aVRMLFile, aTabDepth );
     // enumerate vertices
-    WriteCoord(tp0[0], tp0[1], tp0[2], np, fp, tabs +1);
+    WriteCoord( tp0[0], tp0[1], tp0[2], np, aVRMLFile, aTabDepth + 1 );
     // enumerate facets
-    SetupCoordIndex(fp, tabs +1);
-    string fmt((tabs + 1)*4, ' ');
-    fp << fmt << "    ";
-    for (i = 0; i < np; ++i)
+    SetupCoordIndex( aVRMLFile, aTabDepth + 1 );
+    string fmt( (aTabDepth + 1) * 4, ' ' );
+    aVRMLFile << fmt << "    ";
+
+    for( i = 0; i < np; ++i )
     {
-        fp << i << ",";
+        aVRMLFile << i << ",";
     }
-    fp << "0,-1\n";
-    CloseCoordIndex(fp, tabs +1);
-    CloseShape(fp, tabs);
+
+    aVRMLFile << "0,-1\n";
+    CloseCoordIndex( aVRMLFile, aTabDepth + 1 );
+    CloseShape( aVRMLFile, aTabDepth );
 
     // CAP1
     // set up VRML Shape
-    SetupShape(color, true, fp, tabs);
+    SetupShape( aMaterial, true, aVRMLFile, aTabDepth );
     // enumerate vertices
-    WriteCoord(&tp0[0][np], &tp0[1][np], &tp0[2][np], np, fp, tabs +1);
+    WriteCoord( &tp0[0][np], &tp0[1][np], &tp0[2][np], np, aVRMLFile, aTabDepth + 1 );
     // enumerate facets
-    SetupCoordIndex(fp, tabs +1);
-    fp << fmt << "    ";
-    for (i = np-1; i > 0; --i)
+    SetupCoordIndex( aVRMLFile, aTabDepth + 1 );
+    aVRMLFile << fmt << "    ";
+
+    for( i = np - 1; i > 0; --i )
     {
-        fp << i << ",";
+        aVRMLFile << i << ",";
     }
-    fp << "0," << np-1 << ",-1\n";
-    CloseCoordIndex(fp, tabs +1);
-    CloseShape(fp, tabs);
+
+    aVRMLFile << "0," << np - 1 << ",-1\n";
+    CloseCoordIndex( aVRMLFile, aTabDepth + 1 );
+    CloseShape( aVRMLFile, aTabDepth );
 
     // Body
     // set up VRML Shape
-    SetupShape(color, true, fp, tabs);
+    SetupShape( aMaterial, true, aVRMLFile, aTabDepth );
     // enumerate vertices
-    WriteCoord(tp0[0], tp0[1], tp0[2], np*2, fp, tabs +1);
+    WriteCoord( tp0[0], tp0[1], tp0[2], np * 2, aVRMLFile, aTabDepth + 1 );
     // enumerate facets
-    SetupCoordIndex(fp, tabs +1);
-    fp << fmt << "    ";
-    for (i = 0; i < np -2; ++i)
-    {
-        fp << i+1 << "," << i << "," <<
-                i + np << "," << i + np +1 << ",-1,";
-        if (!((i + 1) % 18))
-            fp << "\n" << fmt << "    ";
-    }
-    fp << np -1 << "," << np -2 << "," <<
-            np + np -2 << "," << np + np -1 << ",-1\n";
-    CloseCoordIndex(fp, tabs +1);
+    SetupCoordIndex( aVRMLFile, aTabDepth + 1 );
+    aVRMLFile << fmt << "    ";
 
-    return CloseShape(fp, tabs);
+    for( i = 0; i < np - 2; ++i )
+    {
+        aVRMLFile << i + 1 << "," << i << "," <<
+            i + np << "," << i + np + 1 << ",-1,";
+
+        if( !( (i + 1) % 18 ) )
+            aVRMLFile << "\n" << fmt << "    ";
+    }
+
+    aVRMLFile << np - 1 << "," << np - 2 << "," <<
+        np + np - 2 << "," << np + np - 1 << ",-1\n";
+    CloseCoordIndex( aVRMLFile, aTabDepth + 1 );
+
+    return CloseShape( aVRMLFile, aTabDepth );
 }

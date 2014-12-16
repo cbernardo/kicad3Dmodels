@@ -1,7 +1,7 @@
 /*
  *      file: keyvalparser.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  * \file
  * \defgroup common_tools Common Tools
-*/
+ */
 
 
 #ifndef KEYVALPARSER_H
@@ -30,46 +30,46 @@
 #include <string>
 #include <map>
 
-namespace kc3d {
-
+namespace KC3D {
 /**
  *      \ingroup common_tools
  *      \brief Key:Value parser
  *
- *      Class KeyValParser reads a file and extracts
+ *      Class KEYVAL_PARSER reads a file and extracts
  *      key:value pairs. Lines beginning with '#' are
  *      ignored. Spaces within a key name are discarded;
  *      leading and trailing spaces within key names and
  *      values are discarded.
  */
-class KeyValParser
+class KEYVAL_PARSER
 {
 private:
     std::map<std::string, std::string> keyvals;
-    int parseLine(const std::string &line);
+    int parseLine( const std::string& aLine );
 
 public:
-    virtual ~KeyValParser();
+    virtual ~KEYVAL_PARSER();
 
     /**
      * Load Key:Value pairs from a file
      *
-     * @param filename [in] file to open and read from
+     * @param aFilename [in] file to open and read from
      * @return Number of key:value pairs found or -1 for failure
      */
-    int LoadKeys(const std::string &filename);
+    int LoadKeys( const std::string& aFilename );
+
     /**
      * Clear all current key:value data
      */
-    void ClearKeys(void);
+    void ClearKeys( void );
+
     /**
      * Retrieve the key:value data
      *
      * @return key:value data as paired strings in a map
      */
-    const std::map<std::string, std::string> &GetKeys(void);
+    const std::map<std::string, std::string>& GetKeys( void );
 };
-
-}   // namespace kc3d
+}       // namespace KC3D
 
 #endif  // KEYVALPARSER_H

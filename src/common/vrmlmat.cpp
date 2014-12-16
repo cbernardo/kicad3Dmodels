@@ -1,7 +1,7 @@
 /*
  *      file: vrmlmat.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -21,30 +21,40 @@
 
 #include <iomanip>
 
-#include "vrmlmat.h"
+#include <vrmlmat.h>
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-int VRMLMat::WriteMaterial(std::ofstream &file, int tabs, bool mainblock)
+int VRMLMAT::WriteMaterial( std::ofstream& aVRMLFile, int aTabDepth )
 {
-    if (tabs < 0) tabs = 0;
-    if (tabs > 5) tabs = 5;
-    string fmt(4*tabs, ' ');
+    if( aTabDepth < 0 )
+        aTabDepth = 0;
 
-    if (mainblock)
-        file << fmt << "DEF " << material << " Material {\n";
-    else
-        file << fmt << "material DEF " << material << " Material {\n";
-    file << fmt << "    diffuseColor " << setprecision(5) << diffuse[0] <<
-            " " << diffuse[1] << " " << diffuse[2] << "\n";
-    file << fmt << "    emissiveColor " << setprecision(5) << emissive[0] <<
-            " " << emissive[1] << " " << emissive[2] << "\n";
-    file << fmt << "    specularColor " << setprecision(5) << specular[0] <<
-            " " << specular[1] << " " << specular[2] << "\n";
-    file << fmt << "    ambientIntensity " << setprecision(5) << ambient << "\n";
-    file << fmt << "    transparency " << setprecision(5) << transparency << "\n";
-    file << fmt << "    shininess " << setprecision(5) << shininess << "\n";
-    file << fmt << "}\n";
-    return file.good() ? 0 : -1;
+    if( aTabDepth > 5 )
+        aTabDepth = 5;
+
+    string fmt( 4 * aTabDepth, ' ' );
+
+    aVRMLFile << fmt << "material DEF " << material << " Material {\n";
+
+    aVRMLFile << setprecision( 5 );
+    aVRMLFile << fmt << "    diffuseColor ";
+    aVRMLFile << diffuse[0] << " " << diffuse[1] << " " << diffuse[2] << "\n";
+
+    aVRMLFile << fmt << "    emissiveColor ";
+    aVRMLFile << emissive[0] << " " << emissive[1] << " " << emissive[2] << "\n";
+
+    aVRMLFile << fmt << "    specularColor ";
+    aVRMLFile << specular[0] << " " << specular[1] << " " << specular[2] << "\n";
+
+    aVRMLFile << fmt << "    ambientIntensity " << ambient << "\n";
+
+    aVRMLFile << fmt << "    transparency " << transparency << "\n";
+
+    aVRMLFile << fmt << "    shininess " << shininess << "\n";
+
+    aVRMLFile << fmt << "}\n";
+
+    return aVRMLFile.good() ? 0 : -1;
 }

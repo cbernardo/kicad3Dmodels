@@ -1,7 +1,7 @@
 /*
  *      file: shoulder.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -28,42 +28,43 @@
  *                      r = radius of inner lip
  */
 
-#ifndef SHOULDER_H_
-#define SHOULDER_H_
+#ifndef SHOULDER_H
+#define SHOULDER_H
 
-namespace kc3d {
-
-class Transform;
-class VRMLMat;
+namespace KC3D
+{
+class TRANSFORM;
+class VRMLMAT;
 
 /**
  * \ingroup vrml_tools
  * This class represents the ridge found on the
  * bottom of some components such as SIL headers.
  */
-class Shoulder
+class SHOULDER
 {
 private:
-    bool valid;     ///< TRUE if the class holds a valid set of parameters
+    bool valid;                 ///< TRUE if the class holds a valid set of parameters
     double p0[3][7], p1[3][7];  ///< 2 polygons defining the shoulder
-    int np; ///< number of points defining the shoulder
+    int np;                     ///< number of points defining the shoulder
 
 public:
-    Shoulder();
-    virtual ~Shoulder();
+    SHOULDER();
+    virtual ~SHOULDER();
 
     /**
      * Calculate the outline of the shoulder.
      *
-     * @param l [in] length of top part
-     * @param h [in] height of the shoulder
-     * @param w [in] depth of the shoulder
-     * @param t [in] taper angle (radians) of the ends of the shoulder
-     * @param r [in] radius of the lower inner edge of the shoulder
-     * @param tx [in] local transformation to apply to results
+     * @param aLength    [in] length of top part
+     * @param aHeight    [in] height of the shoulder
+     * @param aWidth     [in] depth of the shoulder
+     * @param aTaper     [in] taper angle (radians) of the ends of the shoulder
+     * @param aRadius    [in] radius of the lower inner edge of the shoulder
+     * @param aTransform [in] local transformation to apply to results
      * @return 0 for success, -1 for failure
      */
-    int Calc(double l, double h, double w, double t, double r, Transform &tx);
+    int Calc( double aLength, double aHeight, double aWidth, double aTaper,
+              double aRadius, TRANSFORM& aTransform );
 
     /**
      * \brief Write out shoulder data
@@ -72,17 +73,18 @@ public:
      * the shoulder. The user must have made a previous
      * call to SetupXForm to create the encompassing Transform block.
      *
-     * @param t     [in] transform to apply to the output coordinates
-     * @param color [in] VRMLMat material appearance specification
-     * @param reuse [in] TRUE to reuse a previously written material name
-     * @param fp    [in] open output file
-     * @param tabs  [in] indent level for formatting
+     * @param aTransform    [in] transform to apply to the output coordinates
+     * @param aMaterial     [in] VRMLMat material appearance specification
+     * @param reuseMaterial [in] TRUE to reuse a previously written material name
+     * @param aVRMLFile     [in] open output file
+     * @param aTabDepth     [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int Build(Transform &t, VRMLMat &color, bool reuse,
-            std::ofstream &fp, int tabs = 0);
+    int Build( TRANSFORM& aTransform, VRMLMAT& aMaterial, bool reuseMaterial,
+               std::ofstream& aVRMLFile, int aTabDepth = 0 );
 };
 
-}   // namespace kc3d
 
-#endif /* SHOULDER_H_ */
+}    // namespace KC3D
+
+#endif // SHOULDER_H

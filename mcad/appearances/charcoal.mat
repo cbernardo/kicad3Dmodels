@@ -1,0 +1,12 @@
+# Charcoal black (as seen on black ceramic packages)
+# Copyright 2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+# License: GPLv.3 http://www.gnu.org/licenses/gpl.html
+#
+
+name: charcoal
+diffuse: 0.087 0.087 0.087
+emissive: 0.0 0.0 0.0
+specular: 0.01 0.01 0.01
+ambient: 0.09
+transparency: 0
+shininess: 0.0

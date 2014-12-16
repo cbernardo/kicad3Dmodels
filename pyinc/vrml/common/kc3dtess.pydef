@@ -1,0 +1,57 @@
+/*
+    file: kc3dtess.pydef
+
+    Python bindings for KC3D::TESSELATOR
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+
+
+namespace KC3D
+{
+    bool AddPolyToTess( const KC3D::POLYGON& aPoly, KC3D::TESSELATOR& aTess, bool aHole )
+    {
+        return aTess.AddPolygon( aPoly, aHole );
+    }
+
+    bool AddPolyToTess( const KC3D::FAKEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole )
+    {
+        return aTess.AddPolygon( aPoly, aHole );
+    }
+
+    bool AddPolyToTess( const KC3D::SIMPLEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole )
+    {
+        return aTess.AddPolygon( aPoly, aHole );
+    }
+
+    bool AddPolyToTess( const KC3D::CIRCLE& aPoly, KC3D::TESSELATOR& aTess, bool aHole )
+    {
+        return aTess.AddPolygon( aPoly, aHole );
+    }
+
+    bool AddPolyToTess( const KC3D::RECTANGLE& aPoly, KC3D::TESSELATOR& aTess, bool aHole )
+    {
+        return aTess.AddPolygon( aPoly, aHole );
+    }
+
+}
+
+bool (* addPoly1)( const KC3D::POLYGON& aPoly, KC3D::TESSELATOR& aTess, bool aHole ) = &KC3D::AddPolyToTess;
+bool (* addPoly2)( const KC3D::FAKEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole ) = &KC3D::AddPolyToTess;
+bool (* addPoly3)( const KC3D::FAKEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole ) = &KC3D::AddPolyToTess;
+bool (* addPoly4)( const KC3D::FAKEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole ) = &KC3D::AddPolyToTess;
+bool (* addPoly5)( const KC3D::FAKEPOLY& aPoly, KC3D::TESSELATOR& aTess, bool aHole ) = &KC3D::AddPolyToTess;

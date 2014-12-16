@@ -1,15 +1,15 @@
 /*
     file: hole.pyinc
-    
-    Python bindings for kc3d::Shoulder
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::SHOULDER
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,15 +21,14 @@
 */
 
 
-class_<kc3d::Hole, boost::noncopyable>("Hole", "Square frame with an elliptical or rectangular hole", init<>())
-    .def("calc", &kc3d::Hole::Calc, "Calculate the vertices",
+class_<KC3D::HOLE, boost::noncopyable>("HOLE", "Square frame with an elliptical or rectangular hole", init<>())
+    .def("calc", &KC3D::HOLE::Calc, "Calculate the vertices",
         args("w1: frame width [X]", "d1: frame depth [Y]",
         "w2: hole width", "d2: hole depth", "tx: transform to apply to result",
         "square: 1 for square hole", "ow: hole offset [X]", "od: hole offset [Y]",
         "np: vertices for elliptical holes [4..360 in multiples of 4]"))
-        
-    .def("build", &kc3d::Hole::Build, "Render the frame to file",
+
+    .def("build", &KC3D::HOLE::Build, "Render the frame to file",
         args("t: transform to apply to output", "color: appearance specification",
         "reuse: 1 to reuse color", "fp: open output file", "tabs: formatting indent level"))
-    ;
-    
+;

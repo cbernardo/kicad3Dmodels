@@ -1,15 +1,15 @@
 /*
     file: funnel.pyinc
-    
-    Python bindings for kc3d::Funnel
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::FUNNEL
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,23 +21,23 @@
 */
 
 
-class_<kc3d::Funnel>("Funnel", "Model funnel: elliptical or rectangular, rectangular funnels may be beveled", init<>())
-    .def(init<const kc3d::Funnel &>())
-    
-    .def("calc", &kc3d::Funnel::Calc, "Calculate the vertices of the funnel",
+class_<KC3D::FUNNEL>("FUNNEL", "Model funnel: elliptical or rectangular, rectangular funnels may be beveled", init<>())
+    .def(init<const KC3D::FUNNEL &>())
+
+    .def("calc", &KC3D::FUNNEL::Calc, "Calculate the vertices of the funnel",
         args("w1: flute width [X]", "d1: flute depth [Y]",
         "w2: stem width", "d2: stem depth", "h1: flute height",
         "h2: flute-stem transition [may be 0]",
         "h3: stem height", "t: transform to apply to result",
         "ns: vertices in an ellipse"))
 
-    .def("build", &kc3d::Funnel::Build, "Render the funnel to a file",
+    .def("build", &KC3D::FUNNEL::Build, "Render the funnel to a file",
         args("cap: 1 to render the bottom of the stem",
         "t: transform to apply to output",
         "flutecolor: appearance of the flute and transition piece", "reuse_flute: 1 to reuse flutecolor",
         "stemcolor: appearance of the stem", "reuse_stem: 1 to reuse stemcolor",
         "fp: open output file", "tabs: formatting indent level"))
-    
-    .def("setShape", &kc3d::Funnel::SetShape, "Set the cross-section shape of the funnel and the bevel parameter",
+
+    .def("setShape", &KC3D::FUNNEL::SetShape, "Set the cross-section shape of the funnel and the bevel parameter",
         args("square: 1 for square", "bevel: maybe <0 for no bevel"))
-    ;
+;

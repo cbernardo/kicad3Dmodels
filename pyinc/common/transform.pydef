@@ -1,15 +1,15 @@
 /*
     file: transform.pydef
-    
-    Overloads for Python bindings in kc3d::Transform and related classes
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Overloads for Python bindings in KC3D::Transform and related classes
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,38 +20,37 @@
 
 */
 
-// Translations:
-void (kc3d::Translation::*k3d_tra_set1) (kc3d::Quat) = &kc3d::Translation::set;
-void (kc3d::Translation::*k3d_tra_set2) (double, double, double) = &kc3d::Translation::set;
-void (kc3d::Translation::*k3d_tra_tran1) (kc3d::Quat &) = &kc3d::Translation::translate;
-void (kc3d::Translation::*k3d_tra_tran2) (double &, double &, double &) = &kc3d::Translation::translate;
+// TRANSLATIONs:
+void (KC3D::TRANSLATION::*k3d_tra_set1) (KC3D::QUAT) = &KC3D::TRANSLATION::Set;
+void (KC3D::TRANSLATION::*k3d_tra_set2) (double, double, double) = &KC3D::TRANSLATION::Set;
+void (KC3D::TRANSLATION::*k3d_tra_tran1) (KC3D::QUAT &) = &KC3D::TRANSLATION::Translate;
+void (KC3D::TRANSLATION::*k3d_tra_tran2) (double &, double &, double &) = &KC3D::TRANSLATION::Translate;
 
-// Rotations:
-void (kc3d::Rotation::*k3d_rot_rot1) (kc3d::Quat &) = &kc3d::Rotation::rotate;
-void (kc3d::Rotation::*k3d_rot_rot2) (double &, double &, double &) = &kc3d::Rotation::rotate;
-void (kc3d::Rotation::*k3d_rot_set1) (kc3d::Quat) = &kc3d::Rotation::set;
-void (kc3d::Rotation::*k3d_rot_set2) (double, double, double, double) = &kc3d::Rotation::set;
+// ROTATIONs:
+void (KC3D::ROTATION::*k3d_rot_rot1) (KC3D::QUAT &) = &KC3D::ROTATION::Rotate;
+void (KC3D::ROTATION::*k3d_rot_rot2) (double &, double &, double &) = &KC3D::ROTATION::Rotate;
+void (KC3D::ROTATION::*k3d_rot_set1) (KC3D::QUAT) = &KC3D::ROTATION::Set;
+void (KC3D::ROTATION::*k3d_rot_set2) (double, double, double, double) = &KC3D::ROTATION::Set;
 
 // Scaling:
-void (kc3d::Scale::*k3d_scale_scale1) (kc3d::Quat &) = &kc3d::Scale::scale;
-void (kc3d::Scale::*k3d_scale_scale2) (double &, double &, double &) = &kc3d::Scale::scale;
+void (KC3D::SCALE::*k3d_scale_scale1) (KC3D::QUAT &) = &KC3D::SCALE::Scale;
+void (KC3D::SCALE::*k3d_scale_scale2) (double &, double &, double &) = &KC3D::SCALE::Scale;
 
 // Transform
-void (kc3d::Transform::*k3d_xf_setTra1) (kc3d::Translation) = &kc3d::Transform::setTranslation;
-void (kc3d::Transform::*k3d_xf_setTra2) (kc3d::Quat) = &kc3d::Transform::setTranslation;
-void (kc3d::Transform::*k3d_xf_setTra3) (double, double, double) = &kc3d::Transform::setTranslation;
+void (KC3D::TRANSFORM::*k3d_xf_setTra1) (KC3D::TRANSLATION) = &KC3D::TRANSFORM::SetTranslation;
+void (KC3D::TRANSFORM::*k3d_xf_setTra2) (KC3D::QUAT) = &KC3D::TRANSFORM::SetTranslation;
+void (KC3D::TRANSFORM::*k3d_xf_setTra3) (double, double, double) = &KC3D::TRANSFORM::SetTranslation;
 
-void (kc3d::Transform::*k3d_xf_setRot1) (kc3d::Rotation) = &kc3d::Transform::setRotation;
-void (kc3d::Transform::*k3d_xf_setRot2) (kc3d::Quat) = &kc3d::Transform::setRotation;
-void (kc3d::Transform::*k3d_xf_setRot3) (double, double, double, double) = &kc3d::Transform::setRotation;
+void (KC3D::TRANSFORM::*k3d_xf_setRot1) (KC3D::ROTATION) = &KC3D::TRANSFORM::SetRotation;
+void (KC3D::TRANSFORM::*k3d_xf_setRot2) (KC3D::QUAT) = &KC3D::TRANSFORM::SetRotation;
+void (KC3D::TRANSFORM::*k3d_xf_setRot3) (double, double, double, double) = &KC3D::TRANSFORM::SetRotation;
 
-void (kc3d::Transform::*k3d_xf_setSca1) (kc3d::Scale) = &kc3d::Transform::setScale;
-void (kc3d::Transform::*k3d_xf_setSca2) (kc3d::Quat) = &kc3d::Transform::setScale;
-void (kc3d::Transform::*k3d_xf_setSca3) (double, double, double) = &kc3d::Transform::setScale;
-void (kc3d::Transform::*k3d_xf_setSca4) (double) = &kc3d::Transform::setScale;
+void (KC3D::TRANSFORM::*k3d_xf_setSca1) (KC3D::SCALE) = &KC3D::TRANSFORM::SetScale;
+void (KC3D::TRANSFORM::*k3d_xf_setSca2) (KC3D::QUAT) = &KC3D::TRANSFORM::SetScale;
+void (KC3D::TRANSFORM::*k3d_xf_setSca3) (double, double, double) = &KC3D::TRANSFORM::SetScale;
+void (KC3D::TRANSFORM::*k3d_xf_setSca4) (double) = &KC3D::TRANSFORM::SetScale;
 
-void (kc3d::Transform::*k3d_xf_xform1) (kc3d::Quat &) = &kc3d::Transform::transform;
-void (kc3d::Transform::*k3d_xf_xform2) (double &, double &, double &) = &kc3d::Transform::transform;
-void (kc3d::Transform::*k3d_xf_xform3) (kc3d::Quat *, int) = &kc3d::Transform::transform;
-void (kc3d::Transform::*k3d_xf_xform4) (double *, double *, double *, int) = &kc3d::Transform::transform;
-
+void (KC3D::TRANSFORM::*k3d_xf_xform1) (KC3D::QUAT &) = &KC3D::TRANSFORM::Transform;
+void (KC3D::TRANSFORM::*k3d_xf_xform2) (double &, double &, double &) = &KC3D::TRANSFORM::Transform;
+void (KC3D::TRANSFORM::*k3d_xf_xform3) (KC3D::QUAT *, int) = &KC3D::TRANSFORM::Transform;
+void (KC3D::TRANSFORM::*k3d_xf_xform4) (double *, double *, double *, int) = &KC3D::TRANSFORM::Transform;

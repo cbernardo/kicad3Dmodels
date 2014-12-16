@@ -1,15 +1,15 @@
 /*
     file: material.pyinc
-    
-    Python bindings for kc3d::Material   
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::Material
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,11 +20,11 @@
 
 */
 
-class_<kc3d::Material>("Material","VRML2.0 material appearance specification")
-    .def("Load", &kc3d::Material::Load, "read material appearance specification from the named file")
+class_<KC3D::MATERIAL>("Material","VRML2.0 material appearance specification")
+    .def("Load", &KC3D::MATERIAL::Load, "read material appearance specification from the named file")
     .add_property("name",
-        make_function(&kc3d::Material::GetName, return_value_policy<copy_const_reference>()),
-        &kc3d::Material::SetName, "internal name for the material appearance")
+        make_function(&KC3D::MATERIAL::GetName, return_value_policy<copy_const_reference>()),
+        &KC3D::MATERIAL::SetName, "internal name for the material appearance")
     // Note: should the rest be exposed to Python?
     /*
     int  SetDiffuse(const float rgb[3]);

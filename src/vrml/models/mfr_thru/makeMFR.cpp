@@ -1,7 +1,7 @@
 /*
  *      file: makeMFR.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -71,74 +71,105 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <wx/filename.h>
 
-#include "vdefs.h"
-#include "polygon.h"
-#include "vcom.h"
-#include "transform.h"
-#include "vrmlmat.h"
-#include "resistor.h"
-#include "keyvalparser.h"
+#include <macros.h>
+#include <vdefs.h>
+#include <polygon.h>
+#include <vcom.h>
+#include <transform.h>
+#include <vrmlmat.h>
+#include <resistor.h>
+#include <keyvalparser.h>
 
-extern char *optarg;
-extern int optopt;
+extern char*    optarg;
+extern int      optopt;
 
 using namespace std;
-using namespace kc3d;
-using namespace kc3dresistor;
+using namespace KC3D;
+using namespace KC3DRESISTOR;
 
-void printUsage(void)
+void printUsage( void )
 {
+    cout << "Usage: makeMFR [-h] [-k appearances_path] -p paramFile -o outputList\n";
     return;
 }
 
-int GetParams(const std::string &pfile, RParams &rp);
 
-int main(int argc, char **argv)
+int GetParams( const std::string& pfile, RPARAMS& rp, const std::string& matdir );
+
+int main( int argc, char** argv )
 {
-    KeyValParser outputs;
-    RParams params;
-    string paramFile;
-    string outFile;
-    Resistor res;
+    KEYVAL_PARSER outputs;
+    RPARAMS params;
+    string  paramFile;
+    string  outFile;
+    RESISTOR res;
+    string kc3ddir;
 
     int ich;
-    while ((ich = getopt(argc, argv, ":hp:o:")) > 0)
+
+    while( ( ich = getopt( argc, argv, ":hp:o:k:" ) ) > 0 )
     {
-        if (ich == ':')
+        if( ich == ':' )
         {
             ERRBLURB;
-            cerr << "missing option to '-" << (char)optopt << "'\n";
+            cerr << "missing option to '-" << (char) optopt << "'\n";
             printUsage();
             return -1;
         }
-        if (ich == '?')
+
+        if( ich == '?' )
         {
             ERRBLURB;
-            cerr << "unrecognized option '-" << (char)optopt << "'\n";
+            cerr << "unrecognized option '-" << (char) optopt << "'\n";
             printUsage();
             return -1;
         }
-        if (ich == 'h')
+
+        if( ich == 'h' )
         {
             printUsage();
             return 0;
         }
-        if (ich == 'p')
+
+        if( ich == 'p' )
         {
-            paramFile.assign(optarg);
+            paramFile.assign( optarg );
             cerr << "param file: " << paramFile << "\n";
             continue;
         }
-        if (ich == 'o')
+
+        if( ich == 'o' )
         {
-            outFile.assign(optarg);
+            outFile.assign( optarg );
             cerr << "output list: " << outFile << "\n";
             continue;
         }
+
+        if( ich == 'k' )
+        {
+            kc3ddir = optarg;
+            continue;
+        }
+
+    }   // optarg parsing
+
+    if( kc3ddir.empty() )
+    {
+        char *evp = getenv( "KC3DPATH" );
+
+        if( evp == NULL )
+        {
+            cout << "*** no KC3DPATH environment set and no path provided on command line\n";
+            printUsage();
+            return -1;
+        }
+
+        kc3ddir = evp;
     }
 
-    if (paramFile.empty())
+    if( paramFile.empty() )
     {
         ERRBLURB;
         cerr << "no parameters file specified\n";
@@ -146,7 +177,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    if (outFile.empty())
+    if( outFile.empty() )
     {
         ERRBLURB;
         cerr << "no output file list specified\n";
@@ -154,14 +185,14 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    if (GetParams(paramFile, params))
+    if( GetParams( paramFile, params, kc3ddir ) )
     {
         ERRBLURB;
         cerr << "unable to read parameters from file: '" << paramFile << "'\n";
         return -1;
     }
 
-    if (outputs.LoadKeys(outFile) <= 0)
+    if( outputs.LoadKeys( outFile ) <= 0 )
     {
         ERRBLURB;
         cerr << "unable to read output list from file: '" << paramFile << "'\n";
@@ -169,87 +200,101 @@ int main(int argc, char **argv)
     }
 
     map<string, string>::const_iterator lstart = outputs.GetKeys().begin();
-    map<string, string>::const_iterator lend   = outputs.GetKeys().end();
+    map<string, string>::const_iterator lend = outputs.GetKeys().end();
 
     int i = 0;
-    while (lstart != lend)
+
+    while( lstart != lend )
     {
         ++i;
-        if (res.Create(params, lstart->second, lstart->first))
+
+        if( res.Create( params, lstart->second, lstart->first ) )
         {
             ERRBLURB;
             cerr << "bailing out due to error\n";
             cerr << "Problems at item #" << i << "\n";
             return -1;
         }
+
         ++lstart;
     }
+
     return 0;
 }
 
-int GetParams(const std::string &pfile, RParams &rp)
-{
-    KeyValParser p;
-    if (p.LoadKeys(pfile) <= 0) return 0;
 
-    const map<string, string> &k = p.GetKeys();
+int GetParams( const std::string& pfile, RPARAMS& rp, const std::string& matdir )
+{
+    KEYVAL_PARSER p;
+
+    if( p.LoadKeys( pfile ) <= 0 )
+        return 0;
+
+    const map<string, string>& k = p.GetKeys();
     map<string, string>::const_iterator kp;
     map<string, string>::const_iterator kend = k.end();
 
     istringstream os;
-    kp = k.find("scale");
-    if (kp != kend)
+    kp = k.find( "scale" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.scale;
     }
 
-    kp = k.find("shift");
-    if (kp != kend)
+    kp = k.find( "shift" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.shift;
     }
 
-    kp = k.find("L");
-    if (kp != kend)
+    kp = k.find( "L" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.L;
     }
 
-    kp = k.find("D");
-    if (kp != kend)
+    kp = k.find( "D" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.D;
     }
 
-    kp = k.find("d");
-    if (kp != kend)
+    kp = k.find( "d" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.d;
     }
 
-    kp = k.find("p");
-    if (kp != kend)
+    kp = k.find( "p" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.p;
     }
 
-    kp = k.find("horiz");
-    if (kp != kend)
+    kp = k.find( "horiz" );
+
+    if( kp != kend )
     {
-        if ((!kp->second.compare("false")) ||
-                (!kp->second.compare("0")))
+        if( ( !kp->second.compare( "false" ) )
+            || ( !kp->second.compare( "0" ) ) )
         {
             rp.horiz = false;
         }
@@ -259,21 +304,23 @@ int GetParams(const std::string &pfile, RParams &rp)
         }
     }
 
-    kp = k.find("endstyle");
-    if (kp != kend)
+    kp = k.find( "endstyle" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.endshape;
     }
 
-    if (rp.endshape == 'B')
+    if( rp.endshape == 'B' )
     {
-        kp = k.find("bcap");
-        if (kp != kend)
+        kp = k.find( "bcap" );
+
+        if( kp != kend )
         {
-            if ((!kp->second.compare("false")) ||
-                    (!kp->second.compare("0")))
+            if( ( !kp->second.compare( "false" ) )
+                || ( !kp->second.compare( "0" ) ) )
             {
                 rp.bcap = false;
             }
@@ -288,55 +335,66 @@ int GetParams(const std::string &pfile, RParams &rp)
         rp.bcap = false;
     }
 
-    kp = k.find("wsides");
-    if (kp != kend)
+    kp = k.find( "wsides" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.wsides;
     }
 
-    kp = k.find("bsides");
-    if (kp != kend)
+    kp = k.find( "bsides" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.bsides;
     }
 
-    kp = k.find("rsides");
-    if (kp != kend)
+    kp = k.find( "rsides" );
+
+    if( kp != kend )
     {
         os.clear();
-        os.str(kp->second);
+        os.str( kp->second );
         os >> rp.rsides;
     }
 
-    kp = k.find("pwrsuf");
-    if (kp != kend)
+    kp = k.find( "pwrsuf" );
+
+    if( kp != kend )
     {
-        rp.pwrsuf.assign(kp->second);
+        rp.pwrsuf.assign( kp->second );
     }
 
-    kp = k.find("spcsuf");
-    if (kp != kend)
+    kp = k.find( "spcsuf" );
+
+    if( kp != kend )
     {
-        rp.spcsuf.assign(kp->second);
+        rp.spcsuf.assign( kp->second );
     }
 
     int i;
     ostringstream oss;
-    for (i = 0; i < 14; ++i)
+
+    for( i = 0; i < 14; ++i )
     {
-        oss.str("");
+        string color;
+        oss.str( "" );
         oss << "color" << i;
-        kp = k.find(oss.str());
-        if (kp != kend)
+        kp = k.find( oss.str() );
+
+        if( kp != kend )
         {
-            if (rp.colors[i].Load(kp->second))
+            wxFileName cfn( FROM_UTF8( matdir.c_str() ), FROM_UTF8( kp->second.c_str() ) );
+
+            if( rp.colors[i].Load( TO_UTF8( cfn.GetFullPath() ) ) )
             {
                 ERRBLURB;
-                cerr << "cannot load color #" << i << " ('" << kp->second << "')\n";
+                cerr << "cannot load color #" << i << " ('";
+                cerr << TO_UTF8( cfn.GetFullPath() ) << "')\n";
                 return -1;
             }
         }

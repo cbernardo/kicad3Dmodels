@@ -1,0 +1,37 @@
+/*
+    file: kc3dtess.pyinc
+
+    Python bindings for KC3D::TESSELATOR
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+*/
+
+def("addPolygon", addPoly1, "Adds XY vertices from given polygon");
+def("addPolygon", addPoly2);
+def("addPolygon", addPoly3);
+def("addPolygon", addPoly4);
+def("addPolygon", addPoly5);
+
+class_<KC3D::TESSELATOR>("Tesselator", "Planar tesselator", init<>())
+
+.def("clear", &KC3D::TESSELATOR::Clear, "Delete tesselation data")
+.def("getNContours", &KC3D::TESSELATOR::GetNContours, "Returns the number of internal contours")
+.def("newContour", &KC3D::TESSELATOR::NewContour, "Returns IF of a new contour object (-1: fail)")
+.def("addVertex", &KC3D::TESSELATOR::AddVertex, "Adds a new vertex to given contour ID")
+.def("ensureWinding", &KC3D::TESSELATOR::EnsureWinding, "Ensures CW (hole) or CCW (solid) winding of vertices")
+.def("writeVRML", &KC3D::TESSELATOR::WriteVRML, "Write tesselated surface to file")
+;

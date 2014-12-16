@@ -4,7 +4,8 @@
 #
 
 # common VRML objects
-add_subdirectory (vcom)
+add_subdirectory( vcom )
 
 # Part models
-add_subdirectory (models)
+add_subdirectory( models )
+

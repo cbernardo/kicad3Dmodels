@@ -1,7 +1,7 @@
 /*
  file: transform.cpp
 
- Copyright 2012, Cirilo Bernardo
+ Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "transform.h"
+#include <vdefs.h>
+#include <transform.h>
 
 // the minimum acceptable value of w in a quaternion normalization
 #define MIN_W (1e-9)
@@ -41,49 +42,52 @@
 #define MIN_TRANS (1e-8)
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
 /*
  *
  *         BASIC QUATERNION ARITHMETIC
  *
  */
-Quat::Quat()
+QUAT::QUAT()
 {
     x = y = z = 0.0;
     w = 1.0;
     return;
 }
 
-Quat::Quat(const Quat &p)
+
+QUAT::QUAT( const QUAT &aQuat )
 {
-    x = p.x;
-    y = p.y;
-    z = p.z;
-    w = p.w;
+    x = aQuat.x;
+    y = aQuat.y;
+    z = aQuat.z;
+    w = aQuat.w;
+
     return;
 }
 
-Quat::Quat(double w, double x, double y, double z)
+
+QUAT::QUAT( double w, double x, double y, double z )
 {
-    Quat::w = w;
-    Quat::x = x;
-    Quat::y = y;
-    Quat::z = z;
+    QUAT::w = w;
+    QUAT::x = x;
+    QUAT::y = y;
+    QUAT::z = z;
+
     return;
 }
 
 
 /* normalize the quaternion */
-int Quat::normalize(void)
+int QUAT::Normalize( void )
 {
     double n = w * w;
 
     // ensure that w is not too small; a zero value is bad news
-    if (n < MIN_W * MIN_W)
+    if( n < MIN_W * MIN_W )
     {
-        cerr << __FUNCTION__ << ":" << __LINE__ << ": " << __FUNCTION__
-                << "(): w is smaller than the limit " << MIN_W << "\n";
+        ERRBLURB << "w is smaller than the limit " << MIN_W << "\n";
         return -1;
     }
 
@@ -94,250 +98,309 @@ int Quat::normalize(void)
     x /= n;
     y /= n;
     z /= n;
+
     return 0;
 }
 
+
 /* normalize the XYZ vector */
-int Quat::vnormalize(void)
+int QUAT::VNormalize( void )
 {
     double n = x * x + y * y + z * z;
-    if (n < MIN_V)
+
+    if( n < MIN_V )
     {
         x = y = z = 0.0;
         return 1;
     }
+
     n = sqrt(n);
     x /= n;
     y /= n;
     z /= n;
+
     return 0;
 }
 
-void Quat::set(double w, double x, double y, double z)
+
+void QUAT::Set( double w, double x, double y, double z )
 {
-    Quat::w = w;
-    Quat::x = x;
-    Quat::y = y;
-    Quat::z = z;
+    QUAT::w = w;
+    QUAT::x = x;
+    QUAT::y = y;
+    QUAT::z = z;
+
     return;
 }
 
-Quat Quat::operator-()
+
+QUAT QUAT::operator-()
 {
-    Quat local(-w, -x, -y, -z);
+    QUAT local( -w, -x, -y, -z );
+
     return local;
 }
 
-Quat Quat::operator+(Quat arg)
+
+QUAT QUAT::operator+( QUAT arg )
 {
-    Quat local(arg);
+    QUAT local( arg );
     local.w += w;
     local.x += x;
     local.y += y;
     local.z += z;
+
     return local;
 }
 
-Quat Quat::operator-(Quat arg)
+
+QUAT QUAT::operator-( QUAT arg )
 {
-    Quat local(-arg);
+    QUAT local( -arg );
     local.w += w;
     local.x += x;
     local.y += y;
     local.z += z;
+
     return local;
 }
 
-Quat Quat::operator*(Quat arg)
+
+QUAT QUAT::operator*( QUAT arg )
 {
-    Quat local(0, 0, 0, 0);
+    QUAT local( 0, 0, 0, 0 );
     local.w = w * arg.w - x * arg.x - y * arg.y - z * arg.z;
     local.x = w * arg.x + x * arg.w + y * arg.z - z * arg.y;
     local.y = w * arg.y - x * arg.z + y * arg.w + z * arg.x;
     local.z = w * arg.z + x * arg.y - y * arg.x + z * arg.w;
+
     return local;
 }
 
-Quat Quat::operator*(double arg)
+
+QUAT QUAT::operator*( double arg )
 {
-    Quat local(*this);
+    QUAT local( *this );
     local.w *= arg;
     local.x *= arg;
     local.y *= arg;
     local.z *= arg;
+
     return local;
 }
 
-Quat Quat::operator/(double arg)
+
+QUAT QUAT::operator/( double arg )
 {
-    Quat local(*this);
+    QUAT local( *this );
     local.w /= arg;
     local.x /= arg;
     local.y /= arg;
     local.z /= arg;
+
     return local;
 }
 
-Quat kc3d::operator*(double d, Quat q)
+
+QUAT KC3D::operator*( double d, QUAT q )
 {
     return q * d;
 }
 
-Quat Quat::cross(const Quat &b) const
+
+QUAT QUAT::Cross( const QUAT &aQuat ) const
 {
-    Quat q;
-    q.x = y*b.z - z*b.y;
-    q.y = z*b.x - x*b.z;
-    q.z = x*b.y - y*b.x;
+    QUAT q;
+    q.x = y*aQuat.z - z*aQuat.y;
+    q.y = z*aQuat.x - x*aQuat.z;
+    q.z = x*aQuat.y - y*aQuat.x;
 
-    Quat p0(*this);
-    Quat p1(b);
-    p0.vnormalize();
-    p1.vnormalize();
+    QUAT p0( *this );
+    QUAT p1( aQuat );
+    p0.VNormalize();
+    p1.VNormalize();
 
-    q.w = acos(p0.x*p1.x + p0.y*p1.y + p0.z*p1.z);
+    q.w = acos( p0.x*p1.x + p0.y*p1.y + p0.z*p1.z );
     return q;
 }
+
 
 /*
  *
  *         TRANSLATION
  *
  */
-Translation::~Translation()
+TRANSLATION::~TRANSLATION()
 {
     return;
 }
 
-Translation::Translation()
+
+TRANSLATION::TRANSLATION()
 {
-    offset = Quat(1, 0, 0, 0);
+    offset = QUAT( 1, 0, 0, 0 );
     unity = true;
+
     return;
 }
 
-Translation::Translation(Quat p)
+
+TRANSLATION::TRANSLATION( QUAT aVector )
 {
-    offset = p;
+    offset = aVector;
     offset.w = 0.0;
     testUnity();
+
     return;
 }
 
-Translation::Translation(double x, double y, double z)
+
+TRANSLATION::TRANSLATION( double x, double y, double z )
 {
-    offset = Quat(0.0, x, y, z);
+    offset = QUAT( 0.0, x, y, z );
     testUnity();
+
     return;
 }
 
-Translation::Translation(const Translation &t)
+
+TRANSLATION::TRANSLATION( const TRANSLATION &aVector )
 {
-    offset = t.offset;
+    offset = aVector.offset;
     testUnity();
+
     return;
 }
 
-void Translation::set(Quat t)
+
+void TRANSLATION::Set( QUAT aVector )
 {
-    offset.x = t.x;
-    offset.y = t.y;
-    offset.z = t.z;
+    offset.x = aVector.x;
+    offset.y = aVector.y;
+    offset.z = aVector.z;
     testUnity();
+
     return;
 }
 
-void Translation::set(double x, double y, double z)
+
+void TRANSLATION::Set( double x, double y, double z )
 {
     offset.x = x;
     offset.y = y;
     offset.z = z;
     testUnity();
+
     return;
 }
 
-void Translation::testUnity(void)
+
+void TRANSLATION::testUnity( void )
 {
     unity = true;
-    if (fabs(offset.x) > MIN_TRANS)
+
+    if( fabs( offset.x ) > MIN_TRANS )
         unity = false;
-    if (fabs(offset.y) > MIN_TRANS)
+
+    if( fabs( offset.y ) > MIN_TRANS )
         unity = false;
-    if (fabs(offset.z) > MIN_TRANS)
+
+    if( fabs( offset.z ) > MIN_TRANS )
         unity = false;
+
     return;
 }
 
-Translation Translation::operator-()
+
+TRANSLATION TRANSLATION::operator-()
 {
-    Translation local(-offset.x, -offset.y, -offset.z);
+    TRANSLATION local( -offset.x, -offset.y, -offset.z );
+
     return local;
 }
 
-Translation Translation::operator+(Quat arg)
+
+TRANSLATION TRANSLATION::operator+( QUAT arg )
 {
-    Translation local(offset.x + arg.x, offset.y + arg.y, offset.z + arg.z);
+    TRANSLATION local( offset.x + arg.x, offset.y + arg.y, offset.z + arg.z );
+
     return local;
 }
 
-Translation Translation::operator+(Translation arg)
+
+TRANSLATION TRANSLATION::operator+( TRANSLATION arg )
 {
-    Translation local(offset.x + arg.offset.x, offset.y + arg.offset.y,
-            offset.z + arg.offset.z);
+    TRANSLATION local( offset.x + arg.offset.x, offset.y + arg.offset.y,
+            offset.z + arg.offset.z );
+
     return local;
 }
 
-Translation Translation::operator-(Quat arg)
+
+TRANSLATION TRANSLATION::operator-( QUAT arg )
 {
-    Translation local(offset.x - arg.x, offset.y - arg.y, offset.z - arg.z);
+    TRANSLATION local( offset.x - arg.x, offset.y - arg.y, offset.z - arg.z );
+
     return local;
 }
 
-Translation Translation::operator-(Translation arg)
+
+TRANSLATION TRANSLATION::operator-( TRANSLATION arg )
 {
-    Translation local(offset.x - arg.offset.x, offset.y - arg.offset.y,
-            offset.z - arg.offset.z);
+    TRANSLATION local( offset.x - arg.offset.x, offset.y - arg.offset.y,
+            offset.z - arg.offset.z );
+
     return local;
 }
 
-Translation Translation::operator*(double arg)
+
+TRANSLATION TRANSLATION::operator*( double arg )
 {
-    Translation local(offset.x*arg, offset.y*arg, offset.z*arg);
+    TRANSLATION local(offset.x*arg, offset.y*arg, offset.z*arg);
     return local;
 }
 
-Translation kc3d::operator*(double d, Translation t)
+
+TRANSLATION KC3D::operator*( double d, TRANSLATION t )
 {
-    Translation local = t*d;
+    TRANSLATION local = t*d;
+
     return local;
 }
 
-Translation Translation::operator/(double arg)
+
+TRANSLATION TRANSLATION::operator/( double arg )
 {
-    Translation local(offset.x/arg, offset.y/arg,offset.z/arg);
+    TRANSLATION local( offset.x/arg, offset.y/arg,offset.z/arg );
+
     return local;
 }
 
-void Translation::translate(Quat &p)
+
+void TRANSLATION::Translate( QUAT &p )
 {
-    if (unity)
+    if( unity )
         return;
+
     p.x += offset.x;
     p.y += offset.y;
     p.z += offset.z;
+
     return;
 }
 
-void Translation::translate(double &x, double &y, double &z)
+
+void TRANSLATION::Translate( double &x, double &y, double &z )
 {
-    if (unity)
+    if( unity )
         return;
+
     x += offset.x;
     y += offset.y;
     z += offset.z;
+
     return;
 }
-
 
 
 /*
@@ -345,61 +408,74 @@ void Translation::translate(double &x, double &y, double &z)
  *         ROTATION
  *
  */
-Rotation::~Rotation()
+ROTATION::~ROTATION()
 {
     return;
 }
 
-Rotation::Rotation()
+
+ROTATION::ROTATION()
 {
     zeroRotation();
+
     return;
 }
 
-Rotation::Rotation(double angle, double x, double y, double z)
+
+ROTATION::ROTATION( double angle, double x, double y, double z )
 {
-    set(angle, x, y, z);
+    Set( angle, x, y, z );
+
     return;
 }
 
-Rotation::Rotation(Quat p)
+
+ROTATION::ROTATION( QUAT aRotation )
 {
-    set(p);
+    Set( aRotation );
     return;
 }
 
-bool Rotation::isUnity(void)
+
+bool ROTATION::IsUnity( void )
 {
     return unity;
 }
 
-void Rotation::zeroRotation()
+
+void ROTATION::zeroRotation()
 {
-    axisangle = Quat(0.0, 0.0, 0.0, 1.0);
+    axisangle = QUAT( 0.0, 0.0, 0.0, 1.0 );
     mat[1] = mat[2] = mat[3] = mat[5] = mat[6] = mat[7] = 0.0;
     mat[0] = mat[4] = mat[8] = 1.0;
     unity = true;
+
     return;
 }
 
-void Rotation::set(Quat pt)
+
+void ROTATION::Set( QUAT aRotation )
 {
     unity = false;
-    axisangle = pt;
-    pt.vnormalize();
+    axisangle = aRotation;
+    aRotation.VNormalize();
     double angle, x, y, z, w, n, sina;
 
-    angle = pt.w;
-    if ((angle > M_PI)||(angle < -M_PI))
+    angle = aRotation.w;
+
+    if( (angle > M_PI) || (angle < -M_PI) )
     {
-        int i = (int)(angle/M_PI);
-        angle = angle - (M_PI*(double)i);
+        int i = (int)( angle/M_PI );
+        angle = angle - ( M_PI * (double)i );
     }
-    axisangle = Quat(angle, pt.x, pt.y, pt.z);
-    axisangle.vnormalize();
+
+    axisangle = QUAT( angle, aRotation.x, aRotation.y, aRotation.z );
+    axisangle.VNormalize();
     angle /= 2.0;
-    n = pt.x * pt.x + pt.y * pt.y + pt.z * pt.z;  // magnitude of axis vector
-    if (((angle * angle) < MIN_ANGLE)||(n < MIN_V))
+    // calculate magnitude of axis vector
+    n = aRotation.x * aRotation.x + aRotation.y * aRotation.y + aRotation.z * aRotation.z;
+
+    if( ((angle * angle) < MIN_ANGLE) || (n < MIN_V))
     {
         zeroRotation();
         return;
@@ -420,239 +496,321 @@ void Rotation::set(Quat pt)
     mat[6] = 2.0 * (x * z - w * y);
     mat[7] = 2.0 * (y * z + w * x);
     mat[8] = 1.0 - 2.0 * (x * x + y * y);
+
     return;
 }
 
-void Rotation::set(double angle, double x, double y, double z)
+
+void ROTATION::Set( double angle, double x, double y, double z )
 {
-    set(Quat(angle, x, y, z));
+    Set( QUAT( angle, x, y, z ) );
+
     return;
 }
 
-Quat Rotation::get(void)
+
+QUAT ROTATION::Get( void )
 {
     return axisangle;
 }
 
-void Rotation::rotate(Quat &pt)
+
+void ROTATION::Rotate( QUAT &aPoint )
 {
-    if (unity)
+    if( unity )
         return;
-    rotate(pt.x, pt.y, pt.z);
+
+    Rotate( aPoint.x, aPoint.y, aPoint.z );
+
     return;
 }
 
-void Rotation::rotate(double &x, double &y, double &z)
+
+void ROTATION::Rotate( double &x, double &y, double &z )
 {
     double a, b, c;
-    if (unity)
+
+    if( unity )
         return;
+
     a = mat[0] * x + mat[1] * y + mat[2] * z;
     b = mat[3] * x + mat[4] * y + mat[5] * z;
     c = mat[6] * x + mat[7] * y + mat[8] * z;
     x = a;
     y = b;
     z = c;
+
     return;
 }
+
 
 /*
  *
  *         SCALE
  *
  */
-Scale::Scale()
+SCALE::SCALE()
 {
-    factor = Quat(1.0, 1.0, 1.0, 1.0);
+    factor = QUAT( 1.0, 1.0, 1.0, 1.0 );
     unity = true;
+
     return;
 }
 
-Scale::Scale(Quat p)
+
+SCALE::SCALE( QUAT aScale )
 {
-    factor = p;
+    factor = aScale;
     factor.w = 1.0;
     testUnity();
+
     return;
 }
 
-Scale::Scale(double xscale, double yscale, double zscale)
+
+SCALE::SCALE( double xScale, double yScale, double zScale )
 {
-    factor = Quat(1.0, xscale, yscale, zscale);
+    factor = QUAT( 1.0, xScale, yScale, zScale );
     testUnity();
+
     return;
 }
 
-void Scale::set(double xscale, double yscale, double zscale)
+
+void SCALE::Set( double xScale, double yScale, double zScale )
 {
-    factor = Quat(1.0, xscale, yscale, zscale);
+    factor = QUAT( 1.0, xScale, yScale, zScale );
     testUnity();
+
     return;
 }
 
-void Scale::testUnity()
+
+void SCALE::testUnity()
 {
     unity = true;
-    if (fabs(factor.x - 1.0) > MIN_SCALE)
+
+    if( fabs( factor.x - 1.0 ) > MIN_SCALE )
         unity = false;
-    if (fabs(factor.y - 1.0) > MIN_SCALE)
+
+    if( fabs( factor.y - 1.0 ) > MIN_SCALE )
         unity = false;
-    if (fabs(factor.z - 1.0) > MIN_SCALE)
+
+    if( fabs( factor.z - 1.0 ) > MIN_SCALE )
         unity = false;
+
     return;
 }
 
-void Scale::scale(Quat &p)
+
+void SCALE::Scale( QUAT &aPoint )
 {
-    if (unity)
+    if( unity )
         return;
-    p.w *= factor.w;
-    p.x *= factor.x;
-    p.y *= factor.y;
-    p.z *= factor.z;
+
+    aPoint.w *= factor.w;
+    aPoint.x *= factor.x;
+    aPoint.y *= factor.y;
+    aPoint.z *= factor.z;
+
     return;
 }
 
-void Scale::scale(double &x, double &y, double &z)
+
+void SCALE::Scale( double &x, double &y, double &z )
 {
-    if (unity)
+    if( unity )
         return;
+
     x *= factor.x;
     y *= factor.y;
     z *= factor.z;
+
     return;
 }
+
 
 /*
  *
  *         TRANSFORM
  *
  */
-Transform::Transform()
+TRANSFORM::TRANSFORM()
 {
     unity = true;
+
+    return;
 }
 
-Transform::Transform(Translation T, Rotation R, Scale S)
+
+TRANSFORM::TRANSFORM( TRANSLATION T, ROTATION R, SCALE S )
 {
     t = T;
     r = R;
     s = S;
     testUnity();
+
+    return;
 }
 
-void Transform::set(Translation T, Rotation R, Scale S)
+
+void TRANSFORM::Set( TRANSLATION T, ROTATION R, SCALE S )
 {
     t = T;
     r = R;
     s = S;
     testUnity();
+
+    return;
 }
 
-void Transform::testUnity(void)
+
+void TRANSFORM::testUnity( void )
 {
-    if (t.isUnity() && r.isUnity() && s.isUnity())
+    if( t.IsUnity() && r.IsUnity() && s.IsUnity() )
         unity = true;
     else
         unity = false;
+
+    return;
 }
 
-void Transform::setTranslation(Translation T)
+
+void TRANSFORM::SetTranslation( TRANSLATION T )
 {
     t = T;
     testUnity();
+
+    return;
 }
 
-void Transform::setTranslation(Quat q)
+
+void TRANSFORM::SetTranslation( QUAT aTranslation )
 {
-    t = Translation(q);
+    t = TRANSLATION( aTranslation );
     testUnity();
+
+    return;
 }
 
-void Transform::setTranslation(double x, double y, double z)
+
+void TRANSFORM::SetTranslation( double x, double y, double z )
 {
-    t = Translation(x, y, z);
+    t = TRANSLATION( x, y, z );
     testUnity();
+
+    return;
 }
 
-void Transform::setRotation(Rotation R)
+
+void TRANSFORM::SetRotation( ROTATION R )
 {
     r = R;
     testUnity();
+
+    return;
 }
 
-void Transform::setRotation(Quat q)
+
+void TRANSFORM::SetRotation( QUAT aRotation )
 {
-    r = Rotation(q);
+    r = ROTATION( aRotation );
     testUnity();
+
+    return;
 }
 
-void Transform::setRotation(double angle, double x, double y, double z)
+
+void TRANSFORM::SetRotation( double angle, double x, double y, double z )
 {
-    r = Rotation(angle, x, y, z);
+    r = ROTATION( angle, x, y, z );
     testUnity();
+
+    return;
 }
 
-void Transform::setScale(Scale S)
+
+void TRANSFORM::SetScale( SCALE S )
 {
     s = S;
     testUnity();
-}
 
-void Transform::setScale(Quat q)
-{
-    s = Scale(q);
-    testUnity();
-}
-
-void Transform::setScale(double x, double y, double z)
-{
-    s = Scale(x, y, z);
-    testUnity();
-}
-
-void Transform::setScale(double n)
-{
-    s = Scale(n, n, n);
-    testUnity();
-}
-
-void Transform::transform(Quat &p)
-{
-    if (unity)
-        return;
-    r.rotate(p);
-    s.scale(p);
-    t.translate(p);
     return;
 }
 
-void Transform::transform(double &x, double &y, double &z)
+
+void TRANSFORM::SetScale( QUAT aScale )
 {
-    if (unity)
-        return;
-    r.rotate(x, y, z);
-    s.scale(x, y, z);
-    t.translate(x, y, z);
+    s = SCALE( aScale );
+    testUnity();
+
     return;
 }
 
-void Transform::transform(Quat *p, int np)
+
+void TRANSFORM::SetScale( double x, double y, double z )
+{
+    s = SCALE( x, y, z );
+    testUnity();
+
+    return;
+}
+
+
+void TRANSFORM::SetScale( double aScale )
+{
+    s = SCALE( aScale, aScale, aScale );
+    testUnity();
+
+    return;
+}
+
+
+void TRANSFORM::Transform( QUAT &aPoint )
+{
+    if( unity )
+        return;
+
+    s.Scale( aPoint );
+    r.Rotate( aPoint );
+    t.Translate( aPoint );
+
+    return;
+}
+
+
+void TRANSFORM::Transform( double &x, double &y, double &z )
+{
+    if( unity )
+        return;
+
+    s.Scale( x, y, z );
+    r.Rotate( x, y, z );
+    t.Translate( x, y, z );
+
+    return;
+}
+
+
+void TRANSFORM::Transform( QUAT *aPointList, int nPoints )
 {
     int i;
-    Quat *qp = p;
 
-    if (unity)
+    if( unity )
         return;
-    for (i = 0; i < np; ++i)
+
+    for ( i = 0; i < nPoints; ++i )
     {
-        r.rotate(*qp);
-        s.scale(*qp);
-        t.translate(*qp++);
+        s.Scale( *aPointList );
+        r.Rotate( *aPointList );
+        t.Translate( *aPointList++ );
     }
+
+    return;
 }
 
-void Transform::transform(double *x, double *y, double *z, int np)
+
+void TRANSFORM::Transform( double *x, double *y, double *z, int nPoints )
 {
     int i;
     double *X, *Y, *Z;
@@ -661,38 +819,42 @@ void Transform::transform(double *x, double *y, double *z, int np)
     Y = y;
     Z = z;
 
-    if (unity)
+    if( unity )
         return;
-    for (i = 0; i < np; ++i)
+
+    for (i = 0; i < nPoints; ++i)
     {
-        r.rotate(*X, *Y, *Z);
-        t.translate(*X, *Y, *Z);
-        s.scale(*X, *Y, *Z);
+        s.Scale( *X, *Y, *Z );
+        r.Rotate( *X, *Y, *Z );
+        t.Translate( *X, *Y, *Z );
         ++X;
         ++Y;
         ++Z;
     }
-}
 
-
-// TODO: Document and push into python bindings
-void Transform::GetTranslation(Translation &extt)
-{
-    extt = t;
     return;
 }
 
-// TODO: Document and push into python bindings
-void Transform::GetRotation(Rotation &extr)
+
+/// TODO: Document and push into python bindings
+void TRANSFORM::GetTranslation( TRANSLATION &aTranslation )
 {
-    extr = r;
+    aTranslation = t;
     return;
 }
 
-// TODO: Document and push into python bindings
-void Transform::GetScale(Scale &exts)
+
+/// TODO: Document and push into python bindings
+void TRANSFORM::GetRotation( ROTATION &aRotation )
 {
-    exts = s;
+    aRotation = r;
     return;
 }
 
+
+/// TODO: Document and push into python bindings
+void TRANSFORM::GetScale( SCALE &aScale )
+{
+    aScale = s;
+    return;
+}

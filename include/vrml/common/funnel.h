@@ -1,7 +1,7 @@
 /*
  *      file: funnel.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -52,16 +52,17 @@
  *
  */
 
-#ifndef FUNNEL_H_
-#define FUNNEL_H_
+#ifndef FUNNEL_H
+#define FUNNEL_H
 
 #include <iosfwd>
-#include "polygon.h"
 
-namespace kc3d {
+#include <polygon.h>
 
-class VRMLMat;
-class Transform;
+namespace KC3D
+{
+class VRMLMAT;
+class TRANSFORM;
 
 /**
  * \ingroup vrml_tools
@@ -70,24 +71,23 @@ class Transform;
  * A funnel may be used to render a receptacle. The shape may
  * be rectangular or elliptical in cross-section.
  */
-class Funnel
+class FUNNEL
 {
 private:
-    bool   valid;   ///< TRUE if there is a valid vertex set
-    bool   square;  ///< TRUE if the funnel is rectangular (default)
-    int    npoly;   ///< number of polygons in the funnel
+    bool    valid;  ///< TRUE if there is a valid vertex set
+    bool    square; ///< TRUE if the funnel is rectangular (default)
+    int     npoly;  ///< number of polygons in the funnel
     double bev;     ///< bevel (for square funnels only)
-    Polygon **poly; ///< list of polygons representing the funnel
+    POLYGON** poly; ///< list of polygons representing the funnel
 
-    void cleanup(void);
-
+    void cleanup( void );
 
 public:
-    Funnel();
-    Funnel (const Funnel &p);
-    virtual ~Funnel();
+    FUNNEL();
+    FUNNEL( const FUNNEL& p );
+    virtual ~FUNNEL();
 
-    Funnel &operator=(const Funnel &p);
+    FUNNEL& operator=( const FUNNEL& p );
 
     /***
      * \brief Calculate the polygons defining a funnel
@@ -97,19 +97,20 @@ public:
      * cross-section may be chosen by invoking SetShape prior to
      * invoking this method.
      *
-     * @param w1 [in] width (X axis) of the flute
-     * @param d1 [in] depth (Y axis) of the flute
-     * @param w2 [in] width (X axis) of the stem
-     * @param d2 [in] width (Y axis) of the stem
-     * @param h1 [in] length (Z axis) of the flute; must be >= 0
-     * @param h2 [in] length (Z axis) of the stem portion which is the same color as the flute (<= 0 means none)
-     * @param h3 [in] length (Z axis) of the stem portion different in color to the flute (must be > 0)
-     * @param t  [in] geometric transform to apply to results
-     * @param ns [in] (optional) number of vertices in an elliptical flute cross-section
+     * @param aFluteXWidth [in] width (X) of the flute
+     * @param aFluteYDepth [in] depth (Y) of the flute
+     * @param aStemXWidth [in] width (X) of the stem
+     * @param aStemYDepth [in] width (Y) of the stem
+     * @param aFluteLength [in] length (Z) of the flute; must be >= 0
+     * @param aStemLength [in] length (Z) of stem which is same color as flute (<= 0 == none)
+     * @param aStemLength2 [in] length (Z) of stem different in color to flute (must be > 0)
+     * @param aTransform [in] geometric transform to apply to results
+     * @param aNumberSides [in] optional number of vertices in elliptical flute cross-section
      * @return 0 for success, -1 for failure
      */
-    int Calc(double w1, double d1, double w2, double d2,
-            double h1, double h2, double h3, Transform &t, int ns = 16);
+    int Calc( double aFluteXWidth, double aFluteYDepth, double aStemXWidth,
+              double aStemYDepth, double aFluteLength, double aStemLength,
+              double aStemLength2, TRANSFORM& aTransform, int aNumberSides = 16 );
 
     /**
      * \brief Render a funnel
@@ -118,26 +119,27 @@ public:
      *
      * @param cap [in] TRUE if the bottom face of the stem is to be rendered
      * @param t   [in] geometric transform to apply to output vertices
-     * @param flutecolor [in] VRMLMat material appearance for the flute
+     * @param flutecolor [in] VRMLMAT material appearance for the flute
      * @param reuse_flute [in] TRUE if a previously written definition of 'flutecolor' is to be used
-     * @param stemcolor [in] VRMLMat material appearance for the stem
+     * @param stemcolor [in] VRMLMAT material appearance for the stem
      * @param reuse_stem [in] TRUE if a previously written definition of 'stemcolor' is to be used
      * @param fp [in] open output file
      * @param tabs [in] indent level for formatting
      * @return 0 for success, -1 for failure
      */
-    int Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
-            VRMLMat &stemcolor, bool reuse_stem, std::ofstream &fp, int tabs = 0);
+    int Build( bool aRenderCap, TRANSFORM& aTransform, VRMLMAT& aFluteMat, bool reuseFluteMat,
+               VRMLMAT& aStemMat, bool reuseStemMat, std::ofstream& aVRMLFile,
+               int aTabDepth = 0 );
 
     /**
      * Set the cross-section shape of the funnel
      *
-     * @param square [in] TRUE for a rectangular cross-section, FALSE for an elliptical cross-section
-     * @param bev [in] >0 if a rectangular flute is to be beveled; bev must be < 1/2 the smallest cross-sectional dimension of the stem
+     * @param isSquare [in] TRUE for a rectangular cross-section, FALSE for an elliptical cross-section
+     * @param aBevel [in] >0 if a rectangular flute is to be beveled; bev must be < 1/2 the smallest cross-sectional dimension of the stem
      */
-    void SetShape(bool square, double bev = -1.0);
+    void SetShape( bool isSquare, double aBevel = -1.0 );
 };
 
-}   // namespace kc3d
+}    // namespace KC3D
 
-#endif /* FUNNEL_H_ */
+#endif // FUNNEL_H

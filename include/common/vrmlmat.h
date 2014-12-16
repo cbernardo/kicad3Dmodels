@@ -1,7 +1,7 @@
 /*
  *      file: vrmlmat.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -19,15 +19,15 @@
  */
 
 
-#ifndef VRMLMAT_H_
-#define VRMLMAT_H_
+#ifndef VRMLMAT_H
+#define VRMLMAT_H
 
 #include <fstream>
 
-#include "material.h"
+#include <material.h>
 
-namespace kc3d {
-
+namespace KC3D
+{
 /**
  * \file
  * \defgroup vrml_tools VRML Tools
@@ -41,19 +41,19 @@ namespace kc3d {
  * implements a procedure to write the information
  * to a VRML2.0 output file
  */
-class VRMLMat : public Material
+class VRMLMAT : public MATERIAL
 {
 public:
     /**
      * Write out a VRML2.0 compliant material block
      *
-     * @param file  [in]    output file
-     * @param tabs  [in]    indentation depth of the text block
+     * @param aVRMLFile [in]    output file
+     * @param aTabDepth [in]    indentation depth of the text block
      * @return 0 for success, -1 for failure
      */
-    int WriteMaterial(std::ofstream &file, int tabs = 0, bool mainblock = false);
+    int WriteMaterial( std::ofstream& aVRMLFile, int aTabDepth = 0 );
 };
 
-}   // namespace kc3d
+}    // namespace KC3D
 
-#endif /* VRMLMAT_H_ */
+#endif // VRMLMAT_H

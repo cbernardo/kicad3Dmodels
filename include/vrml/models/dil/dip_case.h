@@ -1,26 +1,26 @@
 /*
- file: dip_case.h
-
- Copyright 2012, Cirilo Bernardo (cjh.bernardo@gmail.com)
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>
-
- Notes:
- These classes were created to support the
- programmatic creation of VRML models for
- use with KiCad.
-
+ *  file: dip_case.h
+ *
+ *  Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
+ *  Notes:
+ *  These classes were created to support the
+ *  programmatic creation of VRML models for
+ *  use with KiCad.
+ *
  */
 
 #ifndef DIP_CASE_H
@@ -28,7 +28,7 @@
 
 #include <iosfwd>
 
-#include "transform.h"
+#include <transform.h>
 
 // note: original CASE_NP was 76; it was increased
 // to 80 to support an internal rectangle to improve
@@ -37,127 +37,148 @@
 // edge of the case.
 #define CASE_NP (80)
 
-namespace kc3ddip {
+namespace KC3DDIP
+{
 
-class DipCase
+class DIPCASE
 {
 private:
-    kc3d::Quat p[CASE_NP];
-    double NW;      ///< [NotchWidth]
-    double ND;      ///< [NotchDepth]
-    double BEV;     ///< [CaseBevel]
-    double MID;     ///< [CaseMidHeight] depth of middle portion where pins attach
-    double NL;      ///< [NotchLength] must be > NW/2
-    double D;       ///< [CaseLength]
-    double E1;      ///< [CaseWidth]
-    double S;       ///< [CaseTaper] deviation of unbeveled top and bottom edges
-    double A1;      ///< [BaseHeight] distance from board to bottom of case
-    double A2;      ///< [CaseDepth]
-    bool valid;     ///< true when the current set of vertices are valid
+    KC3D::QUAT p[CASE_NP];
+    double  NW;     ///< [NotchWidth]
+    double  ND;     ///< [NotchDepth]
+    double  BEV;    ///< [CaseBevel]
+    double  MID;    ///< [CaseMidHeight] depth of middle portion where pins attach
+    double  NL;     ///< [NotchLength] must be > NW/2
+    double  D;      ///< [CaseLength]
+    double  E1;     ///< [CaseWidth]
+    double  S;      ///< [CaseTaper] deviation of unbeveled top and bottom edges
+    double  A1;     ///< [BaseHeight] distance from board to bottom of case
+    double  A2;     ///< [CaseDepth]
+    bool    valid;  ///< true when the current set of vertices are valid
 
 public:
-    DipCase();
+    DIPCASE();
 
     /**
      * Set the case parameters
      *
-     * @param d [in] case length
-     * @param e1 [in] case width
-     * @param a1 [in] distance from top of PCB to bottom of case
-     * @param a2 [in] depth of the case
-     * @param nw [in] notch width
-     * @param nd [in] notch depth (must be < (a1-mid)/2)
-     * @param nl [in] notch length
-     * @param mid [in] depth of middle untapered section
-     * @param bev [in] bevel
-     * @param s [in] inward offset of case top and bottom
+     * @param aCaseLength [in] case length
+     * @param aCaseWidth [in] case width
+     * @param aPCBOffset [in] distance from top of PCB to bottom of case
+     * @param aCaseDepth [in] depth of the case
+     * @param aNotchWidth [in] notch width
+     * @param aNotchDepth [in] notch depth (must be < (a1-mid)/2)
+     * @param aNotchLength [in] notch length
+     * @param aCaseMidZ [in] depth of middle untapered section
+     * @param aBevel [in] bevel on case corners
+     * @param aTaper [in] an inward offset of case top and bottom
      * @return 0 for success, -1 for failure
      */
-    int setParams(double d, double e1, double a1, double a2,
-            double nw, double nd, double nl, double mid, double bev, double s);
+    int SetParams( double aCaseLength, double aCaseWidth, double aPCBOffset,
+                   double aCaseDepth, double aNotchWidth, double aNotchDepth,
+                   double aNotchLength, double aCaseMidZ, double aBevel, double aTaper );
 
     /// set the case length
-    int setCaseLength(double d);
+    int SetCaseLength( double aCaseLength );
+
     /// retrieve the case length
-    double getCaseLength(void)
+    double GetCaseLength( void )
     {
         return D;
     }
+
     /// set the case width
-    int setCaseWidth(double e1);
+    int SetCaseWidth( double aCaseWidth );
+
     /// retrieve the case width
-    double getCaseWidth(void)
+    double GetCaseWidth( void )
     {
         return E1;
     }
+
     /// set the case taper
-    int setCaseTaper(double s);
+    int SetCaseTaper( double aTaper );
+
     /// retrieve the case taper
-    double getCaseTaper(void)
+    double GetCaseTaper( void )
     {
         return S;
     }
+
     /// set the case base height above the PCB
-    int setBaseHeight(double a1);
+    int SetBaseHeight( double aPCBOffset );
+
     /// retrieve the case base height above the PCB
-    double getBaseHeight(void)
+    double GetBaseHeight( void )
     {
         return A1;
     }
+
     /// set the case depth
-    int setCaseDepth(double a2);
+    int SetCaseDepth( double aCaseDepth );
+
     /// retrieve the case depth
-    double getCaseDepth(void)
+    double GetCaseDepth( void )
     {
         return A2;
     }
 
     /* ancillary parameters for improved looks */
     /// set the width of the case notch
-    int setNotchWidth(double nw);
+    int SetNotchWidth( double aNotchWidth );
+
     /// retrieve the width of the case notch
-    double getNotchWidth(void)
+    double GetNotchWidth( void )
     {
         return NW;
     }
+
     /// set the depth of the case notch
-    int setNotchDepth(double nd);
+    int SetNotchDepth( double aNotchDepth );
+
     /// retrieve the depth of the case notch
-    double getNotchDepth(void)
+    double GetNotchDepth( void )
     {
         return ND;
     }
+
     /// set the case bevel value
-    int setCaseBevel(double bev);
+    int SetCaseBevel( double aBevel );
+
     /// retrieve the case bevel value
-    double getCaseBevel(void)
+    double GetCaseBevel( void )
     {
         return BEV;
     }
+
     /// set the case center's depth
-    int setCaseMidHeight(double mid);
+    int SetCaseMidHeight( double aCaseMidZ );
+
     /// retrieve the case center's depth
-    double getCaseMidHeight(void)
+    double GetCaseMidHeight( void )
     {
         return MID;
     }
+
     /// set the case notch's length
-    int setNotchLength(double nl);
+    int SetNotchLength( double aNotchLength );
+
     /// retrieve the case notch's length
-    double getNotchLength(void)
+    double GetNotchLength( void )
     {
         return NL;
     }
 
     /// calculate the vertices
-    int calc(void);
+    int Calc( void );
 
     /// write the point list as a VRML Coordinate{}
-    int writeCoord(kc3d::Transform &t, std::ofstream &fp, int tabs = 0);
+    int WriteCoord( KC3D::TRANSFORM& aTransform, std::ofstream& aVRMLFile, int aTabDepth = 0 );
+
     /// write the facet list as a VRML coordIndex[]
-    int writeFacets(std::ofstream &fp, int tabs = 0);
+    int WriteFacets( std::ofstream& aVRMLFile, int aTabDepth = 0 );
 };
 
-}   // namespace kc3ddip
+}    // namespace KC3DDIP
 
-#endif /* DIP_CASE_H */
+#endif // DIP_CASE_H

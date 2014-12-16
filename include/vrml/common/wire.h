@@ -1,7 +1,7 @@
 /*
  *      file: wire.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -18,22 +18,21 @@
  *
  */
 
-#ifndef WIRE_H_
-#define WIRE_H_
+#ifndef WIRE_H
+#define WIRE_H
 
 #include <iosfwd>
 #include <vector>
 
-#include "transform.h"
+#include <transform.h>
 
-namespace kc3d
+namespace KC3D
 {
-
-class VRMLMat;
+class VRMLMAT;
 
 /**
  * \ingroup vrml_tools
- * \brief Wire (swept path)
+ * \brief WIRE (swept path)
  *
  * This class represents a swept path or wire.
  * A list of points in 3D space is built up to
@@ -51,27 +50,28 @@ class VRMLMat;
  * length is calculated to aid the user in
  * estimating wire lengths.
  */
-class Wire
+class WIRE
 {
 private:
-    std::vector <kc3d::Quat> path;
-    double seg_ang; // segments per PI radians
-    double rbend;   // bend radius
+    std::vector <KC3D::QUAT> path;
+    double  seg_ang;    // segments per PI radians
+    double  rbend;      // bend radius
 
-    int extrude(Quat &p1, Quat &p2, SimplePoly &shape, double &length,
-            bool cap0, bool cap1, bool outside, Transform &t,
-            VRMLMat &color, bool &reuse, std::ofstream &file, int tabs = 0);
-    int render(Quat &p1, Quat &p2, Quat &p3, Quat &norm, SimplePoly &shape, double &length,
-            bool cap0, bool outside, Transform &t, VRMLMat &color, bool reuse,
-            std::ofstream &file, int tabs = 0);
+    int extrude( QUAT& p1, QUAT& p2, SIMPLEPOLY& shape, double& length,
+            bool cap0, bool cap1, bool outside, TRANSFORM& t,
+            VRMLMAT& color, bool& reuse, std::ofstream& file, int tabs = 0 );
+
+    int render( QUAT& p1, QUAT& p2, QUAT& p3, QUAT& norm, SIMPLEPOLY& shape, double& length,
+            bool cap0, bool outside, TRANSFORM& t, VRMLMAT& color, bool reuse,
+            std::ofstream& file, int tabs = 0 );
 
 public:
-    Wire();
-    virtual ~Wire();
+    WIRE();
+    virtual ~WIRE();
 
-    int AddPoint(const Quat &q);
-    int AddPoint(double x, double y, double z);
-    void Clear();
+    int     AddPoint( const QUAT& aPoint );
+    int     AddPoint( double x, double y, double z );
+    void    Clear();
 
     /**
      * Set parameters used in extruding the wirse
@@ -80,11 +80,12 @@ public:
      * @param bend_radius [in] bend radius (radians)
      * @return 0 for success, -1 for failure
      */
-    int SetParams(double segments, double bend_radius);
+    int SetParams( double aNSegments, double aBendRadius );
 
-    double Build(const Polygon &shape, bool cap0, bool cap1, bool outside, Transform &t,
-            VRMLMat &color, bool reuse, std::ofstream &file, int tabs = 0);
+    double Build( const POLYGON& aShape, bool aRenderCap0, bool aRenderCap1,
+                  bool isOutside, TRANSFORM& aTransform, VRMLMAT& aMaterial,
+                  bool reuseMaterial, std::ofstream& aVRMLFile, int aTabDepth = 0 );
 };
 
-} /* namespace kc3d */
-#endif /* WIRE_H_ */
+}    // namespace KC3D
+#endif // WIRE_H

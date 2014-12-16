@@ -1,15 +1,15 @@
 /*
     file: rectangle.pyinc
-    
-    Python bindings for kc3d::Ractangle
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::Ractangle
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,17 +20,16 @@
 
 */
 
-    class_<kc3d::Rectangle, bases<kc3d::Polygon> >("Rectangle", "Generic rectangle, plain or beveled", init<>())
+    class_<KC3D::RECTANGLE, bases<KC3D::POLYGON> >("Rectangle", "Generic rectangle, plain or beveled", init<>())
         .def(init<double>())
-        .def(init<const kc3d::Rectangle &>())
-        
-        .def("clone", &kc3d::Rectangle::clone, "Create a copy of this rectangle", return_value_policy<manage_new_object>())
-        .def("calc", &kc3d::Rectangle::Calc, "Calculate the vertices",
+        .def(init<const KC3D::RECTANGLE &>())
+
+        .def("clone", &KC3D::RECTANGLE::Clone, "Create a copy of this rectangle", return_value_policy<manage_new_object>())
+        .def("calc", &KC3D::RECTANGLE::Calc, "Calculate the vertices",
             args("xl: X dimension", "yl: Y dimension", "t: transform to apply to result"))
-        .def("setBevel", &kc3d::Rectangle::SetBevel, "Set the bevel; must be <1/2 of X or Y dimension")
-        .def("paint", &kc3d::Polygon::Paint)
-        .def("stitch", &kc3d::Polygon::Stitch)
-        .def("extrude", &kc3d::Polygon::Extrude)
-        .def("xform", &kc3d::Polygon::Xform)
-        // .def("getVertices", &kc3d::Polygon::GetVertices)
+        .def("setBevel", &KC3D::RECTANGLE::SetBevel, "Set the bevel; must be <1/2 of X or Y dimension")
+        .def("paint", &KC3D::POLYGON::Paint)
+        .def("stitch", &KC3D::POLYGON::Stitch)
+        .def("extrude", &KC3D::POLYGON::Extrude)
+        .def("xform", &KC3D::POLYGON::Xform)
     ;

@@ -1,7 +1,7 @@
 /*
  *      file: keyvalparser.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -22,103 +22,118 @@
 #include <fstream>
 #include <cctype>
 
-#include "keyvalparser.h"
+#include <vdefs.h>
+#include <keyvalparser.h>
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-KeyValParser::~KeyValParser()
+KEYVAL_PARSER::~KEYVAL_PARSER()
 {
     keyvals.clear();
-    return;
 }
 
-int KeyValParser::LoadKeys(const std::string &filename)
+
+int KEYVAL_PARSER::LoadKeys( const std::string& aFilename )
 {
     ifstream file;
     string iline;
 
-    file.open(filename.c_str());
-    if (!file.is_open())
+    file.open( aFilename.c_str() );
+
+    if( !file.is_open() )
     {
-        cerr << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(): could not open file \""
-                << filename << "\".\n";
+        ERRBLURB << "could not open file \"" << aFilename << "\".\n";
         return -1;
     }
 
-    while (file.good()&&!file.eof())
+    while( file.good()&&!file.eof() )
     {
-        getline(file, iline);
-        parseLine(iline);
+        getline( file, iline );
+        parseLine( iline );
     }
-    if (keyvals.empty())
+
+    if( keyvals.empty() )
     {
-        cout << "No key:value pairs found in file: " << filename << "\n";
+        cout << "* Warning: No key:value pairs found in file: " << aFilename << "\n";
     }
 
     return keyvals.size();
 }
 
-void KeyValParser::ClearKeys(void)
+
+void KEYVAL_PARSER::ClearKeys( void )
 {
     keyvals.clear();
-    return;
 }
 
-const std::map<std::string, std::string> &
-KeyValParser::GetKeys(void)
+
+const std::map<std::string, std::string>& KEYVAL_PARSER::GetKeys( void )
 {
     return keyvals;
 }
 
 
-int KeyValParser::parseLine(const std::string &line)
+int KEYVAL_PARSER::parseLine( const std::string& aLine )
 {
-    if (line.empty()) return 0;
-    if (!line.compare(0,1,"#",1)) return 0;
+    if( aLine.empty() )
+        return 0;
+
+    if( !aLine.compare( 0, 1, "#", 1 ) )
+        return 0;
 
     string key;
     string val;
 
-    string::const_iterator sp = line.begin();
-    string::const_iterator ep = line.end();
+    string::const_iterator sp   = aLine.begin();
+    string::const_iterator ep   = aLine.end();
 
-    while(sp != ep)
+    while( sp != ep )
     {
-        if (isspace(*sp))
+        if( isspace( *sp ) )
         {
             ++sp;
             continue;
         }
-        if (*sp == ':')
+
+        if( *sp == ':' )
         {
             ++sp;
             break;
         }
-        key.push_back(*sp);
+
+        key.push_back( *sp );
         ++sp;
     }
-    if (key.empty()) return 0;
 
-    while(sp != ep)
+    if( key.empty() )
+        return 0;
+
+    while( sp != ep )
     {
-        if (isspace(*sp)&&(val.empty()))
+        if( isspace( *sp )&&( val.empty() ) )
         {
             ++sp;
             continue;
         }
-        val.push_back(*sp);
+
+        val.push_back( *sp );
         ++sp;
     }
-    if (val.empty()) return 0;
+
+    if( val.empty() )
+        return 0;
+
     // trim space from right
-    string::iterator msp = val.begin();
-    string::iterator mep = val.end();
+    string::iterator msp    = val.begin();
+    string::iterator mep    = val.end();
 
     --mep;
-    while ((mep != msp) && (isspace(*mep))) val.erase(mep--);
 
-    keyvals.insert(pair<string, string> (key, val));
+    while( (mep != msp) && ( isspace( *mep ) ) )
+        val.erase( mep-- );
+
+    keyvals.insert( pair<string, string> ( key, val ) );
 
     return 1;
 }

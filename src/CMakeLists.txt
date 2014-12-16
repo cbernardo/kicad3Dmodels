@@ -2,11 +2,10 @@
 #
 
 # Tools common to all model types
-add_subdirectory (common)
+add_subdirectory( common )
 
 # VRML models and tools
-add_subdirectory (vrml)
+add_subdirectory( vrml )
 
 # Python bindings
-add_subdirectory (py)
-
+add_subdirectory( py )

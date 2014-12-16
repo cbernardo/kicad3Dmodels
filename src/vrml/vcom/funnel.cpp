@@ -1,7 +1,7 @@
 /*
  *      file: funnel.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -26,38 +26,42 @@
 #include <fstream>
 #include <new>
 
-#include "vdefs.h"
-#include "vcom.h"
-#include "funnel.h"
-#include "transform.h"
-#include "circle.h"
-#include "rectangle.h"
-#include "vrmlmat.h"
+#include <vdefs.h>
+#include <vcom.h>
+#include <funnel.h>
+#include <transform.h>
+#include <circle.h>
+#include <rectangle.h>
+#include <vrmlmat.h>
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-Funnel::Funnel()
+FUNNEL::FUNNEL()
 {
     valid = false;
-    square = true;
-    npoly = 0;
+    square  = true;
+    npoly   = 0;
     poly = NULL;
-    return;
 }
 
-Funnel::Funnel(const Funnel &p)
+
+FUNNEL::FUNNEL( const FUNNEL& p )
 {
     valid = p.valid;
-    square = p.square;
-    npoly = p.npoly;
+    square  = p.square;
+    npoly   = p.npoly;
     poly = NULL;
 
-    if (!valid) npoly = 0;
-    if (npoly == 0) return;
+    if( !valid )
+        npoly = 0;
 
-    poly = new (nothrow) Polygon *[npoly];
-    if (poly == NULL)
+    if( npoly == 0 )
+        return;
+
+    poly = new (nothrow) POLYGON*[npoly];
+
+    if( poly == NULL )
     {
         ERRBLURB;
         cerr << "could not allocate memory for polygon pointers\n";
@@ -67,12 +71,16 @@ Funnel::Funnel(const Funnel &p)
     }
 
     int i, j;
-    for (i = 0; i < npoly; ++i)
+
+    for( i = 0; i < npoly; ++i )
     {
-        poly[i] = p.poly[i]->clone();
-        if (!poly[i])
+        poly[i] = p.poly[i]->Clone();
+
+        if( !poly[i] )
         {
-            for (j = 0; j < i; ++j) delete poly[j];
+            for( j = 0; j < i; ++j )
+                delete poly[j];
+
             delete [] poly;
             poly = NULL;
             ERRBLURB;
@@ -82,33 +90,37 @@ Funnel::Funnel(const Funnel &p)
             return;
         }
     }
-
-    return;
 }
 
 
-Funnel::~Funnel()
+FUNNEL::~FUNNEL()
 {
     cleanup();
 }
 
 
-Funnel &Funnel::operator=(const Funnel &p)
+FUNNEL& FUNNEL::operator=( const FUNNEL& p )
 {
-    if (this == &p) return *this;
+    if( this == &p )
+        return *this;
 
-    if (valid) cleanup();
+    if( valid )
+        cleanup();
 
     valid = p.valid;
-    square = p.square;
-    npoly = p.npoly;
+    square  = p.square;
+    npoly   = p.npoly;
     poly = NULL;
 
-    if (!valid) npoly = 0;
-    if (npoly == 0) return *this;
+    if( !valid )
+        npoly = 0;
 
-    poly = new (nothrow) Polygon *[npoly];
-    if (poly == NULL)
+    if( npoly == 0 )
+        return *this;
+
+    poly = new (nothrow) POLYGON*[npoly];
+
+    if( poly == NULL )
     {
         ERRBLURB;
         cerr << "could not allocate memory for polygon pointers\n";
@@ -118,12 +130,16 @@ Funnel &Funnel::operator=(const Funnel &p)
     }
 
     int i, j;
-    for (i = 0; i < npoly; ++i)
+
+    for( i = 0; i < npoly; ++i )
     {
-        poly[i] = p.poly[i]->clone();
-        if (!poly[i])
+        poly[i] = p.poly[i]->Clone();
+
+        if( !poly[i] )
         {
-            for (j = 0; j < i; ++j) delete poly[j];
+            for( j = 0; j < i; ++j )
+                delete poly[j];
+
             delete [] poly;
             poly = NULL;
             ERRBLURB;
@@ -137,14 +153,18 @@ Funnel &Funnel::operator=(const Funnel &p)
     return *this;
 }
 
-int Funnel::Calc(double w1, double d1, double w2, double d2,
-        double h1, double h2, double h3, Transform &t, int ns)
+
+int FUNNEL::Calc( double aFluteXWidth, double aFluteYDepth, double aStemXWidth,
+                  double aStemYDepth, double aFluteLength, double aStemLength,
+                  double aStemLength2, TRANSFORM& aTransform, int aNumberSides )
 {
-    if (valid) cleanup();
+    if( valid )
+        cleanup();
 
     int np;
     bool has_h2 = false;
-    if (h2 > 0.0)
+
+    if( aStemLength > 0.0 )
     {
         has_h2 = true;
         np = 4;
@@ -155,72 +175,82 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
     }
 
     // validate parameters
-    if ((square) && (bev > 0.0))
+    if( (square) && (bev > 0.0) )
     {
-        if (bev*2.0 >= d2)
+        if( bev * 2.0 >= aStemYDepth )
         {
             ERRBLURB;
-            cerr << "invalid for d2 (<= bevel/2)\n";
+            cerr << "invalid for aStemYDepth (<= bevel/2)\n";
             return -1;
         }
-        if (bev*2.0 >= w2)
+
+        if( bev * 2.0 >= aStemXWidth )
         {
             ERRBLURB;
-            cerr << "invalid for w2 (<= bevel/2)\n";
+            cerr << "invalid for aStemXWidth (<= bevel/2)\n";
             return -1;
         }
     }
-    if (w1 <= 0.0)
+
+    if( aFluteXWidth <= 0.0 )
     {
         ERRBLURB;
-        cerr << "invalid value for w1 (<= 0)\n";
-        return -1;
-    }
-    if (w2 <= 0.0)
-    {
-        ERRBLURB;
-        cerr << "invalid value for w2 (<= 0)\n";
-        return -1;
-    }
-    if (w1 <= w2)
-    {
-        ERRBLURB;
-        cerr << "invalid value for w1 (<= w2)\n";
-        return -1;
-    }
-    if (d1 <= 0.0)
-    {
-        ERRBLURB;
-        cerr << "invalid value for d1 (<= 0)\n";
-        return -1;
-    }
-    if (d2 <= 0.0)
-    {
-        ERRBLURB;
-        cerr << "invalid value for d2 (<= 0)\n";
-        return -1;
-    }
-    if (d1 <= d2)
-    {
-        ERRBLURB;
-        cerr << "invalid value for d1 (<= d2)\n";
-        return -1;
-    }
-    if (h1 < 0.0)
-    {
-        ERRBLURB;
-        cerr << "invalid value for h1 (< 0)\n";
-        return -1;
-    }
-    if (h3 <= 0.0)
-    {
-        ERRBLURB;
-        cerr << "invalid value for h3 (<= 0)\n";
+        cerr << "invalid value for aFluteXWidth (<= 0)\n";
         return -1;
     }
 
-    poly = new (nothrow) Polygon *[np];
-    if (!poly)
+    if( aStemXWidth <= 0.0 )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aStemXWidth (<= 0)\n";
+        return -1;
+    }
+
+    if( aFluteXWidth <= aStemXWidth )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aFluteXWidth (<= aStemXWidth)\n";
+        return -1;
+    }
+
+    if( aFluteYDepth <= 0.0 )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aFluteYDepth (<= 0)\n";
+        return -1;
+    }
+
+    if( aStemYDepth <= 0.0 )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aStemYDepth (<= 0)\n";
+        return -1;
+    }
+
+    if( aFluteYDepth <= aStemYDepth )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aFluteYDepth (<= aStemYDepth)\n";
+        return -1;
+    }
+
+    if( aFluteLength < 0.0 )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aFluteLength (< 0)\n";
+        return -1;
+    }
+
+    if( aStemLength2 <= 0.0 )
+    {
+        ERRBLURB;
+        cerr << "invalid value for aStemLength2 (<= 0)\n";
+        return -1;
+    }
+
+    poly = new (nothrow) POLYGON*[np];
+
+    if( !poly )
     {
         ERRBLURB;
         cerr << "could not allocate memory for polygon pointers\n";
@@ -228,41 +258,54 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
     }
 
     int i, j;
-    if (square)
+
+    if( square )
     {
-        for (i = 0; i < np; ++i)
+        for( i = 0; i < np; ++i )
         {
-            poly[i] = new (nothrow) Rectangle(-1.0);
-            if (!poly[i])
+            poly[i] = new (nothrow) RECTANGLE( -1.0 );
+
+            if( !poly[i] )
             {
                 ERRBLURB;
                 cerr << "could not allocate memory for polygons\n";
-                for (j = 0; j < i; ++j) delete poly[j];
+
+                for( j = 0; j < i; ++j )
+                    delete poly[j];
+
                 delete [] poly;
                 poly = NULL;
                 return -1;
             }
-            static_cast <Rectangle *> (poly[i])->SetBevel(bev);
+
+            static_cast <RECTANGLE*> (poly[i])->SetBevel( bev );
         }
     }
     else
     {
-        int cs = ns;
-        if ((cs < 3) || (cs > 360) || (cs % 4))
+        int cs = aNumberSides;
+
+        if( (cs < 3) || (cs > 360) || (cs % 4) )
         {
             ERRBLURB;
-            cerr << "invalid number of sides (" << ns << "); valid range is 4 .. 360 in multiples of 4\n";
+            cerr << "invalid number of sides (" << aNumberSides <<
+            "); valid range is 4 .. 360 in multiples of 4\n";
             cerr << "\tUsing default 16\n";
             cs = 16;
         }
-        for (i = 0; i < np; ++i)
+
+        for( i = 0; i < np; ++i )
         {
-            poly[i] = new (nothrow) Circle(cs);
-            if (!poly[i])
+            poly[i] = new (nothrow) CIRCLE( cs );
+
+            if( !poly[i] )
             {
                 ERRBLURB;
                 cerr << "could not allocate memory for polygons\n";
-                for (j = 0; j < i; ++j) delete poly[j];
+
+                for( j = 0; j < i; ++j )
+                    delete poly[j];
+
                 delete [] poly;
                 poly = NULL;
                 return -1;
@@ -272,25 +315,28 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
 
     int acc = 0;
     int idx = 0;
-    Transform t0;
-    acc += poly[idx++]->Calc(w1, d1, t0);
-    t0.setTranslation(0, 0, -h1);
-    acc += poly[idx++]->Calc(w2, d2, t0);
-    if (has_h2)
+    TRANSFORM t0;
+    acc += poly[idx++]->Calc( aFluteXWidth, aFluteYDepth, t0 );
+    t0.SetTranslation( 0, 0, -aFluteLength );
+    acc += poly[idx++]->Calc( aStemXWidth, aStemYDepth, t0 );
+
+    if( has_h2 )
     {
-        t0.setTranslation(0, 0, -(h1 + h2));
-        acc += poly[idx++]->Calc(w2, d2, t0);
-        t0.setTranslation(0, 0, -(h1 + h2 + h3));
+        t0.SetTranslation( 0, 0, -(aFluteLength + aStemLength) );
+        acc += poly[idx++]->Calc( aStemXWidth, aStemYDepth, t0 );
+        t0.SetTranslation( 0, 0, -(aFluteLength + aStemLength + aStemLength2) );
     }
     else
     {
-        t0.setTranslation(0, 0, -(h1 + h3));
+        t0.SetTranslation( 0, 0, -(aFluteLength + aStemLength2) );
     }
-    acc += poly[idx++]->Calc(w2, d2, t0);
+
+    acc += poly[idx++]->Calc( aStemXWidth, aStemYDepth, t0 );
 
     npoly = np;
     valid = true;
-    if (acc)
+
+    if( acc )
     {
         ERRBLURB;
         cerr << "problems encountered while creatign funnel\n";
@@ -299,22 +345,25 @@ int Funnel::Calc(double w1, double d1, double w2, double d2,
     }
 
     // apply the transform
-    for (i = 0; i < np; ++ i) poly[i]->Xform(t);
+    for( i = 0; i < np; ++i )
+        poly[i]->Xform( aTransform );
 
     return 0;
 }
 
-int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
-        VRMLMat &stemcolor, bool reuse_stem, std::ofstream &fp, int tabs)
+
+int FUNNEL::Build( bool aRenderCap, TRANSFORM& aTransform, VRMLMAT& aFluteMat,
+                   bool reuseFluteMat, VRMLMAT& aStemMat, bool reuseStemMat,
+                   std::ofstream& aVRMLFile, int aTabDepth )
 {
-    if (!valid)
+    if( !valid )
     {
         ERRBLURB;
         cerr << "invoked with no prior successful call to Calc()\n";
         return -1;
     }
 
-    if (npoly < 2)
+    if( npoly < 2 )
     {
         ERRBLURB;
         cerr << "BUG: invalid number of polygons (min. 2): " << npoly << "\n";
@@ -322,31 +371,42 @@ int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
     }
 
     bool has_h2 = false;
-    if (npoly == 4) has_h2 = true;
+
+    if( npoly == 4 )
+        has_h2 = true;
 
     int acc = 0;
     int idx = 0;
-    bool reuse = reuse_flute;
-    acc += poly[idx]->Stitch(true, *poly[idx +1], t, flutecolor, reuse, fp, tabs);
+    bool reuse = reuseFluteMat;
+    acc += poly[idx]->Stitch( true, *poly[idx + 1], aTransform, aFluteMat, reuse,
+                              aVRMLFile, aTabDepth );
     ++idx;
-    if (has_h2)
+
+    if( has_h2 )
     {
-        acc += poly[idx]->Stitch(true, *poly[idx +1], t, flutecolor, true, fp, tabs);
+        acc += poly[idx]->Stitch( true, *poly[idx + 1], aTransform, aFluteMat, true,
+                                  aVRMLFile, aTabDepth );
         ++idx;
     }
+
     // stem
-    reuse = reuse_stem;
-    if (!flutecolor.GetName().compare(stemcolor.GetName()))
+    reuse = reuseStemMat;
+
+    if( !aFluteMat.GetName().compare( aStemMat.GetName() ) )
     {
         reuse = true;
     }
-    acc += poly[idx]->Stitch(true, *poly[idx +1], t, stemcolor, reuse, fp, tabs);
+
+    acc += poly[idx]->Stitch( true, *poly[idx + 1], aTransform, aStemMat, reuse,
+                              aVRMLFile, aTabDepth );
     ++idx;
-    if (cap)
+
+    if( aRenderCap )
     {
-        acc += poly[idx]->Paint(true, t, stemcolor, true, fp, tabs);
+        acc += poly[idx]->Paint( true, aTransform, aStemMat, true, aVRMLFile, aTabDepth );
     }
-    if (acc)
+
+    if( acc )
     {
         ERRBLURB;
         cerr << "problems encountered creating funnel\n";
@@ -354,27 +414,36 @@ int Funnel::Build(bool cap, Transform &t, VRMLMat &flutecolor, bool reuse_flute,
     }
 
     return 0;
-}   // Build()
+}    // Build()
 
 
-
-void Funnel::cleanup(void)
+void FUNNEL::cleanup( void )
 {
     int i;
-    if (valid)
+
+    if( valid )
     {
-        for (i = 0; i < npoly; ++i) delete poly[i];
+        for( i = 0; i < npoly; ++i )
+            delete poly[i];
+
         delete [] poly;
         poly = NULL;
     }
+
     valid = false;
     npoly = 0;
+
+    return;
 }
 
-void Funnel::SetShape(bool square, double bev)
+
+void FUNNEL::SetShape( bool isSquare, double aBevel )
 {
-    if (valid) cleanup();
-    Funnel::square = square;
-    Funnel::bev = bev;
+    if( valid )
+        cleanup();
+
+    FUNNEL::square = isSquare;
+    FUNNEL::bev = aBevel;
+
     return;
 }

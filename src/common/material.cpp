@@ -1,7 +1,7 @@
 /*
  *      file: material.cpp
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -22,77 +22,80 @@
 #include <iostream>
 #include <iomanip>
 
-#include "vdefs.h"
-#include "material.h"
-#include "keyvalparser.h"
+#include <vdefs.h>
+#include <material.h>
+#include <keyvalparser.h>
 
 using namespace std;
-using namespace kc3d;
+using namespace KC3D;
 
-Material::Material()
+MATERIAL::MATERIAL()
 {
     init();
-    return;
 }
 
-Material::~Material()
+
+MATERIAL::~MATERIAL()
 {
     material.clear();
-    return;
 }
 
-void Material::init(void)
+
+void MATERIAL::init( void )
 {
     material.clear();
     int i;
-    for (i = 0; i < 3; ++i)
+
+    for( i = 0; i < 3; ++i )
     {
-        diffuse[i] = 0.0f;
+        diffuse[i]  = 0.0f;
         emissive[i] = 0.0f;
         specular[i] = 0.0f;
     }
+
     ambient = 0.0f;
     transparency = 1.0f;
     shininess = 0.0f;
-
-    return;
 }
 
-int Material::Load(const std::string &name)
+
+int MATERIAL::Load( const std::string& aMaterialFile )
 {
-    KeyValParser kp;
-    int nl = 0;     // number of required keys parsed
-    Material::name.clear();
+    KEYVAL_PARSER kp;
+    int nl = 0;             // number of required keys parsed
+    MATERIAL::fname.clear();
 
-    if (kp.LoadKeys(name) <= 0) return -1;
+    if( kp.LoadKeys( aMaterialFile ) <= 0 )
+        return -1;
 
-    const map<string, string> &keys = kp.GetKeys();
+    const map<string, string>& keys = kp.GetKeys();
     map<string, string>::const_iterator ki;
 
     init();
 
     // name
-    ki = keys.find("name");
-    if (ki != keys.end())
+    ki = keys.find( "name" );
+
+    if( ki != keys.end() )
     {
         material = ki->second;
     }
     else
     {
         ERRBLURB;
-        cerr << "No material name found in file '" << name << "'\n";
+        cerr << "No material name found in file '" << aMaterialFile << "'\n";
         return -1;
     }
-    // cerr << "Material file: '" << name << "'\n";
 
     // diffusivity
-    ki = keys.find("diffuse");
-    if (ki != keys.end())
+    ki = keys.find( "diffuse" );
+
+    if( ki != keys.end() )
     {
-        if (parseRGB(diffuse, ki->second))
+        if( parseRGB( diffuse, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse diffuse values in string '" << ki->second << "'\n";
         }
         else
@@ -103,30 +106,32 @@ int Material::Load(const std::string &name)
     else
     {
         ERRBLURB;
-        cerr << "file: " << name << "\n";
+        cerr << "file: " << aMaterialFile << "\n";
         cerr << "\t[info] no diffuse coefficients specified\n";
     }
 
     // emissivity (optional)
-    ki = keys.find("emissive");
-    if (ki != keys.end())
+    ki = keys.find( "emissive" );
+
+    if( ki != keys.end() )
     {
-        if (parseRGB(emissive, ki->second))
+        if( parseRGB( emissive, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse emissive values in string '" << ki->second << "'\n";
         }
     }
 
     // specular
-    ki = keys.find("specular");
-    if (ki != keys.end())
+    ki = keys.find( "specular" );
+
+    if( ki != keys.end() )
     {
-        if (parseRGB(specular, ki->second))
+        if( parseRGB( specular, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse specular values in string '" << ki->second << "'\n";
         }
         else
@@ -137,132 +142,142 @@ int Material::Load(const std::string &name)
     else
     {
         ERRBLURB;
-        cerr << "file: " << name << "\n";
+        cerr << "file: " << aMaterialFile << "\n";
         cerr << "\t[info] no specular coefficients specified\n";
     }
-    if (nl < 1)
+
+    if( nl < 1 )
     {
         ERRBLURB;
-        cerr << "file: " << name << "\n";
+        cerr << "file: " << aMaterialFile << "\n";
         cerr << "\t[warn] neither diffuse nor specular reflection were specified\n";
     }
 
     // ambient (optional)
-    ki = keys.find("ambient");
-    if (ki != keys.end())
+    ki = keys.find( "ambient" );
+
+    if( ki != keys.end() )
     {
-        if (parseFloat(ambient, ki->second))
+        if( parseFloat( ambient, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse ambient intensity value in string '" << ki->second << "'\n";
         }
     }
 
     // transparency (optional)
-    ki = keys.find("transparency");
-    if (ki != keys.end())
+    ki = keys.find( "transparency" );
+
+    if( ki != keys.end() )
     {
-        if (parseFloat(transparency, ki->second))
+        if( parseFloat( transparency, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse transparency value in string '" << ki->second << "'\n";
         }
     }
 
     // shininess (optional)
-    ki = keys.find("shininess");
-    if (ki != keys.end())
+    ki = keys.find( "shininess" );
+
+    if( ki != keys.end() )
     {
-        if (parseFloat(shininess, ki->second))
+        if( parseFloat( shininess, ki->second ) )
         {
             ERRBLURB;
-            cerr << "file: " << name << "\n";
+            cerr << "file: " << aMaterialFile << "\n";
             cerr << "\tfailed to parse shininess value in string '" << ki->second << "'\n";
         }
     }
 
-    Material::name = name;
+    MATERIAL::fname = aMaterialFile;
     return 0;
 }
 
 
-int Material::parseRGB(float rgb[3], const std::string val)
+int MATERIAL::parseRGB( float aRGB[3], const std::string aRGBString )
 {
-    istringstream istr(val);
-    float r = -1.0;
-    float g = -1.0;
-    float b = -1.0;
+    istringstream istr( aRGBString );
+    float   r   = -1.0;
+    float   g   = -1.0;
+    float   b   = -1.0;
 
     istr >> r >> g >> b;
-    if ((r < 0.0)||(r > 1.0)||(g < 0.0)||(g > 1.0)||(b < 0.0)||(b > 1.0))
+
+    if( (r < 0.0)||(r > 1.0)||(g < 0.0)||(g > 1.0)||(b < 0.0)||(b > 1.0) )
     {
         ERRBLURB;
-        cerr << "file: " << name << "\n";
+        cerr << "file: " << fname << "\n";
         cerr << "\tinvalid RGB values (range is 0 .. 1); see message below\n";
         return -1;
     }
-    rgb[0] = r;
-    rgb[1] = g;
-    rgb[2] = b;
+
+    aRGB[0]  = r;
+    aRGB[1]  = g;
+    aRGB[2]  = b;
 
     return 0;
 }
 
-int Material::parseFloat(float &param, const std::string val)
+
+int MATERIAL::parseFloat( float& aFloat, const std::string aFloatString )
 {
-    istringstream istr(val);
+    istringstream istr( aFloatString );
     float v = -1.0;
 
     istr >> v;
-    if ((v < 0.0)||(v > 1.0))
+
+    if( (v < 0.0)||(v > 1.0) )
     {
         ERRBLURB;
-        cerr << "file: " << name << "\n";
+        cerr << "file: " << fname << "\n";
         cerr << "\tinvalid coefficient (range is 0 .. 1); see message below\n";
         return -1;
     }
-    param = v;
+
+    aFloat = v;
 
     return 0;
 }
 
-int Material::validateRGB(const float rgb[3], float target[3])
-{
 
-    if ((rgb[0] < 0.0) || (rgb[0] > 1.0)
-            || (rgb[1] < 0.0) || (rgb[1] > 1.0)
-            || (rgb[2] < 0.0) || (rgb[2] > 1.0))
+int MATERIAL::validateRGB( const float aSrcRGB[3], float aDestRGB[3] )
+{
+    if( (aSrcRGB[0] < 0.0) || (aSrcRGB[0] > 1.0)
+        || (aSrcRGB[1] < 0.0) || (aSrcRGB[1] > 1.0)
+        || (aSrcRGB[2] < 0.0) || (aSrcRGB[2] > 1.0) )
     {
         ERRBLURB;
-        cerr << "Invalid RGB value (range is 0.0 .. 1.0): " << setprecision(2) << rgb[0] <<
-                ", " << rgb[1] << ", " << rgb[2] << "\n";
+        cerr << "Invalid RGB value (range is 0.0 .. 1.0): " << setprecision( 2 );
+        cerr << aSrcRGB[0] << ", " << aSrcRGB[1] << ", " << aSrcRGB[2] << "\n";
         return -1;
     }
-    target[0] = rgb[0];
-    target[1] = rgb[1];
-    target[2] = rgb[2];
+
+    aDestRGB[0]   = aSrcRGB[0];
+    aDestRGB[1]   = aSrcRGB[1];
+    aDestRGB[2]   = aSrcRGB[2];
 
     return 0;
 }
 
 
-void Material::SetName(const std::string &name)
+void MATERIAL::SetName( const std::string& aMaterialName )
 {
-    material = name;
-    return;
+    material = aMaterialName;
 }
 
-const std::string &Material::GetName(void)
+
+const std::string& MATERIAL::GetName( void )
 {
     return material;
 }
 
 
-int Material::SetDiffuse(const float rgb[3])
+int MATERIAL::SetDiffuse( const float aRGB[3] )
 {
-    if (validateRGB(rgb, diffuse))
+    if( validateRGB( aRGB, diffuse ) )
     {
         ERRBLURB;
         cerr << "Error setting diffuse values; see message above\n";
@@ -272,18 +287,18 @@ int Material::SetDiffuse(const float rgb[3])
     return 0;
 }
 
-void Material::GetDiffuse(float rgb[3])
+
+void MATERIAL::GetDiffuse( float aRGB[3] )
 {
-    rgb[0] = diffuse[0];
-    rgb[1] = diffuse[1];
-    rgb[2] = diffuse[2];
-    return;
+    aRGB[0]  = diffuse[0];
+    aRGB[1]  = diffuse[1];
+    aRGB[2]  = diffuse[2];
 }
 
 
-int Material::SetEmissivity(const float rgb[3])
+int MATERIAL::SetEmissivity( const float aRGB[3] )
 {
-    if (validateRGB(rgb, emissive))
+    if( validateRGB( aRGB, emissive ) )
     {
         ERRBLURB;
         cerr << "Error setting emissivity values; see message above\n";
@@ -293,18 +308,18 @@ int Material::SetEmissivity(const float rgb[3])
     return 0;
 }
 
-void Material::GetEmissivity(float rgb[3])
+
+void MATERIAL::GetEmissivity( float aRGB[3] )
 {
-    rgb[0] = emissive[0];
-    rgb[1] = emissive[1];
-    rgb[2] = emissive[2];
-    return;
+    aRGB[0]  = emissive[0];
+    aRGB[1]  = emissive[1];
+    aRGB[2]  = emissive[2];
 }
 
 
-int Material::SetSpecular(const float rgb[3])
+int MATERIAL::SetSpecular( const float aRGB[3] )
 {
-    if (validateRGB(rgb, specular))
+    if( validateRGB( aRGB, specular ) )
     {
         ERRBLURB;
         cerr << "Error setting specular values; see message above\n";
@@ -314,65 +329,73 @@ int Material::SetSpecular(const float rgb[3])
     return 0;
 }
 
-void Material::GetSpecular(float rgb[3])
+
+void MATERIAL::GetSpecular( float aRGB[3] )
 {
-    rgb[0] = specular[0];
-    rgb[1] = specular[1];
-    rgb[2] = specular[2];
-    return;
+    aRGB[0]  = specular[0];
+    aRGB[1]  = specular[1];
+    aRGB[2]  = specular[2];
 }
 
 
-int Material::SetAmbientIntensity(float coeff)
+int MATERIAL::SetAmbientIntensity( float aAmbientCoefficient )
 {
-    if ((coeff < 0.0) || (coeff > 1.0))
+    if( (aAmbientCoefficient < 0.0) || (aAmbientCoefficient > 1.0) )
     {
         ERRBLURB;
-        cerr << "Invalid value for Ambient Intensity (" << coeff <<
-                "). Valid range is 0.0 .. 1.0\n";
+        cerr << "Invalid value for Ambient Intensity (" << aAmbientCoefficient;
+        cerr << "). Valid range is 0.0 .. 1.0\n";
         return -1;
     }
-    ambient = coeff;
+
+    ambient = aAmbientCoefficient;
     return 0;
 }
 
-float Material::GetAmbientIntensity(void)
+
+float MATERIAL::GetAmbientIntensity( void )
 {
     return ambient;
 }
 
-int Material::SetTransparency(float coeff)
+
+int MATERIAL::SetTransparency( float aTransparency )
 {
-    if ((coeff < 0.0) || (coeff > 1.0))
+    if( (aTransparency < 0.0) || (aTransparency > 1.0) )
     {
         ERRBLURB;
-        cerr << "Invalid value for transparency (" << coeff <<
-                "). Valid range is 0.0 .. 1.0\n";
+        cerr << "Invalid value for transparency (" << aTransparency;
+        cerr << "). Valid range is 0.0 .. 1.0\n";
         return -1;
     }
-    transparency = coeff;
+
+    transparency = aTransparency;
     return 0;
 }
 
-float Material::GetTransparency(void)
+
+float MATERIAL::GetTransparency( void )
 {
     return transparency;
 }
 
-int Material::SetShininess(float coeff)
+
+int MATERIAL::SetShininess( float aShininess )
 {
-    if ((coeff < 0.0) || (coeff > 1.0))
+    if( (aShininess < 0.0) || (aShininess > 1.0) )
     {
         ERRBLURB;
-        cerr << "Invalid value for shininess (" << coeff <<
-                "). Valid range is 0.0 .. 1.0\n";
+        cerr << "Invalid value for shininess (" << aShininess;
+        cerr << "). Valid range is 0.0 .. 1.0\n";
         return -1;
     }
-    shininess = coeff;
+
+    shininess = aShininess;
     return 0;
 }
 
-float Material::GetShininess(void)
+
+float MATERIAL::GetShininess( void )
 {
     return shininess;
 }

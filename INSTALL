@@ -1,34 +1,114 @@
-This source code requires CMake version 2.8 or greater for
-configuration and a standards compliant C++ compiler with
-the STLPort implementation of the C++ Standard Template
-Libraries. Although many of the classes should be portable
-across platforms, some source files such as the stand-alone
-executable files depend on GNU getopt and thus require a
-GNU build environment.
+These are preliminary instructions on building and installing the VRML tools
+with a short guide on how to run the scripts to generate the currently
+parameterized models.
 
-LINUX
-=====
-To configure, create the build directory within the top
-level project directory and invoke CMake from the build
-directory:
+Building:
+    mkdir build
+    cd build
+    cmake ..
+    make
 
-mkdir build
-cd build
-cmake ..
+Example install on Linux:
+    make install DESTDIR=${HOME}
 
-The source can now be built and installed to the directory
-../scripts/bin:
-make install
+    will install all files within ${HOME}/usr/local.
 
-The ../scripts directory contains a number of scripts for
-running the various programs to generate VRML component
-models, install the models in the ../mcad/vrml directory,
-and package sets of models as tarballs.
+Setting up the environment:
+    To ensure that libraries can be found, set the following environment
+variables as appropriate for the installation (example assumes
+${HOME}/usr/local):
 
-At the moment the tools are not intended to be installed
-into the system directories since they are of no great
-use once they have been run to generate sets of models.
-In the future the tools may be repackaged with Python
-bindings to make it possible to use Python scripts to
-create new component models.
+    LD_LIBRARY_PATH: must contain path to installed kc3d libraries.
+        ex: export LD_LIBRARY_PATH=${HOME}/usr/local/lib/kc3d
+    PYTHONPATH: same as LD_LIBRARY_PATH
+        export PYTHONPATH=${LD_LIBRARY_PATH}
+    KC3DPATH: must point to the directory containing the VRML material
+        appearance definitions. This environment variable is used by
+        the binary executable parametric generators such as 'make19950'.
+        ex: export KC3DPATH=${HOME}/usr/local/share/kc3d/appearances
 
+    It may also be necessary to modify the PATH variable to include the
+    directory of the binary executables:
+
+    export PATH=${HOME}/usr/local/bin:${PATH}
+
+
+Running all existing models:
+    cd
+    mkdir vrml_test
+    cd vrml_test
+    export VDIR=${HOME}/usr/local/share/kc3d/scripts/batch
+    ${VDIR}/conn/generate.sh
+    ${VDIR}/diode/generate.sh
+    ${VDIR}/dipn/generate.sh
+    ${VDIR}/resistor/generate.sh
+    ${VDIR}/smt/generate.sh
+
+    As of 8 Dec 2014 this generates 6736 models with a total disk
+    usage of about 1.7GB.
+
+====================
+BUILDING ON WINDOWS:
+
+The tools can currently be built and run on MSWindows with MSYS2 + MinGW64:
+
+
+1. install msys2 and run the w64 console
+2. synchronize the package repository:
+    pacman -Sy
+3. install gcc/g++/gdb/make
+    * search for candidates:
+    pacman -Ss gcc
+    pacman -Ss gdb
+    pacman -Ss make
+    * install
+    pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-gdb
+    pacman -S mingw-w64-x86_64-make
+4. install git and openssh:
+    pacman -S bzr openssh
+    pacman -S python
+5.a If you downloaded the tarball then simply untar it to
+    the directory 'models3d'
+5.b If you are retrieving the source via git:
+    cd && git clone git://git.code.sf.net/p/kicad3dmodels/code models3d
+6. install cmake:
+    pacman -S mingw-w64-x86_64-cmake
+7. install various build dependencies:
+    pacman -S mingw-w64-x86_64-wxWidgets
+    pacman -S  mingw-w64-x86_64-boost
+    pacman -S mingw-w64-x86_64-gtkglext
+    pacman -S mingw-w64-x86_64-glib2
+    pacman -S glib2-devel
+    pacman -S mingw-w64-x86_64-cairo
+    pacman -S mingw-w64-x86_64-glew
+8. Configure:
+  cd ~/models3d
+  mkdir build
+  cd build
+  /mingw64/bin/cmake -G "MSYS Makefiles" -DCMAKE_C_COMPILER=/mingw64/bin/gcc.exe \
+    -DCMAKE_CXX_COMPILER=/mingw64/bin/g++.exe \
+    -DCMAKE_MAKE_PROGRAM=/mingw64/bin/mingw32-make \
+    -DCMAKE_INSTALL_PREFIX="" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_VERBOSE_MAKEFILE=ON ..
+
+9. Build and install the VRML modeling tools:
+    mingw32-make.exe install DESTDIR=~/usr
+    (NOTE: everything is installed in ${HOME}/usr)
+
+10. Set up the environment:
+    export PATH=/mingw64/bin:${HOME}/usr/bin:${PATH}
+    export LD_LIBRARY_PATH=/mingw64/bin:${HOME}/usr/bin
+    export PYTHONPATH=${LD_LIBRARY_PATH}
+    export KC3DPATH=${HOME}/usr/share/kc3d/appearances
+
+11. Create a directory to try out the tools:
+    cd
+    mkdir vrml
+    cd vrml
+    export VDIR=${HOME}/usr/share/kc3d/scripts/batch
+    ${VDIR}/conn/generate.sh
+    ${VDIR}/diode/generate.sh
+    ${VDIR}/dipn/generate.sh
+    ${VDIR}/resistor/generate.sh
+    ${VDIR}/smt/generate.sh

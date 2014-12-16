@@ -1,5 +1,6 @@
 ARCHNAME=kicad3dmodels_src_$(date -u +"%Y%m%d").tar
-DIRNAME=kicad3dmodels
+DIRNAME=models3d
+#DIRNAME=kicad3dmodels
 
 git archive --prefix="${DIRNAME}/" -o "${ARCHNAME}" HEAD
 

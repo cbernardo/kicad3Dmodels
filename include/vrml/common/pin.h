@@ -1,7 +1,7 @@
 /*
  *      file: pin.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  *
  */
 
-#ifndef PIN_H_
-#define PIN_H_
+#ifndef PIN_H
+#define PIN_H
 
 #include <iosfwd>
 
-namespace kc3d {
-
-class Polygon;
-class PolyRect;
-class VRMLMat;
-class Transform;
+namespace KC3D
+{
+class POLYGON;
+class POLYRECT;
+class VRMLMAT;
+class TRANSFORM;
 
 /**
  * \ingroup vrml_tools
  * Parameters describing a rectangular or elliptical wire or pin
  */
-struct PParams
+struct PPARAMS
 {
-    double w;       ///< pin width
-    double d;       ///< pin depth
-    double tap;     ///< pin taper, < 0 to indicate no taper
-    double stw;     ///< scale factor for taper in 'w' dimension
-    double std;     ///< scale factor for taper in 'd' dimension
-    bool   dbltap;  ///< true if tapered at both ends
-    double h;       ///< pin height (straight vertical section)
-    double r;       ///< pin bend radius, < 0 to indicate no bend (and no hz section)
-    int    nb;      ///< number of segments in a bend (default 5)
-    double l;       ///< length of straight horizontal section, < 0 for no hz section
-    double bev;     ///< bevel (applicable to rectangular pins only); < 0 means no bevel
-    double bend;    ///< bend angle (radians)
-    int    ns;      ///< number of sides for a circular pin (default 24)
+    double  w;      ///< pin width
+    double  d;      ///< pin depth
+    double  tap;    ///< pin taper, < 0 to indicate no taper
+    double  stw;    ///< scale factor for taper in 'w' dimension
+    double  std;    ///< scale factor for taper in 'd' dimension
+    bool    dbltap; ///< true if tapered at both ends
+    double  h;      ///< pin height (straight vertical section)
+    double  r;      ///< pin bend radius, < 0 to indicate no bend (and no hz section)
+    int nb;         ///< number of segments in a bend (default 5)
+    double  l;      ///< length of straight horizontal section, < 0 for no hz section
+    double  bev;    ///< bevel (applicable to rectangular pins only); < 0 means no bevel
+    double  bend;   ///< bend angle (radians)
+    int ns;         ///< number of sides for a circular pin (default 24)
 
-    PParams();
+    PPARAMS();
 };
 
 
@@ -63,25 +63,25 @@ struct PParams
  * A rectangular section may be beveled and an elliptical section
  * may have 3..360 vertices.
  */
-class Pin
+class PIN
 {
 private:
-    Polygon **poly; ///< pointer to polygons (rectangles or circles)
+    POLYGON** poly; ///< pointer to polygons (rectangles or circles)
     int nr;         ///< number of polygons
-    bool valid;     ///< true when we have valid polygons
-    bool square;    ///< true (default) for square pins
+    bool    valid;  ///< true when we have valid polygons
+    bool    square; ///< true (default) for square pins
 
-    void cleanup(void);
+    void cleanup( void );
 
 protected:
-    PParams pin;
+    PPARAMS pin;
 
 public:
-    Pin();
-    Pin (const Pin &p);
-    virtual ~Pin();
+    PIN();
+    PIN( const PIN& aPin );
+    virtual ~PIN();
 
-    Pin &operator=(const Pin &p);
+    PIN& operator=( const PIN& aPin );
 
     /**
      * \brief Calculate intermediate polygons
@@ -96,33 +96,34 @@ public:
      * @param t  [in] geometric transformation to apply to the results
      * @return 0 for success, -1 for failure
      */
-    virtual int Calc(const PParams &pp, Transform &t);
+    virtual int Calc( const PPARAMS& aPinParam, TRANSFORM& aTransform );
 
     /**
      * \brief Write out pin shape information
      *
      * Write a series of VRML2.0 Shape blocks describing the
      *
-     * @param cap0  [in] TRUE if the first end face of the pin is to be rendered
-     * @param cap1  [in] TRUE if the final end face of the pin is to be rendered
-     * @param t     [in] geometric transform to apply to output vertices
-     * @param color [in] VRMLMat material appearance
-     * @param reuse_color [in] TRUE if a previously written color name is to be used
-     * @param fp    [in] open output file
-     * @param tabs  [in] indent level for formatting
+     * @param aRenderCap0 [in] TRUE if the first end face of the pin is to be rendered
+     * @param aRenderCap1 [in] TRUE if the final end face of the pin is to be rendered
+     * @param aFinalTransform [in] geometric transform to apply to output vertices
+     * @param aMaterial   [in] VRMLMAT material appearance
+     * @param reuseMaterial [in] TRUE if a previously written material is to be used
+     * @param aVRMLFile     [in] open VRML file
+     * @param aTabDepth     [in] indent level for formatting
      * @return
      */
-    virtual int Build(bool cap0, bool cap1, Transform &t, VRMLMat &color, bool reuse_color,
-            std::ofstream &fp, int tabs = 0);
+    virtual int Build( bool aRenderCap0, bool aRenderCap1, TRANSFORM& aFinalTransform,
+                       VRMLMAT& aMaterial, bool reuseMaterial,
+                       std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
     /**
      * Set the shape of a generic pin or wire
      *
-     * @param square [in] TRUE for a rectangular cross section, FALSE for an elliptical section
+     * @param isSquare [in] TRUE for a rectangular cross section, FALSE for an elliptical section
      */
-    void SetShape(bool square);
+    void SetShape( bool isSquare );
 };
 
-}   // namespace kc3d
+}    // namespace KC3D
 
-#endif /* PIN_H_ */
+#endif // PIN_H

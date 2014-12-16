@@ -1,0 +1,755 @@
+; data based on compilation by Michal Stec
+; https://github.com/michal777/Packages_Generator.git
+
+[DEFAULT]
+# pkgtype: select the type of package
+pkgtype = none
+# scale: select the output scaling to produce 1VRML units = 0.1inch
+# example: scale = 0.3937 will convert mm units to the correct scale
+# assumed default is '1.0' (units are 0.1inch)
+scale = 1.0
+pin_color = tin.mat
+body_color = charcoal.mat
+dot_color = ceram_gry.mat
+
+[LQFP-100_14x14mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 25
+pads_count_y = 25
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-128_14x14mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 32
+pads_count_y = 32
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.070866
+lead_thickness = 0.066929
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-128_14x20mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 7.874
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 26
+pads_count_y = 38
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-144_20x20mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 7.874
+body_size_y = 7.874
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 36
+pads_count_y = 36
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-160_24x24mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 9.4488
+body_size_y = 9.4488
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 40
+pads_count_y = 40
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-176_20x20mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 7.874
+body_size_y = 7.874
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 44
+pads_count_y = 44
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.059055
+lead_thickness = 0.047244
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-176_24x24mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 9.4488
+body_size_y = 9.4488
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 44
+pads_count_y = 44
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.090551
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-208_28x28mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 11.0236
+body_size_y = 11.0236
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 52
+pads_count_y = 52
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.090551
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-216_24x24mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 9.4488
+body_size_y = 9.4488
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 54
+pads_count_y = 54
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.074803
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-32_5x5mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 1.9685
+body_size_y = 1.9685
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 8
+pads_count_y = 8
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.090551
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-32_7x7mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.55118
+body_standoff = 0.059055
+
+pads_count_x = 8
+pads_count_y = 8
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.137795
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-36_7x7mm_Pitch0.65mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.59055
+body_standoff = 0.03937
+
+pads_count_x = 9
+pads_count_y = 9
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.11811
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-44_10x10mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 11
+pads_count_y = 11
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.15748
+lead_thickness = 0.03937
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-48_7x7mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 12
+pads_count_y = 12
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-52_10x10mm_Pitch0.65mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 13
+pads_count_y = 13
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.11811
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-52-1EP_10x10mm_Pitch0.65mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.55118
+body_standoff = 0.059055
+
+pads_count_x = 13
+pads_count_y = 13
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.11811
+lead_thickness = 0.059055
+exp_pad_x = 1.85039
+exp_pad_y = 1.85039
+
+
+[LQFP-64_10x10mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.07874
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-64_14x14mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.15748
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-64_7x7mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.074803
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[LQFP-80_12x12mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 4.7244
+body_size_y = 4.7244
+body_size_z = 0.55118
+body_standoff = 0.03937
+
+pads_count_x = 20
+pads_count_y = 20
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.082677
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[PQFP-100_14x20mm_Pitch0.65mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 7.874
+body_size_z = 1.06299
+body_standoff = 0.03937
+
+pads_count_x = 20
+pads_count_y = 30
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.59055
+lead_width = 0.11811
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[PQFP-256_28x28mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 11.0236
+body_size_y = 11.0236
+body_size_z = 1.25984
+body_standoff = 0.137795
+
+pads_count_x = 64
+pads_count_y = 64
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.062992
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[PQFP-80_14x20mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 7.874
+body_size_z = 1.06299
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 24
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.59055
+lead_width = 0.137795
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-100_12x12mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 4.7244
+body_size_y = 4.7244
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 25
+pads_count_y = 25
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.070866
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-100_14x14mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 25
+pads_count_y = 25
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-120_14x14mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 30
+pads_count_y = 30
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.059055
+lead_thickness = 0.049212
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-128_14x14mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 32
+pads_count_y = 32
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.059055
+lead_thickness = 0.049212
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-144_16x16mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 6.2992
+body_size_y = 6.2992
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 36
+pads_count_y = 36
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.070866
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-144_20x20mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 7.874
+body_size_y = 7.874
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 36
+pads_count_y = 36
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-32_7x7mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 8
+pads_count_y = 8
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.145669
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-44_10x10mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 11
+pads_count_y = 11
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.145669
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-44-1EP_10x10mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 11
+pads_count_y = 11
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.145669
+lead_thickness = 0.059055
+exp_pad_x = 1.77165
+exp_pad_y = 1.77165
+
+
+[TQFP-48-1EP_7x7mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 12
+pads_count_y = 12
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.051181
+exp_pad_x = 1.37795
+exp_pad_y = 1.37795
+
+
+[TQFP-48_7x7mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 12
+pads_count_y = 12
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-64_10x10mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 3.937
+body_size_y = 3.937
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-64_14x14mm_Pitch0.8mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.31496
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.145669
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-64_7x7mm_Pitch0.4mm]
+pkgtype = qfp
+body_size_x = 2.7559
+body_size_y = 2.7559
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 16
+pads_count_y = 16
+
+pitch_y = 0.15748
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.07874
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-80_12x12mm_Pitch0.5mm]
+pkgtype = qfp
+body_size_x = 4.7244
+body_size_y = 4.7244
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 20
+pads_count_y = 20
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.086614
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TQFP-80_14x14mm_Pitch0.65mm]
+pkgtype = qfp
+body_size_x = 5.5118
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 20
+pads_count_y = 20
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.125984
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+

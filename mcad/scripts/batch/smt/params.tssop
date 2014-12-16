@@ -1,0 +1,641 @@
+; data based on compilation by Michal Stec
+; https://github.com/michal777/Packages_Generator.git
+
+[DEFAULT]
+; pkgtype: select the type of package []
+pkgtype = none
+; scale: select the output scaling to produce 1VRML units = 0.1inch
+; example: scale = 0.3937 will convert mm units to the correct scale
+; assumed default is '1.0' (units are 0.1inch)
+scale = 1.0
+pin_color = tin.mat
+body_color = charcoal.mat
+dot_color = ceram_gry.mat
+
+[MSOP-10-1EP_3x3mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.338582
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 5
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.086614
+lead_thickness = 0.070866
+exp_pad_x = 0.661416
+exp_pad_y = 0.740156
+
+
+[MSOP-10_3x3mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.334645
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 5
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[MSOP-12-1EP_3x4mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.5748
+body_size_z = 0.338582
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 6
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0.649605
+exp_pad_y = 1.12204
+
+
+[MSOP-12_3x4mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.5748
+body_size_z = 0.338582
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 6
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[MSOP-8-1EP_3x3mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.338582
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0.661416
+exp_pad_y = 0.740156
+
+
+[MSOP-8_3x3mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.334645
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.11811
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[QSOP-16_3.9x4.9mm_Pitch0.635mm]
+pkgtype = tssop
+body_size_x = 1.54
+body_size_y = 1.93
+body_size_z = 0.582676
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.249999
+pitch_x = %(pitch_y)s
+lead_length = 0.411101
+lead_width = 0.098425
+lead_thickness = 0.07874
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-14_5.3x6.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.08661
+body_size_y = 2.44094
+body_size_z = 0.677164
+body_standoff = 0.051181
+
+pads_count_x = 0
+pads_count_y = 7
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.492125
+lead_width = 0.125984
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-16_3.9x4.9mm_Pitch0.635mm]
+pkgtype = tssop
+body_size_x = 1.53543
+body_size_y = 1.92913
+body_size_z = 0.59055
+body_standoff = 0.070866
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.249999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.102362
+lead_thickness = 0.086614
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-16_4.4x5.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 2.04724
+body_size_z = 0.51181
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.106299
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-16_5.3x6.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.08661
+body_size_y = 2.44094
+body_size_z = 0.688975
+body_standoff = 0.051181
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.492125
+lead_width = 0.129921
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-20_4.4x6.5mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 2.55905
+body_size_z = 0.51181
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 10
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.110236
+lead_thickness = 0.066929
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-20_5.3x7.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.08661
+body_size_y = 2.83464
+body_size_z = 0.688975
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 10
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.492125
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-24_3.9x8.7mm_Pitch0.635mm]
+pkgtype = tssop
+body_size_x = 1.53543
+body_size_y = 3.42519
+body_size_z = 0.59055
+body_standoff = 0.070866
+
+pads_count_x = 0
+pads_count_y = 12
+
+pitch_y = 0.249999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.102362
+lead_thickness = 0.086614
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-24_5.3x8.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.08661
+body_size_y = 3.22834
+body_size_z = 0.688975
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 12
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.492125
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-28_5.3x10.2mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.08661
+body_size_y = 4.01574
+body_size_z = 0.688975
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 14
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.492125
+lead_width = 0.11811
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-48_7.5x15.9mm_Pitch0.635mm]
+pkgtype = tssop
+body_size_x = 2.95275
+body_size_y = 6.25983
+body_size_z = 0.90551
+body_standoff = 0.11811
+
+pads_count_x = 0
+pads_count_y = 24
+
+pitch_y = 0.249999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.098425
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SSOP-56_7.5x18.5mm_Pitch0.635mm]
+pkgtype = tssop
+body_size_x = 2.95275
+body_size_y = 7.28345
+body_size_z = 0.90551
+body_standoff = 0.11811
+
+pads_count_x = 0
+pads_count_y = 28
+
+pitch_y = 0.249999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.098425
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-10_3x3mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 5
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.094488
+lead_thickness = 0.074803
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-14_4.4x5mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 1.9685
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 7
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-16-1EP_4.4x5mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 1.9685
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 1.15748
+exp_pad_y = 1.40945
+
+
+[TSSOP-16_4.4x5mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 1.9685
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-20_4.4x6.5mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 2.55905
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 10
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-24_4.4x7.8mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 3.07086
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 12
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-28_4.4x9.7mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 3.81889
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 14
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-32_6.1x11mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 2.40157
+body_size_y = 4.3307
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 16
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-38_4.4x9.7mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 3.81889
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 19
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.094488
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-48_6.1x12.5mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 2.40157
+body_size_y = 4.92125
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 24
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.090551
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-56_6.1x14mm_Pitch0.5mm]
+pkgtype = tssop
+body_size_x = 2.40157
+body_size_y = 5.5118
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 28
+
+pitch_y = 0.19685
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.090551
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-8_3x3mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.1811
+body_size_y = 1.1811
+body_size_z = 0.35433
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.374015
+lead_width = 0.137795
+lead_thickness = 0.086614
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[TSSOP-8_4.4x3mm_Pitch0.65mm]
+pkgtype = tssop
+body_size_x = 1.73228
+body_size_y = 1.1811
+body_size_z = 0.3937
+body_standoff = 0.03937
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.255905
+pitch_x = %(pitch_y)s
+lead_length = 0.3937
+lead_width = 0.098425
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[VSO-40_7.6x15.4mm_Pitch0.762mm]
+pkgtype = tssop
+body_size_x = 2.97243
+body_size_y = 6.06298
+body_size_z = 0.925195
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 20
+
+pitch_y = 0.299999
+pitch_x = %(pitch_y)s
+lead_length = 0.895667
+lead_width = 0.145669
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[VSO-56_11.1x21.5mm_Pitch0.75mm]
+pkgtype = tssop
+body_size_x = 4.35039
+body_size_y = 8.46455
+body_size_z = 1.14173
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 28
+
+pitch_y = 0.295275
+pitch_x = %(pitch_y)s
+lead_length = 0.875982
+lead_width = 0.145669
+lead_thickness = 0.070866
+exp_pad_x = 0
+exp_pad_y = 0
+
+

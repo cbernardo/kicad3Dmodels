@@ -1,19 +1,19 @@
-# file: ${K3D_SOURCE_DIR}/src/vrml/tools/CMakeLists.txt
+# file: ${K3D_SOURCE_DIR}/src/vrml/models/CMakeLists.txt
 #
 # Top level directory for VRML specific sources
 #
 
 # DIPn models
-add_subdirectory (dipn)
+add_subdirectory( dipn )
 
 # Thru-hole resistors
-add_subdirectory (mfr_thru)
+add_subdirectory( mfr_thru )
 
 # Connectors
-add_subdirectory (conn)
+add_subdirectory( conn )
 
 # VRML stitching and assembly tools
-add_subdirectory (stitch)
+add_subdirectory( stitch )
 
 # Diodes
-add_subdirectory (diode)
+add_subdirectory( diode )

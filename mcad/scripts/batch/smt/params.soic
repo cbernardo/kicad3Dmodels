@@ -1,0 +1,204 @@
+; data based on compilation by Michal Stec
+; https://github.com/michal777/Packages_Generator.git
+
+[DEFAULT]
+; pkgtype: select the type of package []
+pkgtype = none
+; scale: select the output scaling to produce 1VRML units = 0.1inch
+; example: scale = 0.3937 will convert mm units to the correct scale
+; assumed default is '1.0' (units are 0.1inch)
+scale = 1.0
+pin_color = tin.mat
+body_color = charcoal.mat
+dot_color = ceram_gry.mat
+
+[SOIC-14_3.9x8.7mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 1.53543
+body_size_y = 3.4055
+body_size_z = 0.51181
+body_standoff = 0.059055
+
+pads_count_x = 0
+pads_count_y = 7
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.15748
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-16_3.9x9.9mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 1.53543
+body_size_y = 3.89763
+body_size_z = 0.51181
+body_standoff = 0.059055
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.15748
+lead_thickness = 0.059055
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-16_7.5x10.3mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.95275
+body_size_y = 4.05511
+body_size_z = 0.90551
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 8
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.15748
+lead_thickness = 0.098425
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-18_7.5x11.6mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.95275
+body_size_y = 4.54723
+body_size_z = 0.90551
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 9
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.15748
+lead_thickness = 0.098425
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-20_7.5x12.8mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.95275
+body_size_y = 5.03936
+body_size_z = 0.90551
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 10
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.15748
+lead_thickness = 0.098425
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-24_7.5x15.4mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.95275
+body_size_y = 6.06298
+body_size_z = 0.90551
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 12
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.15748
+lead_thickness = 0.098425
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-28_7.5x17.9mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.95275
+body_size_y = 7.04723
+body_size_z = 0.90551
+body_standoff = 0.07874
+
+pads_count_x = 0
+pads_count_y = 14
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.55118
+lead_width = 0.15748
+lead_thickness = 0.098425
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIC-8-1EP_3.9x4.9mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 1.53543
+body_size_y = 1.92913
+body_size_z = 0.51181
+body_standoff = 0.047244
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.15748
+lead_thickness = 0.07874
+exp_pad_x = 0.90551
+exp_pad_y = 0.90551
+
+
+[SOIC-8_3.9x4.9mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 1.53543
+body_size_y = 1.92913
+body_size_z = 0.51181
+body_standoff = 0.059055
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.413385
+lead_width = 0.15748
+lead_thickness = 0.07874
+exp_pad_x = 0
+exp_pad_y = 0
+
+
+[SOIJ-8_5.3x5.3mm_Pitch1.27mm]
+pkgtype = soic
+body_size_x = 2.06692
+body_size_y = 2.07086
+body_size_z = 0.728345
+body_standoff = 0.059055
+
+pads_count_x = 0
+pads_count_y = 4
+
+pitch_y = 0.499999
+pitch_x = %(pitch_y)s
+lead_length = 0.529526
+lead_width = 0.15748
+lead_thickness = 0.07874
+exp_pad_x = 0
+exp_pad_y = 0
+
+

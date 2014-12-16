@@ -24,8 +24,8 @@
 
 #include <string>
 
-namespace kc3d {
-
+namespace KC3D
+{
 /**
  * \ingroup common_tools
  * \brief Material appearance
@@ -56,135 +56,155 @@ namespace kc3d {
  *  may promote a more uniform appearance of models regardless of the
  *  type.
  */
-class Material
+class MATERIAL
 {
 private:
-    void init(void);                                        ///< initialize material values
-    int parseRGB(float rgb[3], const std::string val);      ///< read an R G B triplet
-    int parseFloat(float &param, const std::string val);    ///< read a floating point
-    int validateRGB(const float rgb[3], float target[3]);   ///< validate
-    std::string name;
+    /// initialize material values
+    void init( void );
+    /// read an R G B triplet from a key string
+    int parseRGB( float aRGB[3], const std::string aRGBString );
+    /// read a floating point value from a key string
+    int parseFloat( float& aFloat, const std::string aFloatString );
+    /// validate a SourceRGB set and copy to a DestinationRGB set
+    int validateRGB( const float aSrcRGB[3], float aDstRGB[3] );
+
+    std::string fname;  // name of input file (if any)
 
 protected:
-    std::string material;   ///< user given material name
-    float diffuse[3];   ///< coefficients of diffuse reflection for R,G,B, range 0..1
-    float emissive[3];  ///< coefficients of emission for R,G,B; generally zero, range 0..1
-    float specular[3];  ///< coefficients of specular reflection for R,G,B, range 0..1
-    float ambient;      ///< coefficient for ambient intensity contribution. range 0..1
-    float transparency; ///< coefficient of transparency, range 0 (transparent) .. 1 (opaque)
-    float shininess;    ///< shininess of an object, range 0 (no glint) .. 1 (reflection at oblique angles)
+    /// user given material name
+    std::string material;
+    /// coefficients of diffuse reflection for R,G,B, range 0..1
+    float   diffuse[3];
+    /// coefficients of emission for R,G,B; generally zero, range 0..1
+    float   emissive[3];
+    /// coefficients of specular reflection for R,G,B, range 0..1
+    float   specular[3];
+    /// coefficient for ambient intensity contribution. range 0..1
+    float   ambient;
+    /// coefficient of transparency, range 0 (transparent) .. 1 (opaque)
+    float   transparency;
+    /// shininess of an object, range 0 (no glint) .. 1 (reflection at oblique angles)
+    float   shininess;
 
 public:
-    Material();
-    virtual ~Material();
+    MATERIAL();
+    virtual ~MATERIAL();
 
     /**
      * Load a material appearance specification file.
      *
-     * @param name [in] path to material specification file
+     * @param aMaterialFile [in] path to material specification file
      * @return 0 for success, -1 for failure
      */
-    int  Load(const std::string &name);
+    int Load( const std::string& aMaterialFile );
 
     /**
      * Set the name of the material appearance.  This name may be used when writing out the
      * material information.
      *
-     * @param name [in] material name
+     * @param aMaterialName [in] material name
      */
-    void SetName(const std::string &name);
+    void SetName( const std::string& aMaterialName );
+
     /**
      * Retrieve the material name.
      *
      * @return material name.
      */
-    const std::string &GetName(void);
+    const std::string& GetName( void );
 
     /**
      * Set the material diffuse reflectance values
      *
-     * @param rgb [in] VRML2.0 RGB values for diffuse reflectance (range: 0..1)
+     * @param aRGB [in] VRML2.0 RGB values for diffuse reflectance (range: 0..1)
      * @return 0 for success, -1 for failure
      */
-    int  SetDiffuse(const float rgb[3]);
+    int SetDiffuse( const float aRGB[3] );
+
     /**
      * Retrieve the material's diffuse reflectance parameters
      *
-     * @param rgb [out] RGB diffuse reflectance values (range: 0..1)
+     * @param aRGB [out] RGB diffuse reflectance values (range: 0..1)
      */
-    void GetDiffuse(float rgb[3]);
+    void GetDiffuse( float aRGB[3] );
 
     /**
      * Set the material emissivity values
      *
-     * @param rgb [in] VRML2.0 RGB values for emissivity (range: 0..1)
+     * @param aRGB [in] VRML2.0 RGB values for emissivity (range: 0..1)
      * @return 0 for success, -1 for failure
      */
-    int  SetEmissivity(const float rgb[3]);
+    int SetEmissivity( const float aRGB[3] );
+
     /**
      * Retrieve the material emissivity values
      *
-     * @param rgb [out] RGB emissivity values (range: 0..1)
+     * @param aRGB [out] RGB emissivity values (range: 0..1)
      */
-    void GetEmissivity(float rgb[3]);
+    void GetEmissivity( float aRGB[3] );
 
     /**
      * Set the material specular reflectance values.
      *
-     * @param rgb [in] VRML2.0 RGB values for specular reflectance (range: 0..1)
+     * @param aRGB [in] VRML2.0 RGB values for specular reflectance (range: 0..1)
      * @return 0 for success, -1 for failure
      */
-    int  SetSpecular(const float rgb[3]);
+    int SetSpecular( const float aRGB[3] );
+
     /**
      * Retrieve the material specular reflectance values
      *
-     * @param rgb [out] RGB values for specular reflectance (range: 0..1)
+     * @param aRGB [out] RGB values for specular reflectance (range: 0..1)
      */
-    void GetSpecular(float rgb[3]);
+    void GetSpecular( float aRGB[3] );
 
     /**
      * Set the material ambient intensity value
      *
-     * @param coeff [in] VRML2.0 Ambient Intensity coefficient
+     * @param aAmbientCoefficient [in] VRML2.0 Ambient Intensity coefficient
      * @return 0 for success, -1 for failure
      */
-    int  SetAmbientIntensity(float coeff);
+    int SetAmbientIntensity( float aAmbientCoefficient );
+
     /**
      * Retrieve the material ambient intensity value
      *
      * @return ambient intensity (as per VRML2.0 specification)
      */
-    float GetAmbientIntensity(void);
+    float GetAmbientIntensity( void );
 
     /**
      * Set the material transparency
      *
-     * @param coeff [in] transparency; range is 0 (opaque) to 1 (completely transparent)
+     * @param aTransparency [in] transparency; range is 0 (opaque) to 1 (completely transparent)
      * @return 0 for success, -1 for failure
      */
-    int  SetTransparency(float coeff);
+    int SetTransparency( float aTransparency );
+
     /**
      * Retrieve the material transparency
      *
      * @return material transparency; range 0 (opaque) to 1 (transparent)
      */
-    float GetTransparency(void);
+    float GetTransparency( void );
 
     /**
      * Set the material shininess parameter
      *
-     * @param coeff [in] range 0 (no glint) to 1 (mirror surface)
+     * @param aShininess [in] range 0 (no glint) to 1 (mirror surface)
      * @return 0 for success, -1 for failure
      */
-    int  SetShininess(float coeff);
+    int SetShininess( float aShininess );
+
     /**
      * Retrieve the material shininess
      *
      * @return shininess; 0 (no glint) to 1 (mirror)
      */
-    float GetShininess(void);
+    float GetShininess( void );
 };
 
-}   // namespace kc3d
+
+}       // namespace KC3D
 
 #endif  // MATERIAL_H

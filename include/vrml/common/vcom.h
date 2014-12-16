@@ -1,7 +1,7 @@
 /*
  *      file: vcom.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@
  *      11. Close the file stream
  */
 
-#ifndef VCOM_H_
-#define VCOM_H_
+#ifndef VCOM_H
+#define VCOM_H
 
 #include <iosfwd>
 
-namespace kc3d {
-
-class VRMLMat;
+namespace KC3D
+{
+class VRMLMAT;
 
 /** \file */
 
@@ -53,11 +53,11 @@ class VRMLMat;
  * a boilerplate VRML2.0 header which includes a permissive
  * license for the use and distribution of the output file.
  *
- * @param filename [in] name of file to create or open
- * @param fp [in,out]
+ * @param aFilename [in] name of file to create or open
+ * @param aOutputStream [in,out] VRML output file stream
  * @return 0 for success, -1 for failure
  */
-int SetupVRML(std::string filename, std::ofstream &fp);
+int SetupVRML( std::string aFilename, std::ofstream& aOutputStream );
 
 /**
  * \ingroup vrml_tools
@@ -72,12 +72,12 @@ int SetupVRML(std::string filename, std::ofstream &fp);
  * and finally CloseXForm is invoked to close the
  * transform block.
  *
- * @param name [in] a VRML2.0 compliant name for the Transform block
- * @param fp   [in] open output file
- * @param tabs [in] indent level for formatting
+ * @param aBlockName [in] a VRML2.0 compliant name for the Transform block
+ * @param aVRMLFile  [in] open output file
+ * @param aTabDepth  [in] indent level for formatting
  * @return 0 for success, -1 for failure
  */
-int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0);
+int SetupXForm( std::string aBlockName, std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -87,11 +87,11 @@ int SetupXForm(std::string name, std::ofstream &fp, int tabs = 0);
  * Write out the closing braces to match a previous
  * call to SetupXForm.
  *
- * @param fp    [in] open output file
- * @param tabs  [in] indent level for formatting
+ * @param aVRMLFile [in] open output file
+ * @param aTabDepth [in] indent level for formatting
  * @return 0 for success, -1 for failure
  */
-int CloseXForm(std::ofstream &fp, int tabs = 0);
+int CloseXForm( std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -101,14 +101,14 @@ int CloseXForm(std::ofstream &fp, int tabs = 0);
  * Write the opening statements of a VRML2.0 Shape block. The
  * statements include Appearance and Geometry opening statements.
  *
- * @param color         [in] VRMLMat material appearance specification
- * @param reuse_color   [in] If FALSE the entire material specification is written, otherwise a previous definition is reused
- * @param fp            [in] open output file
- * @param tabs          [in] indent level for formatting
+ * @param aMaterial     [in] VRMLMat material appearance specification
+ * @param reuseMaterial [in] If FALSE the entire material specification is written, otherwise a previous definition is reused
+ * @param aVRMLFile     [in] open output file
+ * @param aTabDepth     [in] indent level for formatting
  * @return 0 for success, -1 for failure
  */
-int SetupShape(VRMLMat &color, bool reuse_color,
-        std::ofstream &fp, int tabs = 0);
+int SetupShape( VRMLMAT& aMaterial, bool reuseMaterial,
+        std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -118,11 +118,11 @@ int SetupShape(VRMLMat &color, bool reuse_color,
  * Write the closing braces for a VRML2.0 Shape block previously
  * opened via a call to SetupShape.
  *
- * @param fp    [in] open output file
- * @param tabs  [in] indent level for formatting
+ * @param aVRMLFile [in] open output file
+ * @param aTabDepth [in] indent level for formatting
  * @return
  */
-int CloseShape(std::ofstream &fp, int tabs = 0);
+int CloseShape( std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -135,12 +135,13 @@ int CloseShape(std::ofstream &fp, int tabs = 0);
  * @param x     [in] pointer to array of vertex X coordinates
  * @param y     [in] pointer to array of vertex Y coordinates
  * @param z     [in] pointer to array of vertex Z coordinates
- * @param np    [in] number of points to write
- * @param fp    [in] open output file
- * @param tabs  [in] indent level for formatting
+ * @param nPoints   [in] number of points to write
+ * @param aVRMLFile [in] open output file
+ * @param aTabDepth [in] indent level for formatting
  * @return  0 for success, -1 for failure
  */
-int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int tabs = 0);
+int WriteCoord( double* x, double* y, double* z, int nPoints,
+                std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -155,11 +156,11 @@ int WriteCoord(double *x, double *y, double *z, int np, std::ofstream &fp, int t
  * See the VRML2.0 specification for information on the
  * formatting of the vertex list.
  *
- * @param fp    [in] open output file
- * @param tabs  [in] indent level for formatting
+ * @param aVRMLFile [in] open output file
+ * @param aTabDepth [in] indent level for formatting
  * @return 0 for success, -1 for failure
  */
-int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
+int SetupCoordIndex( std::ofstream& aVRMLFile, int aTabDepth = 0 );
 
 /**
  * \ingroup vrml_tools
@@ -169,12 +170,11 @@ int SetupCoordIndex(std::ofstream &fp, int tabs = 0);
  * Close a VRML2.0 coordIndex block which was previously
  * opened via a call to SetupCoordIndex.
  *
- * @param fp    [in] open output file
- * @param tabs  [in] indent level for formatting
+ * @param aVRMLFile [in] open output file
+ * @param aTabDepth [in] indent level for formatting
  * @return
  */
-int CloseCoordIndex(std::ofstream &fp, int tabs = 0);
+int CloseCoordIndex( std::ofstream& aVRMLFile, int aTabDepth = 0 );
+}    // namespace KC3D
 
-} // namespace kc3d
-
-#endif /* VCOM_H_ */
+#endif // VCOM_H

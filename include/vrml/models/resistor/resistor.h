@@ -1,7 +1,7 @@
 /*
  *      file: resistor.h
  *
- *      Copyright 2012 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *      Copyright 2012-2014 Dr. Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -88,53 +88,54 @@
  *          with a straight lead of 2*wire dia.
  */
 
-#ifndef RESISTOR_H_
-#define RESISTOR_H_
+#ifndef RESISTOR_H
+#define RESISTOR_H
 
 #include <iosfwd>
 
-#include "vrmlmat.h"
+#include <vrmlmat.h>
 
-namespace kc3dresistor {
-
-struct RParams
+namespace KC3DRESISTOR
 {
-    double scale;   // world scale
-    double shift;   // shift in x-axis to control (0,0) reference point (default 0)
-    double L;       // length of body
-    double D;       // diameter of body
-    double d;       // diameter of wire
-    double p;       // lead pitch
-    double wl;      // wire length below PCB
-    bool horiz;     // orientation; true if horizontal
-    char endshape;  // end finish; 'C'ap, 'R'ound, 'B'ulge (default)
-    bool bcap;      // true to place a metallic cap on a Bulge style end (default false)
-    int wsides;     // number of sides to the wire (default 16)
-    int bsides;     // number of sides in a 90-deg bend (default 6)
-    int rsides;     // number of sides on the resistor (default 48)
-    std::string pwrsuf;     // suffix for power rating
-    std::string spcsuf;     // suffix for pin spacing
-    kc3d::VRMLMat colors[14]; // color values for 0..9, Gold, Silver, body color, wire color
+struct RPARAMS
+{
+    double  scale;              // world scale
+    double  shift;              // shift in x-axis to control (0,0) reference point (default 0)
+    double  L;                  // length of body
+    double  D;                  // diameter of body
+    double  d;                  // diameter of wire
+    double  p;                  // lead pitch
+    double  wl;                 // wire length below PCB
+    bool    horiz;              // orientation; true if horizontal
+    char    endshape;           // end finish; 'C'ap, 'R'ound, 'B'ulge (default)
+    bool    bcap;               // true to place a metallic cap on a Bulge style end (default false)
+    int wsides;                 // number of sides to the wire (default 16)
+    int bsides;                 // number of sides in a 90-deg bend (default 6)
+    int rsides;                 // number of sides on the resistor (default 48)
+    std::string pwrsuf;         // suffix for power rating
+    std::string spcsuf;         // suffix for pin spacing
+    KC3D::VRMLMAT colors[14];   // color values for 0..9, Gold, Silver, body color, wire color
 
-    RParams();
+    RPARAMS();
 };
 
-class Resistor
+class RESISTOR
 {
-    RParams params;
-    int makeHzLead(std::ofstream &fp);
-    int makeVtLead(std::ofstream &fp);
-    int makeBody(std::ofstream &fp, const std::string &bands);
-    int validateBands(const std::string &bands);
-    int getColorIdx(int i, const std::string &bands);
+    RPARAMS params;
+    int makeHzLead( std::ofstream& fp );
+    int makeVtLead( std::ofstream& fp );
+    int makeBody( std::ofstream& fp, const std::string& bands );
+    int validateBands( const std::string& bands );
+    int getColorIdx( int i, const std::string& bands );
 
 public:
-    int Create(RParams &rp, const std::string &bands, const std::string &filename);
-    // filename = base filename =
-    // [Part Series]_[Value]_[Tolerance][Tcoeff][End Style]_[Power]_[Lead Space]
+    int Create( RPARAMS& aParameters, const std::string& aBandString,
+                const std::string& aVRMLFname );
 
+    // Note: typically aVRMLFname = base filename =
+    // [Part Series]_[Value]_[Tolerance][Tcoeff][End Style]_[Power]_[Lead Space]
 };
 
-}   // namespace kc3dresistor
+}    // namespace KC3DRESISTOR
 
-#endif /* RESISTOR_H_ */
+#endif // RESISTOR_H

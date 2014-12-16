@@ -1,15 +1,15 @@
 /*
     file: dil.pyinc
-    
-    Python bindings for kc3ddip::Dip and DipParams
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3DDIP::DIP and DIPPARAMS
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,29 +20,29 @@
 
 */
 
-    class_<kc3ddip::DipParams>("DipParams","DIL package parameters")
-        .def_readwrite("scale", &kc3ddip::DipParams::scale, "VRML world scale")
-        .def_readwrite("A1", &kc3ddip::DipParams::A1, "case distance from top of PCB")
-        .def_readwrite("A2", &kc3ddip::DipParams::A2, "case height")
-        .def_readwrite("L", &kc3ddip::DipParams::L, "pin length below top of PCB")
-        .def_readwrite("e", &kc3ddip::DipParams::e, "pin pitch")
-        .def_readwrite("E", &kc3ddip::DipParams::E, "row spacing")
-        .def_readwrite("E1", &kc3ddip::DipParams::E1, "case width")
-        .def_readwrite("B1", &kc3ddip::DipParams::B1, "pin breadth (wide part)")
-        .def_readwrite("b", &kc3ddip::DipParams::b, "pin width (narrow part)")
-        .def_readwrite("c", &kc3ddip::DipParams::c, "pin thickness")
-        .def_readwrite("NW", &kc3ddip::DipParams::NW, "notch width")
-        .def_readwrite("ND", &kc3ddip::DipParams::ND, "notch depth")
-        .def_readwrite("NL", &kc3ddip::DipParams::NW, "notch length (must be > ND)")
-        .def_readwrite("casebev", &kc3ddip::DipParams::casebev, "case bevel")
-        .def_readwrite("pinbev", &kc3ddip::DipParams::pinbev, "pin bevel")
+    class_<KC3DDIP::DIPPARAMS>("DIPParams","DIL package parameters")
+        .def_readwrite("scale", &KC3DDIP::DIPPARAMS::scale, "VRML world scale")
+        .def_readwrite("A1", &KC3DDIP::DIPPARAMS::A1, "case distance from top of PCB")
+        .def_readwrite("A2", &KC3DDIP::DIPPARAMS::A2, "case height")
+        .def_readwrite("L", &KC3DDIP::DIPPARAMS::L, "pin length below top of PCB")
+        .def_readwrite("e", &KC3DDIP::DIPPARAMS::e, "pin pitch")
+        .def_readwrite("E", &KC3DDIP::DIPPARAMS::E, "row spacing")
+        .def_readwrite("E1", &KC3DDIP::DIPPARAMS::E1, "case width")
+        .def_readwrite("B1", &KC3DDIP::DIPPARAMS::B1, "pin breadth (wide part)")
+        .def_readwrite("b", &KC3DDIP::DIPPARAMS::b, "pin width (narrow part)")
+        .def_readwrite("c", &KC3DDIP::DIPPARAMS::c, "pin thickness")
+        .def_readwrite("NW", &KC3DDIP::DIPPARAMS::NW, "notch width")
+        .def_readwrite("ND", &KC3DDIP::DIPPARAMS::ND, "notch depth")
+        .def_readwrite("NL", &KC3DDIP::DIPPARAMS::NW, "notch length (must be > ND)")
+        .def_readwrite("casebev", &KC3DDIP::DIPPARAMS::casebev, "case bevel")
+        .def_readwrite("pinbev", &KC3DDIP::DIPPARAMS::pinbev, "pin bevel")
     ;
 
-    class_<kc3ddip::Dip>("Dip", "Model of a DIL package")
-        .def("create", &kc3ddip::Dip::Build, "Write a resistor model to a file")
-        .def("setParams", &kc3ddip::Dip::SetParams, "Set the case and pin parameters")
-        .def("setPins", &kc3ddip::Dip::SetPins, "Set the nominal number of pins")
-        .def("setPin", &kc3ddip::Dip::SetPin, "Set whether a pin is rendered (True) or not (False)")
-        .def("setPinColor", &kc3ddip::Dip::SetPinColor, "load the pin color definition") 
-        .def("setCaseColor", &kc3ddip::Dip::SetCaseColor, "load the case color definition") 
+    class_<KC3DDIP::DIP>("Dip", "Model of a DIL package")
+        .def("create", &KC3DDIP::DIP::Build, "Write a resistor model to a file")
+        .def("setParams", &KC3DDIP::DIP::SetParams, "Set the case and pin parameters")
+        .def("setPins", &KC3DDIP::DIP::SetPins, "Set the nominal number of pins")
+        .def("setPin", &KC3DDIP::DIP::SetPin, "Set whether a pin is rendered (True) or not (False)")
+        .def("setPinColor", &KC3DDIP::DIP::SetPinColor, "load the pin color definition")
+        .def("setCaseColor", &KC3DDIP::DIP::SetCaseColor, "load the case color definition")
     ;

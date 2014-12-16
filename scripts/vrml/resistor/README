@@ -1,8 +1,0 @@
-Run build_lists.sh to generate the base output filenames and color code sequences
-then run generate.sh to build all the models and place them in their directories.
-
-To add more models, create parameter files and edit generate.sh.
-
-For examples of parameter files, see the files in the params directory.
-
-

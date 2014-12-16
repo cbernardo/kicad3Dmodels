@@ -1,15 +1,15 @@
 /*
     file: vcom.pyinc
-    
+
     Python bindings for functions in vcom.h
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,11 +20,11 @@
 
 */
 
-    def("SetupVRML", kc3d::SetupVRML, "Open the named VRML file and write a boilerplate header");
-    def("SetupXForm", kc3d::SetupXForm, "Create an open Transform block");
-    def("CloseXForm", kc3d::CloseXForm, "Close a Transform block");
-    def("SetupShape", kc3d::SetupShape, "Create an open Shape block (must be within a Transform block)");
-    def("CloseShape", kc3d::CloseShape, "Close a Shape block");
-    def("WriteCoord", kc3d::WriteCoord, "Write a coordinate list");
-    def("SetupCoordIndex", kc3d::SetupCoordIndex, "Create an open coordIndex block");
-    def("CloseCoordIndex", kc3d::CloseCoordIndex, "Close a coordIndex block");
+    def("SetupVRML", KC3D::SetupVRML, "Open the named VRML file and write a boilerplate header");
+    def("SetupXForm", KC3D::SetupXForm, "Create an open TRANSFORM block");
+    def("CloseXForm", KC3D::CloseXForm, "Close a TRANSFORM block");
+    def("SetupShape", KC3D::SetupShape, "Create an open Shape block (must be within a TRANSFORM block)");
+    def("CloseShape", KC3D::CloseShape, "Close a Shape block");
+    def("WriteCoord", KC3D::WriteCoord, "Write a coordinate list");
+    def("SetupCoordIndex", KC3D::SetupCoordIndex, "Create an open coordIndex block");
+    def("CloseCoordIndex", KC3D::CloseCoordIndex, "Close a coordIndex block");

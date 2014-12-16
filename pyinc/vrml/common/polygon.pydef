@@ -1,15 +1,15 @@
 /*
     file: polygon.pydef
-    
-    Python bindings for kc3d::Polygon
-    
-    Copyright 2012, Cirilo Bernardo
-    
+
+    Python bindings for KC3D::POLYGON
+
+    Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,53 +20,54 @@
 
 */
 
-namespace kc3d {
- 
-class PolyWrap : public Polygon, public wrapper<Polygon>
+namespace KC3D
+{
+
+class POLYWRAP : public POLYGON, public wrapper<POLYGON>
 {
 public:
     // PURE VIRTUAL FUNCTIONS
-    Polygon *clone(void)
+    POLYGON *Clone(void)
     {
         return this->get_override("clone")();
     }
-    
-    int Calc(double x, double y, Transform &t)
+
+    int Calc(double x, double y, TRANSFORM &t)
     {
         return this->get_override("Calc")(x, y, t);
     }
-    
+
     // IMPLEMENTED VIRTUAL FUNCTIONS
-    bool isValid(void)
+    bool IsValid(void)
     {
         if (override IsValid = this->get_override("IsValid"))
             return IsValid();
-        return Polygon::IsValid();
+        return POLYGON::IsValid();
     }
-    
-    int Paint(bool ccw, Transform &t, VRMLMat &color, bool reuse_color,
+
+    int Paint(bool ccw, TRANSFORM &t, VRMLMAT &color, bool reuse_color,
             std::ofstream &fp, int tabs)
     {
         if (override Paint = this->get_override("Paint"))
             return Paint(ccw, t, color, reuse_color, fp, tabs);
-        return this->Polygon::Paint(ccw, t, color, reuse_color, fp, tabs);
+        return this->POLYGON::Paint(ccw, t, color, reuse_color, fp, tabs);
     }
-  
-    int Stitch(bool ccw, Polygon &p2, Transform &t,
-            VRMLMat &color, bool reuse_color, std::ofstream &fp, int tabs)
+
+    int Stitch(bool ccw, POLYGON &p2, TRANSFORM &t,
+            VRMLMAT &color, bool reuse_color, std::ofstream &fp, int tabs)
     {
         if (override Stitch = this->get_override("Stitch"))
             return Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
-        return Polygon::Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
+        return POLYGON::Stitch(ccw, p2, t, color, reuse_color, fp, tabs);
     }
-    
-    int Extrude(bool cap0, bool cap1, bool outer, Quat &center, Transform &upto, Transform &txout,
-            VRMLMat &color, bool reuse, std::ofstream &fp, int tabs)
+
+    int Extrude(bool cap0, bool cap1, bool outer, QUAT &center, TRANSFORM &upto, TRANSFORM &txout,
+            VRMLMAT &color, bool reuse, std::ofstream &fp, int tabs)
     {
         if (override Extrude = this->get_override("Extrude"))
             return Extrude(cap0, cap1, outer, center, upto, txout, color, reuse, fp, tabs);
-        return Polygon::Extrude(cap0, cap1, outer, center, upto, txout, color, reuse, fp, tabs);
+        return POLYGON::Extrude(cap0, cap1, outer, center, upto, txout, color, reuse, fp, tabs);
     }
 };
 
-}   // namespace kc3d
+}   // namespace KC3D

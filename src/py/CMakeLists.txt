@@ -3,22 +3,9 @@
 # Python bindings for K3D tools
 #
 
-# This path must point to the boost library installation
-SET(ENV{BOOST_ROOT} "/usr/lib")
-
-# Set this to the Python include directory
-SET(PYTHON_INCLUDE "/usr/include/python2.7")
-
-# Set this to the python version to use
-SET(PYTHON_VERSION python2.7)
-
-# Ensure the specified Boost version matches what's installed
-find_package(Boost 1.49 REQUIRED COMPONENTS python)
-
-# The Python include directory must be specified
-INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}" "${PYTHON_INCLUDE}")
-
 include_directories(
+    "${Boost_INCLUDE_DIR}"
+    "${PYTHON_INCLUDE_DIR}"
     "${K3D_SOURCE_DIR}/include/common"
     "${K3D_SOURCE_DIR}/include/vrml/common"
     "${K3D_SOURCE_DIR}/include/vrml/models/conn"
@@ -32,78 +19,121 @@ include_directories(
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/dil"
     "${K3D_SOURCE_DIR}/pyinc/vrml/models/diode"
     )
-    
+
 link_directories(
-	"${K3D_BINARY_DIR}/src/vrml/vcom"
-	"${K3D_BINARY_DIR}/src/vrml/models/conn"
+    "${Boost_LIBRARY_DIR}"
+    "${K3D_BINARY_DIR}/src/vrml/vcom"
+    "${K3D_BINARY_DIR}/src/vrml/models/conn"
     "${K3D_BINARY_DIR}/src/vrml/models/diode"
-	)
+    )
+
+# NOTE: on Linux a static link to boost-python
+# results in broken tools; this is a bug waiting
+# to be fixed. It is not known if other platforms
+# would be affected.
+if( APPLE )
+    set( BOOST_LINK_FLAGS "-Wl,-Bstatic" )
+else()
+    set( BOOST_LINK_FLAGS "-Wl,-Bdynamic" )
+endif()
 
 # KC3D: General Tools
-add_library(kc3d SHARED kc3d.cpp)
-target_link_libraries(kc3d kc3d_vcom ${Boost_LIBRARIES} ${PYTHON_VERSION})
+add_library( kc3d SHARED kc3d.cpp )
+
+set_target_properties( kc3d PROPERTIES PREFIX "" )
+
+if( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+    set_target_properties( kc3d PROPERTIES SUFFIX ".pyd" )
+endif()
+
+add_dependencies( kc3d boost )
+
+target_link_libraries(
+    kc3d
+    "${BOOST_LINK_FLAGS}" "${Boost_PYTHON_LIBRARY}"
+    "-Wl,-Bdynamic" kc3d_vcom
+    "-Wl,-Bdynamic" ${PYTHON_LIBRARY}
+    )
 
 # KC3DCONN: Connectors
-add_library(kc3dconn SHARED kc3dconn.cpp)
-target_link_libraries(kc3dconn kc3d_vconn ${Boost_LIBRARIES} ${PYTHON_VERSION})
+add_library( kc3dconn SHARED kc3dconn.cpp )
+
+set_target_properties( kc3dconn PROPERTIES PREFIX "" )
+
+if( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+    set_target_properties( kc3dconn PROPERTIES SUFFIX ".pyd" )
+endif()
+
+add_dependencies( kc3dconn boost  )
+
+target_link_libraries(
+    kc3dconn
+    ${BOOST_LINK_FLAGS} "${Boost_PYTHON_LIBRARY}"
+    "-Wl,-Bdynamic" kc3d_vconn
+    "-Wl,-Bdynamic" ${PYTHON_LIBRARY}
+    )
 
 # KC3DRES: Resistors
-add_library(kc3dres SHARED kc3dres.cpp)
-target_link_libraries(kc3dres kc3d_vresist ${Boost_LIBRARIES} ${PYTHON_VERSION})
+add_library( kc3dres SHARED kc3dres.cpp )
+
+set_target_properties( kc3dres PROPERTIES PREFIX "" )
+
+if( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+    set_target_properties( kc3dres PROPERTIES SUFFIX ".pyd" )
+endif()
+
+add_dependencies( kc3dres boost  )
+
+target_link_libraries(
+    kc3dres
+    ${BOOST_LINK_FLAGS} "${Boost_PYTHON_LIBRARY}"
+    "-Wl,-Bdynamic" kc3d_vresist
+    "-Wl,-Bdynamic" ${PYTHON_LIBRARY}
+    )
 
 # KC3DDIP: DIL Packages
 add_library(kc3ddip SHARED kc3ddip.cpp)
-target_link_libraries(kc3ddip kc3d_vdip ${Boost_LIBRARIES} ${PYTHON_VERSION})
+
+set_target_properties( kc3ddip PROPERTIES PREFIX "" )
+
+if( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+    set_target_properties( kc3ddip PROPERTIES SUFFIX ".pyd" )
+endif()
+
+add_dependencies( kc3ddip boost  )
+
+target_link_libraries(
+    kc3ddip
+    ${BOOST_LINK_FLAGS} "${Boost_PYTHON_LIBRARY}"
+    "-Wl,-Bdynamic" kc3d_vdip
+    "-Wl,-Bdynamic" ${PYTHON_LIBRARY}
+    )
 
 # KC3DDIP: DIL Packages
-add_library(kc3ddiode SHARED kc3ddiode.cpp)
-target_link_libraries(kc3ddiode kc3d_vdiode ${Boost_LIBRARIES} ${PYTHON_VERSION})
+add_library( kc3ddiode SHARED kc3ddiode.cpp )
 
-# INSTALLATION
-install(TARGETS kc3d LIBRARY DESTINATION lib)
-install(TARGETS kc3dconn LIBRARY DESTINATION lib)
-install(TARGETS kc3dres LIBRARY DESTINATION lib)
-install(TARGETS kc3ddip LIBRARY DESTINATION lib)
-install(TARGETS kc3ddiode LIBRARY DESTINATION lib)
+set_target_properties( kc3ddiode PROPERTIES PREFIX "" )
 
-if( CMAKE_HOST_UNIX )
+if( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+    set_target_properties( kc3ddiode PROPERTIES SUFFIX ".pyd" )
+endif()
 
-    add_custom_command(
-        TARGET kc3d
-        POST_BUILD
-        COMMAND ln -s libkc3d.so kc3d.so
+add_dependencies( kc3ddiode boost  )
+
+target_link_libraries(
+    kc3ddiode
+    ${BOOST_LINK_FLAGS} "${Boost_PYTHON_LIBRARY}"
+    "-Wl,-Bdynamic" kc3d_vdiode
+    "-Wl,-Bdynamic" ${PYTHON_LIBRARY}
     )
 
-    add_custom_command(
-        TARGET kc3dconn
-        POST_BUILD
-        COMMAND ln -s libkc3dconn.so kc3dconn.so
+# Installation
+install(
+    TARGETS
+        kc3d
+        kc3dconn
+        kc3dres
+        kc3ddip
+        kc3ddiode
+    ${K3D_LIBDIR}
     )
-
-    add_custom_command(
-        TARGET kc3ddiode
-        POST_BUILD
-        COMMAND ln -s libkc3ddiode.so kc3ddiode.so
-    )
-
-    add_custom_command(
-        TARGET kc3ddip
-        POST_BUILD
-        COMMAND ln -s libkc3ddip.so kc3ddip.so
-    )
-
-    add_custom_command(
-        TARGET kc3dres
-        POST_BUILD
-        COMMAND ln -s libkc3dres.so kc3dres.so
-    )
-
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/kc3d.so"
-    "${CMAKE_CURRENT_BINARY_DIR}/kc3dconn.so"
-    "${CMAKE_CURRENT_BINARY_DIR}/kc3ddiode.so"
-    "${CMAKE_CURRENT_BINARY_DIR}/kc3ddip.so"
-    "${CMAKE_CURRENT_BINARY_DIR}/kc3dres.so"
-    DESTINATION lib)
-
-endif( CMAKE_HOST_UNIX )
