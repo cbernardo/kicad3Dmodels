@@ -76,11 +76,6 @@ The tools can currently be built and run on MSWindows with MSYS2 + MinGW64:
 7. install various build dependencies:
     pacman -S mingw-w64-x86_64-wxWidgets
     pacman -S  mingw-w64-x86_64-boost
-    pacman -S mingw-w64-x86_64-gtkglext
-    pacman -S mingw-w64-x86_64-glib2
-    pacman -S glib2-devel
-    pacman -S mingw-w64-x86_64-cairo
-    pacman -S mingw-w64-x86_64-glew
 8. Configure:
   cd ~/models3d
   mkdir build
