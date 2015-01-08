@@ -285,7 +285,7 @@ def BodyQFP( out, body_size_x, body_size_y, body_size_z, body_standoff, lead_thi
     dimple.writeVRML( False, True, t0, bcolor, True, out, 1 )
 
 
-def BodyQFN( out, body_size_x, body_size_y, body_size_z, body_standoff, lead_thickness, pin, dotp,
+def BodyQFN( out, body_size_x, body_size_y, body_size_z, body_standoff, lead_thickness, pin,
              pitch_x, pitch_y, pins_x, pins_y, bcolor ):
     tx = Transform()
     b1 = SimplePoly()
@@ -390,25 +390,7 @@ def BodyQFN( out, body_size_x, body_size_y, body_size_z, body_standoff, lead_thi
     t1 = Transform()
     p0 = Quat()
     p0.z = lead_thickness
-    c1.extrude( True, False, True, p0, tx, t1, color, True, out, 1 )
-
-    # Top of case
-    tess = Tesselator()
-    addPolygon( c1, tess, False )
-    t1.setTranslation( 1.5*dotp - body_size_x/2, body_size_y/2 - 1.5*dotp, 0 )
-    dot = Circle()
-    dot.setNVertices( 12 )
-    dot.calc( dotp, dotp, t1)
-    addPolygon( dot, tess, True )
-    t1.setTranslation( 0, 0, body_standoff + body_size_z )
-    t1.setRotation( 0, 0, 0, 1 )
-    tess.writeVRML( True, t1, color, True, out, 1 )
-
-    # place the dimple
-    t1.setTranslation( 1.5*dotp - body_size_x/2, body_size_y/2 - 1.5*dotp, body_standoff + body_size_z )
-    dimple = Dimple()
-    dimple.setParams( dotp/2, dotp/8, 12, 5 )
-    dimple.writeVRML( False, True, t1, color, True, out, 1 )
+    c1.extrude( True, True, True, p0, tx, t1, color, True, out, 1 )
 
 
 def MakeQFN( out, body_size_x, body_size_y, body_size_z, body_standoff,
@@ -421,22 +403,8 @@ def MakeQFN( out, body_size_x, body_size_y, body_size_z, body_standoff,
 
     pin = PinQFN( lead_length, lead_width )
 
-    dotp = min( body_size_x, body_size_y ) / 8
-
-    # 0.31496 = 0.8mm / 2.54 (scale factor)
-    if dotp > 0.31496 :
-        dotp = 0.31496
-
-    # 0.23622 = 0.6mm / 2,54
-    #if dotp < 0.23622 :
-    #    dotp = 0.23622
-
-    # 0.1574 = 0.4mm / 2,54
-    if dotp < 0.1574:
-        dotp = 0.1574
-
     BodyQFN( out, body_size_x, body_size_y, body_size_z, body_standoff,
-            lead_thickness, pin, dotp, pitch_x, pitch_y, pads_count_x, pads_count_y,
+            lead_thickness, pin, pitch_x, pitch_y, pads_count_x, pads_count_y,
             nbcolor )
 
     HeatPad( out, exp_pad_x, exp_pad_y, body_standoff, color )
