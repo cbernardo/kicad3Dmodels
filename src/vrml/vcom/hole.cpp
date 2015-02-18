@@ -41,6 +41,13 @@ HOLE::HOLE()
     hole    = NULL;
     np  = 16;
     bev = -1.0;
+    square = true;
+    w1 = 0;
+    w2 = 0;
+    d1 = 0;
+    d2 = 0;
+    ow = 0;
+    od = 0;
 }
 
 

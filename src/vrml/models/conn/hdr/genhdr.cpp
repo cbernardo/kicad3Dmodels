@@ -42,6 +42,34 @@ GENHDR::GENHDR()
     hasColors = false;
     hasBparams  = false;
     hasPparams  = false;
+
+    cols = 1;
+    rows = 1;
+    xp = 2.54;
+    yp = 2.54;
+    sh = 0.3;
+    bh = 2.54;
+    bev = 0.2;
+    hassh = true;
+    squarebot = true;
+    squaretop = true;
+    male = true;
+    pbev = 0;
+    fbev = 0;
+    pd = 3.5;
+    pl = 8;
+    pd0 = 0.64;
+    pdy = 0.64;
+    pd1 = 0;
+    pd2 = 0;
+    pd3 = 0;
+    ftc = 1.1;
+    pt = 0.5;
+    pts = 0.625;
+    ns = 0;
+    fd = 0;
+
+    return;
 }
 
 
@@ -441,6 +469,10 @@ int GENHDR::makePins( KC3D::TRANSFORM& t, std::ofstream& fp, int tabs )
     double  tpl;                // total pin length (pin[0])
     double  tpo, tph, tpt, tps; // second pin's offset, height, taper, and taper ratio
     double  dtmp;
+
+    tps = 0.625;
+    tpt = 0;
+    tph = 0;
 
     if( male )
     {

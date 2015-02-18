@@ -95,6 +95,8 @@
 
 #include <vrmlmat.h>
 
+#define NRCOLOR_CODES (14)
+
 namespace KC3DRESISTOR
 {
 struct RPARAMS
@@ -114,7 +116,7 @@ struct RPARAMS
     int rsides;                 // number of sides on the resistor (default 48)
     std::string pwrsuf;         // suffix for power rating
     std::string spcsuf;         // suffix for pin spacing
-    KC3D::VRMLMAT colors[14];   // color values for 0..9, Gold, Silver, body color, wire color
+    KC3D::VRMLMAT colors[NRCOLOR_CODES];    // color values for 0..9, Gold, Silver, body color, wire color
 
     RPARAMS();
 };

@@ -45,6 +45,7 @@ DIMPLE::DIMPLE()
     factor = 0.0;
     sides = 0;
     sections = 0;
+    depth = 0;
 
     return;
 }
@@ -317,7 +318,9 @@ bool DIMPLE::writeIndices( bool isCapped, bool isCCW, VRMLMAT& aMaterial, bool r
 
     }
 
-    int o1, o2;
+    int o1;
+    int o2 = 0;
+
     for(int k = 1; k < sections; ++k)
     {
         o2 = j + k*sides;
@@ -339,6 +342,7 @@ bool DIMPLE::writeIndices( bool isCapped, bool isCCW, VRMLMAT& aMaterial, bool r
 
     // close the sphere
     o1 = o2 + sides;
+
     for( int i = 0; i <= sides; ++i )
     {
         writeTriplet( (i %sides) + o2, ((i + 1) % sides) + o2, o1,

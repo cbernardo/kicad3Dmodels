@@ -479,10 +479,10 @@ int main( int argc, char** argv )
             }
 
             if( k == -1 )
-                k = 10;
+                oc = 'J';
 
             if( k == -2 )
-                k = 11;
+                oc = 'K';
 
             // base name + code up to Multiplier
             switch( nb )

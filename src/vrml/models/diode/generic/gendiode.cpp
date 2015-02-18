@@ -46,6 +46,7 @@ GENDIODE::GENDIODE()
     lbody = 0.0;
     wcath = 0.0;
     scath = 0.0;
+    nb = 5;
 }
 
 

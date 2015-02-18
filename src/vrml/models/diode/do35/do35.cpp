@@ -40,6 +40,7 @@ DO35::DO35()
     hascol = false;
     nwv = 16;
     ntv = 48;
+    nb  = 5;
 }
 
 

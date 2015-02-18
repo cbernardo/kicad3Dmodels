@@ -39,19 +39,21 @@ using namespace KC3D;
 
 FUNNEL::FUNNEL()
 {
-    valid = false;
-    square  = true;
-    npoly   = 0;
-    poly = NULL;
+    valid  = false;
+    square = true;
+    npoly  = 0;
+    poly   = NULL;
+    bev    = 0;
 }
 
 
 FUNNEL::FUNNEL( const FUNNEL& p )
 {
-    valid = p.valid;
-    square  = p.square;
-    npoly   = p.npoly;
-    poly = NULL;
+    valid  = p.valid;
+    square = p.square;
+    npoly  = p.npoly;
+    bev    = p.bev;
+    poly   = NULL;
 
     if( !valid )
         npoly = 0;

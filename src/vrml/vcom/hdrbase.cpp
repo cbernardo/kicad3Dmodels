@@ -71,6 +71,7 @@ HDRBASE::HDRBASE( const HDRBASE& p )
     POLYGON::nv = 0;
 
     valid = p.valid;
+    ns  = p.ns;
 
     nv  = p.nv;
     x   = NULL;

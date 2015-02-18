@@ -24,7 +24,7 @@ namespace KC3DRESISTOR
 {
     int SetColor(int idx, KC3DRESISTOR::RPARAMS &params, std::string filename)
     {
-        if ((idx < 0) || (idx > 14))
+        if( (idx < 0) || (idx >= NRCOLOR_CODES) )
         {
             std::cerr << "Invalid index (" << idx << "); valid values are 0..14\n";
             return -1;
