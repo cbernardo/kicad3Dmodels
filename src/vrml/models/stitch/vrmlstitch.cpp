@@ -1065,13 +1065,13 @@ int parsePart( std::ofstream& ofile, INFO& glob,
                 part.tx.Transform( &fs.x, &fs.y, &fs.z, 1 );
                 glob.tx.Transform( &fs.x, &fs.y, &fs.z, 1 );
 
-                if( (fs.x < 1e-9) && (fs.x > 11e-9) )
+                if( (fs.x < 1e-9) && (fs.x > -1e-9) )
                     fs.x = 0.0;
 
-                if( (fs.y < 1e-9) && (fs.y > 11e-9) )
+                if( (fs.y < 1e-9) && (fs.y > -1e-9) )
                     fs.y = 0.0;
 
-                if( (fs.z < 1e-9) && (fs.z > 11e-9) )
+                if( (fs.z < 1e-9) && (fs.z > -1e-9) )
                     fs.z = 0.0;
 
                 ofile << setprecision( 8 ) << fs.x << " " << fs.y << " " << fs.z;
@@ -1158,13 +1158,13 @@ int parsePart( std::ofstream& ofile, INFO& glob,
             part.tx.Transform( &fs.x, &fs.y, &fs.z, 1 );
             glob.tx.Transform( &fs.x, &fs.y, &fs.z, 1 );
 
-            if( (fs.x < 1e-9) && (fs.x > 11e-9) )
+            if( (fs.x < 1e-9) && (fs.x > -1e-9) )
                 fs.x = 0.0;
 
-            if( (fs.y < 1e-9) && (fs.y > 11e-9) )
+            if( (fs.y < 1e-9) && (fs.y > -1e-9) )
                 fs.y = 0.0;
 
-            if( (fs.z < 1e-9) && (fs.z > 11e-9) )
+            if( (fs.z < 1e-9) && (fs.z > -1e-9) )
                 fs.z = 0.0;
 
             ofile << setprecision( 8 ) << fs.x << " " << fs.y << " " << fs.z;

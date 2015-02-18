@@ -223,8 +223,9 @@ int POLYGON::Stitch( bool isCCW, POLYGON& aPolygon, TRANSFORM& aTransform, VRMLM
     if( aTabDepth > 4 )
         aTabDepth = 4;
 
-    double* lx, * ly, * lz;
-    lx = ly = lz = NULL;
+    double* lx;
+    double* ly;
+    double* lz;
 
     // allocate memory
     lx = new double[nv * 2];
@@ -609,12 +610,19 @@ int SIMPLEPOLY::AddVertex( double X, double Y, double Z )
         double* ly = new (nothrow) double[np];
 
         if( !ly )
+        {
+            delete [] lx;
             return -1;
+        }
 
         double* lz = new (nothrow) double[np];
 
         if( !lz )
+        {
+            delete [] lx;
+            delete [] ly;
             return -1;
+        }
 
         if( nv )
         {

@@ -299,6 +299,9 @@ int DIP::Build( std::string aVRMLFilename )
     if( CloseXForm( fp ) )
         return -1;
 
+    if( acc )
+        return -1;
+
     return 0;
 }
 

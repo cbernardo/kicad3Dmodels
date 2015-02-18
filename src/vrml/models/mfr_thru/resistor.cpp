@@ -200,6 +200,8 @@ int RESISTOR::makeHzLead( std::ofstream& fp )
         val = cap[0].Stitch( true, cap[1], t0, params.colors[13], true, fp, 2 );
     }
 
+    delete [] bend;
+
     return val;
 }
 

@@ -64,7 +64,7 @@ bool DIMPLE::SetParams( double aRadius, double aDepth, int aNSides, int aNSectio
         return false;
     }
 
-    if( aDepth < 0.0000001 && aDepth > 0.0000001 )
+    if( aDepth < 0.0000001 && aDepth > -0.0000001 )
     {
         ERRBLURB << "invalid aDepth (0)\n";
         return false;

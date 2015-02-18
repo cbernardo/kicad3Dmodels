@@ -810,33 +810,8 @@ void TESSELATOR::glEnd( void )
             if( !loop )
                 break;
 
-            double firstX = 0.0;
-            double firstY = 0.0;
-            double lastX = 0.0;
-            double lastY = 0.0;
-            double curX, curY;
-            double area = 0.0;
-
-            if( vlist.size() > 0 )
-            {
-                loop->push_back( vlist[0]->o );
-                firstX = vlist[0]->x;
-                firstY = vlist[0]->y;
-                lastX = firstX;
-                lastY = firstY;
-            }
-
-            for( size_t i = 1; i < vlist.size(); ++i )
-            {
+            for( size_t i = 0; i < vlist.size(); ++i )
                 loop->push_back( vlist[i]->o );
-                curX = vlist[i]->x;
-                curY = vlist[i]->y;
-                area += ( curX - lastX ) * ( curY + lastY );
-                lastX = curX;
-                lastY = curY;
-            }
-
-            area += ( firstX - lastX ) * ( firstY + lastY );
 
             outline.push_back( loop );
         }
@@ -956,9 +931,6 @@ int TESSELATOR::checkNContours( bool holes )
     if( contours.empty() )
         return 0;
 
-    std::list<int>::const_iterator  begin;
-    std::list<int>::const_iterator  end;
-
     for( size_t i = 0; i < contours.size(); ++i )
     {
         if( contours[i]->size() < 3 )
@@ -980,10 +952,11 @@ void TESSELATOR::pushVertices( bool holes )
     // push the internally held vertices
     unsigned int i;
 
-    std::list<int>::const_iterator  begin;
-    std::list<int>::const_iterator  end;
     GLdouble pt[3];
     VERTEX_3D* vp;
+
+    std::list<int>::const_iterator  begin;
+    std::list<int>::const_iterator  end;
 
     for( i = 0; i < contours.size(); ++i )
     {

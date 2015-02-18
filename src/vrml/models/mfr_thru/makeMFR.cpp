@@ -381,7 +381,6 @@ int GetParams( const std::string& pfile, RPARAMS& rp, const std::string& matdir 
 
     for( i = 0; i < 14; ++i )
     {
-        string color;
         oss.str( "" );
         oss << "color" << i;
         kp = k.find( oss.str() );
