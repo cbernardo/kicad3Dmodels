@@ -4,6 +4,10 @@ project( K3D CXX C )
 
 cmake_minimum_required( VERSION 2.8.4 FATAL_ERROR )
 
+# Version information
+set( K3D_VERSION_MAJOR 0 )
+set( K3D_VERSION_MINOR 12 )
+
 find_package( wxWidgets 2.8.0 COMPONENTS core base REQUIRED )
 
 if( NOT wxWidgets_FOUND )
@@ -42,11 +46,6 @@ endif()
 find_package( PythonLibs 2.6 )
 
 set( CMAKE_CXX_FLAGS "-Wall -DBOOST_PYTHON_MAX_ARITY=20" )
-
-# Version information
-set( K3D_VERSION_MAJOR 0 )
-
-set( K3D_VERSION_MINOR 10 )
 
 # The top level VRML tools directory is ${K3D_SOURCE_DIR}
 set( K3D_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
