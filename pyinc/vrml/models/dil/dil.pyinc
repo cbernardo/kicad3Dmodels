@@ -20,8 +20,9 @@
 
 */
 
-    class_<KC3DDIP::DIPPARAMS>("DIPParams","DIL package parameters")
+    class_<KC3DDIP::DIPPARAMS>("DipParams","DIL package parameters")
         .def_readwrite("scale", &KC3DDIP::DIPPARAMS::scale, "VRML world scale")
+        .def_readwrite("rotation", &KC3DDIP::DIPPARAMS::rotation, "Component rotation along Z")
         .def_readwrite("A1", &KC3DDIP::DIPPARAMS::A1, "case distance from top of PCB")
         .def_readwrite("A2", &KC3DDIP::DIPPARAMS::A2, "case height")
         .def_readwrite("L", &KC3DDIP::DIPPARAMS::L, "pin length below top of PCB")

@@ -1,7 +1,7 @@
 /*
  *  file: dip.cpp
  *
- *  Copyright 2012-2014 Cirilo Bernardo (cjh.bernardo@gmail.com)
+ *  Copyright 2012-2015 Cirilo Bernardo (cjh.bernardo@gmail.com)
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  */
 
-#include <cstdio>
 #include <cerrno>
 #include <cstring>
 #include <fstream>
@@ -60,7 +59,8 @@ DIPPARAMS::DIPPARAMS()
     casebev = 0.005;    // [CaseBevel]
     pinbev  = 0.002;    // Pin edge bevel
 
-    scale = 10;
+    scale = 10;         // factor to convert model space to VRML space
+    rotation = -M_PI/2.0;  // rotation along Z axis (model orientation)
 }
 
 
@@ -214,14 +214,17 @@ int DIP::Build( std::string aVRMLFilename )
     xoff = -(pins / 4.0 - 0.5) * params.e;
     yoff = -params.E1 * 0.5;
     zoff = 0.0;
+    ROTATION r0( params.rotation, 0.0, 0.0, 1.0 );
+    r0.Rotate( xoff, yoff, zoff );
 
     TRANSFORM T, TC;
     QUAT offset( 0, xoff, yoff, zoff );
     TRANSLATION tr( offset );
-    ROTATION rot( 0, 0, 0, 1 );
+    ROTATION rot( params.rotation, 0, 0, 1 );
     T.SetTranslation( tr * params.scale );
     T.SetRotation( rot );
     TC.SetScale( params.scale );
+    TC.SetRotation( ROTATION( params.rotation, 0.0, 0.0, 1.0) );
 
     acc += iccase.Calc();
 
@@ -266,10 +269,13 @@ int DIP::Build( std::string aVRMLFilename )
 
     // Pin 2 .. (pins/2)
     hpin = pins / 2;
+    QUAT o1( 0.0, params.e, 0.0, 0.0 );
+    r0.Rotate( o1 );
 
     for( pin = 2; pin <= hpin; ++pin )
     {
-        offset.x = offset.x + params.e;
+        offset.x = offset.x + o1.x;
+        offset.y = offset.y + o1.y;
 
         if( !(haspin[pin - 1]) )
             continue;
@@ -281,17 +287,26 @@ int DIP::Build( std::string aVRMLFilename )
 
     // Pin (pins/2 +1)..
     rot.Set( M_PI, 0, 0, 1 );
+    offset.x = xoff;
+    offset.y = yoff;
+    offset.z = zoff;
+    rot.Rotate(offset);
+    rot.Set( M_PI + params.rotation, 0, 0, 1 );
     T.SetRotation( rot );
-    offset.y = -offset.y;
     tr.Set( offset * params.scale );
     T.SetTranslation( tr );
+    o1.x = params.e;
+    o1.y = 0.0;
+    o1.z = 0.0;
+    rot.Rotate( o1 );
 
     for( pin = hpin + 1; pin <= pins; ++pin )
     {
         if( haspin[pin - 1] )
             acc += icpin.Build( T, pinmaterial, true, fp, 2 );
 
-        offset.x = offset.x - params.e;
+        offset.x += o1.x;
+        offset.y += o1.y;
         tr.Set( offset * params.scale );
         T.SetTranslation( tr );
     }

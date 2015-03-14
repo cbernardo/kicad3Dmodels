@@ -136,7 +136,7 @@ int DIPPIN::Calc( double aPinHeight, double aPinDepth, double aPinHLength,
     pp.r = r;
     pp.bend = 0.5 * M_PI;
     pp.nb   = 3;
-    pp.l    = aPinHeight - r;
+    pp.l    = aPinHLength - r;
     pp.stw  = 1.0;
     pp.std  = aThruBreadth / aPinBreadth;
     acc += pin[1].Calc( pp, t0 );
