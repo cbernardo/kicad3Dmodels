@@ -148,7 +148,6 @@ int DIP::SetPin( int aPinNumber, bool isRendered )
 
 int DIP::Build( std::string aVRMLFilename )
 {
-    double xoff, yoff, zoff;
     int pin, hpin;
     ofstream fp;
     int acc = 0;
@@ -211,20 +210,15 @@ int DIP::Build( std::string aVRMLFilename )
         return -1;
     }
 
-    xoff = -(pins / 4.0 - 0.5) * params.e;
-    yoff = -params.E1 * 0.5;
-    zoff = 0.0;
-    ROTATION r0( params.rotation, 0.0, 0.0, 1.0 );
-    r0.Rotate( xoff, yoff, zoff );
-
     TRANSFORM T, TC;
-    QUAT offset( 0, xoff, yoff, zoff );
-    TRANSLATION tr( offset );
+    QUAT offset( 0, (pins / 4.0 - 0.5) * params.e, params.E1 / 2.0, 0.0 );
     ROTATION rot( params.rotation, 0, 0, 1 );
-    T.SetTranslation( tr * params.scale );
+    rot.Rotate( offset );
     T.SetRotation( rot );
+    TRANSLATION tr( offset );
     TC.SetScale( params.scale );
-    TC.SetRotation( ROTATION( params.rotation, 0.0, 0.0, 1.0) );
+    TC.SetRotation( rot);
+    TC.SetTranslation( tr * params.scale );
 
     acc += iccase.Calc();
 
@@ -270,7 +264,10 @@ int DIP::Build( std::string aVRMLFilename )
     // Pin 2 .. (pins/2)
     hpin = pins / 2;
     QUAT o1( 0.0, params.e, 0.0, 0.0 );
-    r0.Rotate( o1 );
+    rot.Rotate( o1 );
+    offset.x = 0.0;
+    offset.y = 0.0;
+    offset.z = 0.0;
 
     for( pin = 2; pin <= hpin; ++pin )
     {
@@ -286,11 +283,11 @@ int DIP::Build( std::string aVRMLFilename )
     }
 
     // Pin (pins/2 +1)..
-    rot.Set( M_PI, 0, 0, 1 );
-    offset.x = xoff;
-    offset.y = yoff;
-    offset.z = zoff;
-    rot.Rotate(offset);
+    offset.x = (pins / 2.0 - 1.0) * params.e;
+    offset.y = params.E1;
+    offset.z = 0.0;
+    rot.Set( params.rotation, 0, 0, 1 );
+    rot.Rotate( offset );
     rot.Set( M_PI + params.rotation, 0, 0, 1 );
     T.SetRotation( rot );
     tr.Set( offset * params.scale );
