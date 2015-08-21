@@ -8,7 +8,9 @@ cmake_minimum_required( VERSION 2.8.4 FATAL_ERROR )
 set( K3D_VERSION_MAJOR 0 )
 set( K3D_VERSION_MINOR 12 )
 
-find_package( wxWidgets 2.8.0 COMPONENTS core base REQUIRED )
+# Note: "core" may be statically linked with "base" in some
+# installations so it is specified as an optional component
+find_package( wxWidgets 2.8.0 COMPONENTS base REQUIRED OPTIONAL_COMPONENTS core )
 
 if( NOT wxWidgets_FOUND )
     message( FATAL_ERROR "wxWidgets >= 2.8 is required (not found)." )
