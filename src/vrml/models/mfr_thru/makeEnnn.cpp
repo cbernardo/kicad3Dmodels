@@ -478,12 +478,6 @@ int main( int argc, char** argv )
                     oc = 'G';
             }
 
-            if( k == -1 )
-                oc = 'J';
-
-            if( k == -2 )
-                oc = 'K';
-
             // base name + code up to Multiplier
             switch( nb )
             {
