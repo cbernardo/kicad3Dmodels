@@ -368,7 +368,7 @@ int main( int argc, char** argv )
         ERRBLURB;
         cerr <<
         "\nInvalid series name. The name must begin with an alphabet character and the name \n";
-        cerr << "may contain only alphanumeric characters, dash ('-'), and underscore ('_')\n";
+        cerr << "may contain only alphanumeric characters and underscore ('_')\n";
         return -1;
     }
 
@@ -444,7 +444,7 @@ int main( int argc, char** argv )
             if( tc )
                 basename << tc;
             else
-                basename << "-";
+                basename << "_";
 
             k = i - 2;
 

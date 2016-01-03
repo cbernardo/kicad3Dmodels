@@ -37,7 +37,7 @@
  *  values  : path to file containing filename : color code pairs
  *
  *  Example of a values file entry for a horizontal 12.1K resistor, 1% (F), no Tcoeff code:
- *  LR0204_12K1_F-BH.wrl : 11X22X11X22XXX111
+ *  LR0204_12K1_F_BH.wrl : 11X22X11X22XXX111
  *
  *  The format for the file name should be as follows:
  *  [Part Series]_[VALUE]_[Tol. Code][Tcoeff Code][End Style][Orientation].wrl
