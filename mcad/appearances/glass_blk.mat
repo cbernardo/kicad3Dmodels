@@ -6,6 +6,6 @@ name: glass_blk
 diffuse: 0.1 0.1 0.1
 emissive: 0 0 0
 specular: 0.1 0.1 0.1
-ambient: 0.5
+ambient: 0.2
 transparency: 0.04
-shininess: 1
+shininess: 0.8

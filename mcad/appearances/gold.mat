@@ -8,6 +8,6 @@ name: gold
 diffuse: 1.0 0.8 0.0
 emissive: 0.24742 0.24742 0.00097
 specular: 1.0 0.8 0
-ambient: 0.86536
+ambient: 0.2
 transparency: 0
-shininess: 1.0
+shininess: 0.3

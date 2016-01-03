@@ -6,6 +6,6 @@ name: copper
 diffuse: 0.96 0.21 0.05
 emissive: 0 0 0
 specular: 0 0 0
-ambient: 0.8
+ambient: 0.2
 transparency: 0
 shininess: 0.5

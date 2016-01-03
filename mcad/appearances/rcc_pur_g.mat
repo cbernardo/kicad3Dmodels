@@ -6,6 +6,6 @@ name: rcc_pur_g
 diffuse: 0.32 0.07 0.64
 emissive: 0 0 0
 specular: 0.32 0.07 0.64
-ambient: 1
+ambient: 0.2
 transparency: 0
-shininess: 1
+shininess: 0.3

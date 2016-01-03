@@ -8,6 +8,6 @@ name: tin
 diffuse: 0.92008 0.92008 0.92008
 emissive: 0 0 0
 specular: 1 1 1
-ambient: 0.82018
+ambient: 0.2
 transparency: 0
-shininess: 1.0
+shininess: 0.8

@@ -6,6 +6,6 @@ name: rcc_blu_g
 diffuse: 0.1 0.11 0.88
 emissive: 0 0 0
 specular: 0.1 0.11 0.88
-ambient: 1
+ambient: 0.2
 transparency: 0
-shininess: 1
+shininess: 0.3

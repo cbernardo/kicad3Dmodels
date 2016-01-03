@@ -6,6 +6,6 @@ name: rcc_blk_g
 diffuse: 0.05 0.05 0.05
 emissive: 0 0 0
 specular: 0.05 0.05 0.05
-ambient: 1
+ambient: 0.2
 transparency: 0
-shininess: 1
+shininess: 0.3
